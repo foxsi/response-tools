@@ -18,6 +18,16 @@ from response_tools.effective_area import (eff_area_msfc_10shell,
                                            eff_area_nagoya_hxt,
                                            )
 
+# position 0
+@u.quantity_input(mid_energies=u.keV)
+def foxsi4_position0_obf(mid_energies):
+    pass
+
+# position 1
+@u.quantity_input(mid_energies=u.keV)
+def foxsi4_position1_obf(mid_energies):
+    pass
+
 # position 2
 @u.quantity_input(mid_energies=u.keV)
 def foxsi4_position2_thermal_blanket(mid_energies):

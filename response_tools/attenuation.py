@@ -16,7 +16,6 @@ import scipy
 from response_tools.util import BaseOutput, native_resolution
 
 ATT_PATH = os.path.join(pathlib.Path(__file__).parent, "..", "response-information", "attenuation-data")
-ATM_PATH = os.path.join(pathlib.Path(__file__).parent, "..", "response-information", "atmospheric-data")
 ASSETS_PATH = os.path.join(pathlib.Path(__file__).parent, "..", "assets", "response-tools-figs", "att-figs")
 
 @dataclass
@@ -472,7 +471,7 @@ def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
         warnings.warn(f"{sys._getframe().f_code.co_name} `time_range` (convertable to astropy.units.seconds) should be of length 2.")
         return
 
-    _f = os.path.join(ATM_PATH, f"FOXSI4_atmospheric_transmission_v1.fits") if file is None else file
+    _f = os.path.join(ATT_PATH, f"FOXSI4_atmospheric_transmission_v1.fits") if file is None else file
     with fits.open(_f) as hdul:
         native_times, native_energies, transmission = hdul[1].data["TIME"][0]<<u.second, (hdul[1].data["ENERGY"][0]<<u.eV)<<u.keV, hdul[1].data["ATMOSPHERIC_TRANS"][0]<<u.dimensionless_unscaled
 

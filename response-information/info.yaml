@@ -5,8 +5,17 @@ files:
     eff_area_telescope-5-pan_msfc_heritage: "effective-area-data/FOXSI3_Module_X-8_EA_pan_v1.txt"
     eff_area_telescope-5-tilt_msfc_heritage: "effective-area-data/FOXSI3_Module_X-8_EA_tilt_v1.txt"
     eff_area_msfc_hi_res: "effective-area-data/FOXSI4_Module_MSFC_HiRes_EA_with_models_v1.txt"
-    eff_area_nagoya_hxt: "effective-area-data/nagoya_hxt_onaxis_measurement_v1.txt"
-    eff_area_nagoya_sxt: "effective-area-data/nagoya_sxt_onaxis_measurement_v1.txt"
+    eff_area_measured_nagoya_hxt: "effective-area-data/nagoya_hxt_onaxis_measurement_v1.txt"
+    eff_area_measured_sxt: "effective-area-data/nagoya_sxt_onaxis_measurement_v1.txt"
+
+    # eff_area_cmos_mirror0: "effective-area-data/foxsi4_telescope-0_BASIC_mirror_effective_area_v1.fits" 
+    # eff_area_cmos_mirror1: "effective-area-data/foxsi4_telescope-1_BASIC_mirror_effective_area_v1.fits"
+    # eff_area_cmos_telescope0: "effective-area-data/foxsi4_telescope-0_BASIC_TELESCOPE_RESPONSE_v1.fits" 
+    # eff_area_cmos_telescope1: "effective-area-data/foxsi4_telescope-1_BASIC_TELESCOPE_RESPONSE_v1.fits"
+    # eff_area_early_nagoya_sxt: "effective-area-data/effective-area_raytracing_soft-xray-optic_on-axis.txt"
+    # eff_area_early_msfc_hi_res: "effective-area-data/3Inner_EA_EPDL97_14AA.csv"
+    # eff_area_modeled_nagoya_hxt: "effective-area-data/HXR_Nagoya_FOXSI4.arf"
+    # eff_area_modeled_nagoya_sxt: "effective-area-data/SXR_nocollimator_noobf.arf"
 
   detectors:
     cmos_det_telescope-0_resp: "detector-response-data/cmos/foxsi4_telescope-0_BASIC_RESPONSE_MATRIX_v1.fits"
@@ -25,6 +34,8 @@ files:
     att_telescope-0_cmos_prefilter: "attenuation-data/foxsi4_telescope-0_BASIC_attenuation_filter_transmittance_v1.fits"
     att_telescope-1_cmos_prefilter: "attenuation-data/foxsi4_telescope-1_BASIC_attenuation_filter_transmittance_v1.fits"
     att_foxsi4_atmosphere: "attenuation-data/FOXSI4_atmospheric_transmission_v1.fits"
+
+    # att_early_cmos_prefilter: "attenuation-data/CMOST_Prefilter_transmission.dat"
 
   quantum_efficiency:
     qe_cmos_telescope-0: "quantum-efficiency-data/foxsi4_telescope-0_BASIC_sensor_quantum_efficiency_v1.fits"

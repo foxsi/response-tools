@@ -477,7 +477,7 @@ def eff_area_cmos_telescope(mid_energies, telescope=None, file=None):
     logging.warning("If you care about what elements are included then proceed carefully.")
     logging.warning("For current file, see PR#11 in the `cmos-tools` repository.")
 
-    _f = os.path.join(EFF_PATH, f"foxsi4_telescope-{telescope}_BASIC_TELESCOPE_RESPONSE_V25APR13.fits") if file is None else file
+    _f = os.path.join(EFF_PATH, f"foxsi4_telescope-{telescope}_BASIC_TELESCOPE_RESPONSE_v1.fits") if file is None else file
     with fits.open(_f) as hdul:
         # _ is the off-axis angle but it's just [0] at the minute
         ea_energies, _, effas = hdul[2].data << u.keV, hdul[3].data << u.arcsec, hdul[1].data << u.cm**2
