@@ -30,7 +30,7 @@ For a coded runthrough of creating an ARF, see the [Create an ARF from scratch](
 
 The RMF is a matrix that contains the energy redistribution information of the detector, this is the photon-to-count conversion probability. An incoming photon of energy $\epsilon$ can be detected by the telescope's sensor as a count with an energy $\lesssim\epsilon$ (say, $E$) due to scattering, detection efficiency, and energy resolution. Therefore, the energies we are interested in are the ones defined for the RMF creation. I.e., the defined photon energies/input axis controls the energies the ARF and photon models should be evaluated and the defined count bin energies/observable bins/output axis controls the binning of the observed data.
 
-Example RMFs for the CdTe and CMOS can be seen below (see the [Example FOXSI-4 RMFs](https://foxsi.github.io/response-tools/auto_examples/plot_rmf_examples.html#sphx-glr-auto-examples-plot-rmf-examples-py) example in the example gallery) which show the conversion probability of a photon being recorded as detector observable (i.e., either a count with a calibrated energy or DN):
+Example RMFs for the CdTe and CMOS can be seen below (see the [Example FOXSI-4 RMFs](https://foxsi.github.io/response-tools/auto_examples/plot_rmf_examples.html#sphx-glr-auto-examples-plot-rmf-examples-py) example in the example gallery) which show the conversion probability of a photon being recorded as detector observable (i.e., either a count with a calibrated energy or DN). The units of a response matrix will be observable/photon (e.g., counts/photon or DN/photon).
 
 ![FOXSI-4-telescope0-and-2-2D-RMF](../response_tools/assets/tel0_and_2_rmf.png "FOXSI-4 telescope 0 and 2 RMF.")
 
@@ -45,20 +45,20 @@ The SRM describes the total response of the telescope in question. It takes into
 The SRM is the combination of the ARF and RMF:
 
 ```{math}
-SRM = ARF \times RMF \quad \textrm{and} \quad SRM_{a, b} = ARF_{a}*RMF_{a,b}
+\textrm{SRM} = \textrm{ARF} \times \textrm{RMF} \quad \textrm{and} \quad \textrm{SRM}_{a, b} = \textrm{ARF}_{a}\cdot\textrm{RMF}_{a,b}
 ```
 
-where $a$ and $b$ are the elements along the input and output RMF axis, respectively.
+where $a$ and $b$ are the elements along the input and output RMF axis, respectively. The units of the SRM will be something like observable photon<sup>-1</sup> cm<sup>2</sup> (e.g., counts photon<sup>-1</sup> cm<sup>2</sup> or DN photon<sup>-1</sup> cm<sup>2</sup>).
 
 Using the SRM, a user can perform a variety of scientific analysis, such as forward fitting and spectral inversion. The SRM describes the link between the incoming photon spectrum and the observed data spectrum.
 
 For example, for forward fitting, if a user has a model photon spectrum ($M_{photon}$) evaluated for the SRM input energy bins then they are able to obtain a model telescope observable spectrum (e.g., a count or DN spectrum):
 
 ```{math}
-M_{observable} = M_{photon} \# SRM \quad \textrm{and} \quad M_{observable, b} = \sum_{a=0}^{n} M_{photon, a} \cdot SRM_{a, b}
+M_{\textrm{observable}} = M_{\textrm{photon}} \# \textrm{SRM} \quad \textrm{and} \quad M_{\textrm{observable}, b} = \sum_{a=0}^{n} M_{\textrm{photon}, a} \cdot \textrm{SRM}_{a, b}
 ```
 
-where $M_{observable}$ is the model observable spectrum that can be compared to the measured observable spectrum from, say, the flight. A user can make use of spectral fitting software for this analysis:
+where $M_{\textrm{observable}}$ is the model observable spectrum that can be compared to the measured observable spectrum from, say, the flight and $\#$ represents matrix multiplication. A user can make use of spectral fitting software for this analysis:
 
 - [Sunkit-spex](https://github.com/sunpy/sunkit-spex) (`Python`)
 - [OSPEX](https://hesperia.gsfc.nasa.gov/ssw/packages/spex/doc/ospex_explanation.htm) (`IDL`)
