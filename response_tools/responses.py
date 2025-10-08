@@ -1161,9 +1161,9 @@ def asset_response_chain_plot(save_location=None):
                    6:foxsi4_telescope6_rmf,
                    }
     
-    fig = plt.figure(figsize=(6, 10))
+    fig = plt.figure(figsize=(18, 6))
     positions = list(pos2rmffunc.keys())
-    gs = gridspec.GridSpec(len(positions), 3)
+    gs = gridspec.GridSpec(3, len(positions))
 
     original_fs = plt.rcParams["font.size"]
     plt.rcParams["font.size"] = 6
@@ -1174,9 +1174,9 @@ def asset_response_chain_plot(save_location=None):
         mid_energies = np.linspace(5,20,100)<<u.keV if pos_rmf is None else (pos_rmf.input_energy_edges[:-1]+pos_rmf.input_energy_edges[1:])/2
         pos_arf = pos2arffunc[key](mid_energies=mid_energies, off_axis_angle=off_axis_angle)
 
-        gs_ax0 = fig.add_subplot(gs[c, 0])
-        gs_ax1 = fig.add_subplot(gs[c, 1])
-        gs_ax2 = fig.add_subplot(gs[c, 2])
+        gs_ax0 = fig.add_subplot(gs[0, c])
+        gs_ax1 = fig.add_subplot(gs[1, c])
+        gs_ax2 = fig.add_subplot(gs[2, c])
 
         gs_ax0.plot(pos_arf.mid_energies, pos_arf.response)
         gs_ax0.set_xlabel(f"Photon Energy [{pos_arf.mid_energies.unit:latex}]")
