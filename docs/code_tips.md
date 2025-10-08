@@ -62,6 +62,8 @@ There are a number of fields common to all data-class types used in the package.
 
 Inspecting a returned output and observing a subset of these fields should make it extra clear to a user as to exactly what they are handling when it comes to the output of the function.
 
+The above tables need to be manually updated. To ensure you are viewing the most accurate and up-to-date abilities of the data-classes and code please utilize the [auto-generated code documentation](https://foxsi.github.io/response-tools/modules.html) (this shows and describes all functions and classes in the codebase). You can also make use of Python's [`help`](https://docs.python.org/3/library/functions.html#help) built-in function. The `help` function use is shown in the [Functions \& Outputs](https://foxsi.github.io/response-tools/auto_examples/plot_functions_and_outputs.html) gallery example.
+
 ## Plotting: data-class and units
 
 After you have your object(s), you might want to plot the contents for visual inspection. We can use the information in the data-class object to avoid a lot of manual bookkeeping jobs like tracking units.

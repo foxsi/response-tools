@@ -927,9 +927,7 @@ def foxsi4_position6_detector_response():
 
     Returns
     -------
-    : `detector_response.DetectorResponseOutput`
-        An object containing all the redistribution matrix information. 
-        See accessible information using `.contents` on the output.
+    : `None`
     """
     logging.warning(f"The Position 6 Timepix detector response from {sys._getframe().f_code.co_name} does not yet exist.")
 
