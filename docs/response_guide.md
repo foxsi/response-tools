@@ -52,7 +52,7 @@ where $a$ and $b$ are the elements along the input and output RMF axis, respecti
 
 Using the SRM, a user can perform a variety of scientific analysis, such as forward fitting and spectral inversion. The SRM describes the link between the incoming photon spectrum and the observed data spectrum.
 
-For example, for forward fitting, if a user has a model photon spectrum ($M_{photon}$) evaluated for the SRM input energy bins then they are able to obtain a model telescope observable spectrum (e.g., a count or DN spectrum):
+For example, for forward fitting, if a user has a model photon spectrum ($M_{\textrm{photon}}$) evaluated for the SRM input energy bins then they are able to obtain a model telescope observable spectrum (e.g., a count or DN spectrum):
 
 ```{math}
 M_{\textrm{observable}} = M_{\textrm{photon}} \# \textrm{SRM} \quad \textrm{and} \quad M_{\textrm{observable}, b} = \sum_{a=0}^{n} M_{\textrm{photon}, a} \cdot \textrm{SRM}_{a, b}

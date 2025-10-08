@@ -206,7 +206,6 @@ def foxsi4_telescope0_flight_arf(mid_energies, off_axis_angle, time_range):
                                       ),
                             )
 
-@u.quantity_input(pitch=u.um)
 def foxsi4_telescope0_rmf():
     """The Redistribution Matrix Function (RMF) for Telescope 0. 
 
@@ -337,8 +336,6 @@ def foxsi4_telescope1_flight_arf(mid_energies, off_axis_angle, time_range):
                                       ),
                             )
 
-
-@u.quantity_input(pitch=u.um)
 def foxsi4_telescope1_rmf():
     """The Redistribution Matrix Function (RMF) for Telescope 1. 
 
@@ -1032,6 +1029,119 @@ def foxsi4_telescope5_rmf(region:int=None, pitch=None, _side:str="merged", _even
                                       ),
                             )
 
+# telescope 6
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
+def foxsi4_telescope6_arf(mid_energies, off_axis_angle):
+    """The Ancillary Response Function (ARF) for Telescope 6.
+    
+    **DOES NOT** include atmospheric attenuation from flight.
+
+    Parameters
+    ----------
+    mid_energies : `astropy.units.quantity.Quantity`
+        The energies at which the Telescope 6 componented are calculated. 
+        If `numpy.nan<<astropy.units.keV` is passed then an entry for 
+        all native file energies are returned. 
+        Unit must be convertable to keV.
+
+    off_axis_angle : `astropy.units.quantity.Quantity`
+        The off-axis angle of the source.
+        Unit must be convertable to arc-minutes.
+
+    Returns
+    -------
+    : `responses.Response1DOutput`
+        An object containing the 1D response information of Telescope 6. 
+        See accessible information using `.contents` on the output.
+    """
+    tb = tp.foxsi4_position6_thermal_blanket(mid_energies) 
+    opt = tp.foxsi4_position6_optics(mid_energies, 
+                                     off_axis_angle=off_axis_angle) 
+    mylar = tp.foxsi4_position5_al_mylar(mid_energies)
+
+    arf = tb.transmissions * opt.effective_areas * mylar.transmissions 
+
+    func_name = sys._getframe().f_code.co_name
+    tb.update_function_path(func_name)
+    opt.update_function_path(func_name)
+    mylar.update_function_path(func_name)
+
+    return Response1DOutput(filename="No-File",
+                            function_path=func_name,
+                            mid_energies=mid_energies,
+                            response=arf,
+                            response_type="ARF",
+                            telescope="foxsi4-telescope6",
+                            elements=(tb, 
+                                      opt, 
+                                      mylar,
+                                      ),
+                            )
+
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+def foxsi4_telescope6_flight_arf(mid_energies, off_axis_angle, time_range):
+    """The flight Ancillary Response Function (ARF) for Telescope 6.
+    
+    Includes atmospheric attenuation from flight.
+
+    Parameters
+    ----------
+    mid_energies : `astropy.units.quantity.Quantity`
+        The energies at which the Telescope 6 componented are calculated. 
+        If `numpy.nan<<astropy.units.keV` is passed then an entry for 
+        all native file energies are returned. 
+        Unit must be convertable to keV.
+
+    off_axis_angle : `astropy.units.quantity.Quantity`
+        The off-axis angle of the source.
+        Unit must be convertable to arc-minutes.
+
+    time_range : `astropy.units.quantity.Quantity` or `None`
+        The time range the atmsopheric transmissions should be averaged
+        over. If `None`, `numpy.nan<<astropy.units.second`, or
+        `[numpy.nan, numpy.nan]<<astropy.units.second` then the full 
+        time will be considered and the output will not be averaged but 
+        a grid of the transmissions at all times and at any provided
+        energies.
+
+    Returns
+    -------
+    : `responses.Response1DOutput`
+        An object containing the 1D response information of Telescope 6. 
+        See accessible information using `.contents` on the output.
+    """
+    atm = att_foxsi4_atmosphere(mid_energies=mid_energies, 
+                                time_range=time_range)
+    arf = foxsi4_telescope6_arf(mid_energies, off_axis_angle)
+
+    flight_arf = atm.transmissions*arf.response
+
+    func_name = sys._getframe().f_code.co_name
+    atm.update_function_path(func_name)
+    arf.update_function_path(func_name)
+
+    return Response1DOutput(filename="No-File",
+                            function_path=func_name,
+                            mid_energies=mid_energies,
+                            response=flight_arf,
+                            response_type="ARF-flight",
+                            telescope=f"foxsi4-telescope6",
+                            elements=(atm, 
+                                      arf,
+                                      ),
+                            )
+
+def foxsi4_telescope6_rmf():
+    """The Redistribution Matrix Function (RMF) for Telescope 6. 
+
+    Returns
+    -------
+    : `None`
+    """
+    logging.warning(f"The Telescope 6 Timepix detector response from {sys._getframe().f_code.co_name} does not yet exist.")
+    rmf = tp.foxsi4_position6_detector_response()
+    return rmf
+
 def asset_response_chain_plot(save_location=None):
     """Plot the response chain data to visually check."""
     pos2arffunc = {0:foxsi4_telescope0_arf, 
@@ -1040,6 +1150,7 @@ def asset_response_chain_plot(save_location=None):
                    3:foxsi4_telescope3_arf, 
                    4:foxsi4_telescope4_arf, 
                    5:foxsi4_telescope5_arf,
+                   6:foxsi4_telescope6_arf,
                    }
     pos2rmffunc = {0:foxsi4_telescope0_rmf, 
                    1:foxsi4_telescope1_rmf, 
@@ -1047,9 +1158,10 @@ def asset_response_chain_plot(save_location=None):
                    3:foxsi4_telescope3_rmf, 
                    4:foxsi4_telescope4_rmf, 
                    5:foxsi4_telescope5_rmf,
+                   6:foxsi4_telescope6_rmf,
                    }
     
-    fig = plt.figure(figsize=(6.5, 10))
+    fig = plt.figure(figsize=(6, 10))
     positions = list(pos2rmffunc.keys())
     gs = gridspec.GridSpec(len(positions), 3)
 
@@ -1059,17 +1171,21 @@ def asset_response_chain_plot(save_location=None):
     for c, key in enumerate(positions):
         off_axis_angle = 0 << u.arcmin
         pos_rmf = pos2rmffunc[key](region=0) if 2<=key<=5 else pos2rmffunc[key]()
-        mid_energies = (pos_rmf.input_energy_edges[:-1]+pos_rmf.input_energy_edges[1:])/2
+        mid_energies = np.linspace(5,20,100)<<u.keV if pos_rmf is None else (pos_rmf.input_energy_edges[:-1]+pos_rmf.input_energy_edges[1:])/2
         pos_arf = pos2arffunc[key](mid_energies=mid_energies, off_axis_angle=off_axis_angle)
-        pos_srm = foxsi4_telescope_spectral_response(pos_arf, pos_rmf)
 
         gs_ax0 = fig.add_subplot(gs[c, 0])
+        gs_ax1 = fig.add_subplot(gs[c, 1])
+        gs_ax2 = fig.add_subplot(gs[c, 2])
+
         gs_ax0.plot(pos_arf.mid_energies, pos_arf.response)
         gs_ax0.set_xlabel(f"Photon Energy [{pos_arf.mid_energies.unit:latex}]")
         gs_ax0.set_ylabel(f"Response [{pos_arf.response.unit:latex}]")
         gs_ax0.set_title(f"Pos. {key}: ARF")
 
-        gs_ax1 = fig.add_subplot(gs[c, 1])
+        if pos_rmf is None:
+            continue
+
         extent = [np.min(pos_rmf.output_energy_edges.value), 
                   np.max(pos_rmf.output_energy_edges.value), 
                   np.min(pos_rmf.input_energy_edges.value), 
@@ -1087,7 +1203,8 @@ def asset_response_chain_plot(save_location=None):
         gs_ax1.set_ylabel(f"Photon Energy [{pos_rmf.input_energy_edges.unit:latex}]")
         gs_ax1.set_title(f"Pos. {key}: RMF")
 
-        gs_ax2 = fig.add_subplot(gs[c, 2])
+        pos_srm = foxsi4_telescope_spectral_response(pos_arf, pos_rmf)
+
         r = gs_ax2.imshow(pos_srm.response.value, 
                         origin="lower", 
                         norm=LogNorm(vmin=1e-7), 

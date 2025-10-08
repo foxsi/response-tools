@@ -125,7 +125,6 @@ def foxsi4_position0_obf(mid_energies):
     r.update_function_path(sys._getframe().f_code.co_name)
     return r
 
-@u.quantity_input(pitch=u.um)
 def foxsi4_position0_detector_response():
     """Position 0 CMOS1 detector response.
 
@@ -246,7 +245,6 @@ def foxsi4_position1_obf(mid_energies):
     r.update_function_path(sys._getframe().f_code.co_name)
     return r
 
-@u.quantity_input(pitch=u.um)
 def foxsi4_position1_detector_response():
     """Position 1 CMOS2 detector response.
 
@@ -841,6 +839,99 @@ def foxsi4_position5_detector_response(region:int=None, pitch=None, _side:str="m
     r.update_function_path(sys._getframe().f_code.co_name)
     r.detector = f"CdTe{pos5_det}-Detector-Response"
     return r
+
+# position 6
+@u.quantity_input(mid_energies=u.keV)
+def foxsi4_position6_thermal_blanket(mid_energies):
+    """Position 6 thermal blanket transmissions.
+
+    Parameters
+    ----------
+    mid_energies : `astropy.units.quantity.Quantity`
+        The energies at which the thermal blanketing transmission is 
+        required. If `numpy.nan<<astropy.units.keV` is passed then an 
+        entry for all native file energies are returned. 
+        Unit must be convertable to keV.
+
+    Returns
+    -------
+    : `attenuation.AttOutput`
+        An object containing the attenuation/transmission information of
+        the thermal blanket. See accessible information using 
+        `.contents` on the output.
+    """
+    r = att_thermal_blanket(mid_energies)
+    r.update_function_path(sys._getframe().f_code.co_name)
+    return r
+
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
+def foxsi4_position6_optics(mid_energies, off_axis_angle=None):
+    """Position 6 MSFC high resolution optic effective areas.
+
+    Parameters
+    ----------
+    mid_energies : `astropy.units.quantity.Quantity`
+        The energies at which the position 6 optics is required. If 
+        `numpy.nan<<astropy.units.keV` is passed then an entry for all 
+        native file energies are returned. 
+        Unit must be convertable to keV.
+
+    off_axis_angle : `astropy.units.quantity.Quantity`
+        The off-axis angle of the source.
+        Unit must be convertable to arc-minutes.
+        *** Not implemented yet. ***
+
+    Returns
+    -------
+    : `effective_area.EffAreaOutput`
+        An object containing the effective area information of the MSFC 
+        high resolution optic. See accessible information using 
+        `.contents` on the output.
+    """
+    if off_axis_angle is not None:
+        logging.warning(f"The `off_axis_angle` input for Position 3's optics ({sys._getframe().f_code.co_name}) is not yet implemented.")
+    r = eff_area_msfc_hi_res(mid_energies, 
+                             off_axis_angle=off_axis_angle,
+                             position=6, 
+                             use_model=True)
+    r.update_function_path(sys._getframe().f_code.co_name)
+    return r
+
+@u.quantity_input(mid_energies=u.keV)
+def foxsi4_position6_al_mylar(mid_energies):
+    """Position 6 thin Mylar window transmissions.
+
+    Parameters
+    ----------
+    mid_energies : `astropy.units.quantity.Quantity`
+        The energies at which the thin Mylar window transmission is 
+        required. If `numpy.nan<<astropy.units.keV` is passed then an 
+        entry for all native file energies are returned. 
+        Unit must be convertable to keV.
+
+    Returns
+    -------
+    : `attenuation.AttOutput`
+        An object containing the attenuation/transmission information of
+        the thin Mylar window. See accessible information using 
+        `.contents` on the output.
+    """
+    r = att_al_mylar(mid_energies)
+    r.update_function_path(sys._getframe().f_code.co_name)
+    return r
+
+def foxsi4_position6_detector_response():
+    """Position 6 Timepix detector response.
+
+    **Not Implemented.**
+
+    Returns
+    -------
+    : `detector_response.DetectorResponseOutput`
+        An object containing all the redistribution matrix information. 
+        See accessible information using `.contents` on the output.
+    """
+    logging.warning(f"The Position 6 Timepix detector response from {sys._getframe().f_code.co_name} does not yet exist.")
 
 if __name__=="__main__":
     p2_dr_reg = foxsi4_position2_detector_response(region=0)
