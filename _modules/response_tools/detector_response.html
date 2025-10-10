@@ -1,0 +1,635 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>response_tools.detector_response &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="../../_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            response-tools
+              <img src="../../_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Response-tools Examples 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code.html">Response-tools Code 🦊</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">response_tools.detector_response</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for response_tools.detector_response</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Code to load different detector responses. &quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">LogNorm</span><span class="p">,</span> <span class="n">Normalize</span>
+<span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">response_tools</span>
+<span class="kn">from</span> <span class="nn">response_tools.util</span> <span class="kn">import</span> <span class="n">BaseOutput</span>
+
+<span class="n">FILE_PATH</span> <span class="o">=</span> <span class="n">response_tools</span><span class="o">.</span><span class="n">responseFilePath</span>
+<span class="n">RESPONSE_INFO_TYPE</span> <span class="o">=</span> <span class="n">response_tools</span><span class="o">.</span><span class="n">contextResponseInfo</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="s2">&quot;detectors&quot;</span><span class="p">]</span>
+<span class="n">ASSETS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="s2">&quot;response-tools-figs&quot;</span><span class="p">,</span> <span class="s2">&quot;det-resp-figs&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DetectorResponseOutput">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.detector_response.DetectorResponseOutput">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DetectorResponseOutput</span><span class="p">(</span><span class="n">BaseOutput</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for keeping track of effective area response values.&quot;&quot;&quot;</span>
+    <span class="c1"># numbers</span>
+    <span class="n">input_energy_edges</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span> <span class="c1"># photon axis</span>
+    <span class="n">output_energy_edges</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span> <span class="c1"># count axis</span>
+    <span class="n">detector_response</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span> <span class="c1"># rmf</span>
+    <span class="c1"># bookkeeping</span>
+    <span class="n">detector</span><span class="p">:</span> <span class="nb">str</span></div>
+
+    <span class="c1"># any other fields needed can be added here</span>
+    <span class="c1"># can even add with a default so the input is not required for every other instance</span>
+
+<div class="viewcode-block" id="cdte_det_resp_rmf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.detector_response.cdte_det_resp_rmf">[docs]</a>
+<span class="k">def</span> <span class="nf">cdte_det_resp_rmf</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the redistribution matrix for CdTe from a given file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file : `str`</span>
+<span class="sd">        The file for the RMF.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `DetectorResponseOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">e_lo</span><span class="p">,</span> <span class="n">e_hi</span><span class="p">,</span> <span class="n">ngrp</span><span class="p">,</span> <span class="n">fchan</span><span class="p">,</span> <span class="n">nchan</span><span class="p">,</span> <span class="n">matrix</span> <span class="o">=</span> <span class="n">_read_rmf</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="n">fchan_array</span> <span class="o">=</span> <span class="n">col2arr_py</span><span class="p">(</span><span class="n">fchan</span><span class="p">)</span>
+    <span class="n">nchan_array</span> <span class="o">=</span> <span class="n">col2arr_py</span><span class="p">(</span><span class="n">nchan</span><span class="p">)</span>
+
+    <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e_lo</span><span class="p">,</span> <span class="n">e_hi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">&lt;&lt;</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span>
+
+    <span class="k">return</span> <span class="n">DetectorResponseOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+                                  <span class="n">function_path</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                  <span class="n">input_energy_edges</span><span class="o">=</span><span class="n">energies</span><span class="p">,</span>
+                                  <span class="n">output_energy_edges</span><span class="o">=</span><span class="n">energies</span><span class="p">,</span>
+                                  <span class="n">detector_response</span><span class="o">=</span><span class="n">vrmf2arr_py</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">matrix</span><span class="p">,</span>
+                                                                <span class="n">n_grp_list</span><span class="o">=</span><span class="n">ngrp</span><span class="p">,</span>
+                                                                <span class="n">f_chan_array</span><span class="o">=</span><span class="n">fchan_array</span><span class="p">,</span>
+                                                                <span class="n">n_chan_array</span><span class="o">=</span><span class="n">nchan_array</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">ct</span><span class="o">/</span><span class="n">u</span><span class="o">.</span><span class="n">ph</span><span class="p">),</span>
+                                  <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;CdTe-General-Detector-Response&quot;</span>
+                                  <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cdte_det_resp">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.detector_response.cdte_det_resp">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">cdte_det_resp</span><span class="p">(</span><span class="n">cdte</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">region</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">side</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;merged&quot;</span><span class="p">,</span> <span class="n">event_type</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the redistribution matrix for CdTe from a given file.</span>
+
+<span class="sd">    Requires the `cdte` input and _either_ `region` _xor_ `pitch`.</span>
+
+<span class="sd">    Wrapper for `cdte_det_resp_rmf` with bookkeeping.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cdte : `int`</span>
+<span class="sd">        The CdTe detector number. Must be in [1,2,3,4].</span>
+
+<span class="sd">    region : `int`</span>
+<span class="sd">        The region of the CdTe detector required. Either provide </span>
+<span class="sd">        `region` _xor_ `pitch`. The `region` maps onto the pitches used </span>
+<span class="sd">        across the detector. </span>
+<span class="sd">        - Region 0 -&gt; 60&lt;&lt;astropy.units.um </span>
+<span class="sd">        - Region 1 -&gt; 80&lt;&lt;astropy.units.um</span>
+<span class="sd">        - Region 2 -&gt; 100&lt;&lt;astropy.units.um</span>
+
+<span class="sd">    pitch : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        Instead of `region`, it might be more usefule to specify the </span>
+<span class="sd">        pitch in physical units (must b convertable to </span>
+<span class="sd">        `astropy.units.um`). Either provide `region` _xor_ `pitch`.</span>
+<span class="sd">        The pitches map onto the `region` input.</span>
+<span class="sd">        - 60&lt;&lt;astropy.units.um -&gt; Region 0</span>
+<span class="sd">        - 80&lt;&lt;astropy.units.um -&gt; Region 1</span>
+<span class="sd">        - 100&lt;&lt;astropy.units.um -&gt; Region 2</span>
+
+<span class="sd">    side : `str`</span>
+<span class="sd">        Define the side on the detector the user requires the response </span>
+<span class="sd">        from. Must be in [&quot;pt&quot;, &quot;merged&quot;].</span>
+<span class="sd">        Default: &quot;merged&quot;</span>
+
+<span class="sd">    event_type : `str`</span>
+<span class="sd">        Define the type of event trigger being considered in the </span>
+<span class="sd">        response. Must be in [&quot;1hit&quot;, &quot;2hit&quot;, (&quot;all&quot;, &quot;mix&quot;)]. </span>
+<span class="sd">        Note: \&quot;all\&quot; and \&quot;mix\&quot; are the same but some from different </span>
+<span class="sd">        naming conventions on the merged and individual detector sides. </span>
+<span class="sd">        This will be fixed at some point in the future.</span>
+<span class="sd">        Default: &quot;all&quot;</span>
+
+<span class="sd">    file : `str`</span>
+<span class="sd">        The file for the RMF.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `DetectorResponseOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">have_region</span><span class="p">,</span> <span class="n">have_pitch</span> <span class="o">=</span> <span class="p">(</span><span class="n">region</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="n">pitch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">pitch2region</span> <span class="o">=</span> <span class="p">{</span><span class="mi">60</span><span class="o">&lt;&lt;</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="mi">80</span><span class="o">&lt;&lt;</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="o">&lt;&lt;</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+    <span class="n">valid_region</span><span class="p">,</span> <span class="n">valid_pitch</span> <span class="o">=</span> <span class="p">(</span><span class="n">region</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">pitch2region</span><span class="o">.</span><span class="n">values</span><span class="p">())),</span> <span class="p">(</span><span class="n">pitch</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">pitch2region</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">cdte</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">cdte</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">, `cdte` must be given and in [1,2,3,4].&quot;</span><span class="p">)</span>
+        <span class="k">return</span> 
+    
+    <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="n">have_region</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">have_pitch</span><span class="p">))</span> \
+        <span class="ow">or</span> <span class="p">(</span><span class="n">have_region</span> <span class="ow">and</span> <span class="n">have_pitch</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">, either `region` [0,1,2] _xor_ `pitch` [60&lt;&lt;u.um,80&lt;&lt;u.um,100&lt;&lt;u.um] must be given.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> 
+    
+    <span class="k">if</span> <span class="n">have_region</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">valid_region</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">, the `region` must be in [0,1,2].&quot;</span><span class="p">)</span>
+        <span class="k">return</span> 
+
+    <span class="k">if</span> <span class="n">have_pitch</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">valid_pitch</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">, the `pitch` must be in [60&lt;&lt;u.um,80&lt;&lt;u.um,100&lt;&lt;u.um].&quot;</span><span class="p">)</span>
+        <span class="k">return</span> 
+    
+    <span class="k">if</span> <span class="n">side</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="s2">&quot;merged&quot;</span><span class="p">]:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">, the `side` must be in [</span><span class="se">\&quot;</span><span class="s2">pt</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">merged</span><span class="se">\&quot;</span><span class="s2">].&quot;</span><span class="p">)</span>
+        <span class="k">return</span> 
+    
+    <span class="k">if</span> <span class="n">event_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;1hit&quot;</span><span class="p">,</span> <span class="s2">&quot;2hit&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;mix&quot;</span><span class="p">]:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">, the `event_type` must be in [</span><span class="se">\&quot;</span><span class="s2">1hit</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">2hit</span><span class="se">\&quot;</span><span class="s2">, (</span><span class="se">\&quot;</span><span class="s2">all</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">mix</span><span class="se">\&quot;</span><span class="s2">)].&quot;</span><span class="p">)</span>
+        <span class="k">return</span> 
+    
+    <span class="k">if</span> <span class="n">side</span><span class="o">==</span><span class="s2">&quot;merged&quot;</span> <span class="ow">and</span> <span class="n">event_type</span><span class="o">==</span><span class="s2">&quot;mix&quot;</span><span class="p">:</span>
+        <span class="n">event_type</span><span class="o">=</span><span class="s2">&quot;all&quot;</span>
+    <span class="k">elif</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pt&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">event_type</span><span class="o">==</span><span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="n">event_type</span><span class="o">=</span><span class="s2">&quot;mix&quot;</span>
+    
+    <span class="n">region</span> <span class="o">=</span> <span class="n">pitch2region</span><span class="p">[</span><span class="n">pitch</span><span class="p">]</span> <span class="k">if</span> <span class="n">have_pitch</span> <span class="k">else</span> <span class="n">region</span>
+    
+    <span class="n">_f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FILE_PATH</span><span class="p">,</span> 
+                      <span class="n">RESPONSE_INFO_TYPE</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;cdte_det_</span><span class="si">{</span><span class="n">side</span><span class="si">}</span><span class="s2">_resp&quot;</span><span class="p">],</span> 
+                      <span class="sa">f</span><span class="s2">&quot;Resp_3keVto30keV_CdTe</span><span class="si">{</span><span class="n">cdte</span><span class="si">}</span><span class="s2">_reg</span><span class="si">{</span><span class="n">region</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">event_type</span><span class="si">}</span><span class="s2">.rmf&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">file</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">cdte_det_resp_rmf</span><span class="p">(</span><span class="n">_f</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">detector</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;CdTe</span><span class="si">{</span><span class="n">cdte</span><span class="si">}</span><span class="s2">-Detector-Response&quot;</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="cmos_det_resp">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.detector_response.cmos_det_resp">[docs]</a>
+<span class="k">def</span> <span class="nf">cmos_det_resp</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">telescope</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the redistribution matrix for CMOS from a given file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file : `str`</span>
+<span class="sd">        The file for the RMF.</span>
+
+<span class="sd">    telescope : `int`</span>
+<span class="sd">        Either 0 or 1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `DetectorResponseOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">telescope</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">telescope</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The `telescope` input in </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2"> must be 0 or 1.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+    
+    <span class="n">_f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FILE_PATH</span><span class="p">,</span> <span class="n">RESPONSE_INFO_TYPE</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;cmos_det_telescope-</span><span class="si">{</span><span class="n">telescope</span><span class="si">}</span><span class="s2">_resp&quot;</span><span class="p">])</span> <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">file</span>
+    
+    <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">_f</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
+        <span class="n">matrix</span><span class="p">,</span> <span class="n">counts</span><span class="p">,</span> <span class="n">energy</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">DN</span><span class="o">/</span><span class="n">u</span><span class="o">.</span><span class="n">ph</span><span class="p">),</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">&lt;&lt;</span><span class="n">u</span><span class="o">.</span><span class="n">DN</span><span class="p">,</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">&lt;&lt;</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span> <span class="c1"># units?</span>
+
+    <span class="c1"># counts &amp; energy come as the bin centers, not edges</span>
+    <span class="c1"># check for uniform binning and convert to bin edges...</span>
+    <span class="c1"># round to avoid differences in float precision</span>
+    <span class="n">diff_counts</span><span class="p">,</span> <span class="n">diff_energy</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">counts</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">energy</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">diff_counts</span><span class="p">)</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">diff_counts</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;In </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">, the counts axis values do not appear to follow uniform binning and so cannot be automatically converted from bin centers to edges:</span><span class="se">\n</span><span class="si">{</span><span class="n">diff_counts</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">diff_energy</span><span class="p">)</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">diff_energy</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;In </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">, the energy axis values do not appear to follow uniform binning and so cannot be automatically converted from bin centers to edges:</span><span class="se">\n</span><span class="si">{</span><span class="n">diff_energy</span><span class="si">}</span><span class="s2">&quot;</span>
+    
+    <span class="n">counts_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">counts</span><span class="o">-</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">diff_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">counts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">diff_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">energy_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">energy</span><span class="o">-</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">diff_energy</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">energy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">diff_energy</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">DetectorResponseOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+                                  <span class="n">function_path</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                  <span class="n">input_energy_edges</span><span class="o">=</span><span class="n">energy_edges</span><span class="p">,</span>
+                                  <span class="n">output_energy_edges</span><span class="o">=</span><span class="n">counts_edges</span><span class="p">,</span>
+                                  <span class="n">detector_response</span><span class="o">=</span><span class="n">matrix</span><span class="p">,</span>
+                                  <span class="n">detector</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;CMOS</span><span class="si">{</span><span class="n">telescope</span><span class="si">}</span><span class="s2">-Detector-Response&quot;</span>
+                                  <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_read_rmf</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a .rmf file and extract useful information from it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file :  `str`, `file-like` or `pathlib.Path`</span>
+<span class="sd">        A .rmf file (see `~astropy.fits.io.open` for details).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    `tuple`</span>
+<span class="sd">        The low and high boundary of energy bins (data[&#39;energ_lo&#39;], </span>
+<span class="sd">        data[&#39;energ_hi&#39;]), number of sub-set channels in the energybin </span>
+<span class="sd">        (data[&#39;n_grp&#39;]), starting index of each sub-set of channels </span>
+<span class="sd">        (data[&#39;f_chan&#39;]),number of channels in each sub-set </span>
+<span class="sd">        (data[&#39;n_chan&#39;]), redistribution matrix [counts per photon] </span>
+<span class="sd">        (data[&#39;matrix&#39;]).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;energ_lo&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;energ_hi&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;n_grp&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;f_chan&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;n_chan&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;matrix&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="col2arr_py">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.detector_response.col2arr_py">[docs]</a>
+<span class="k">def</span> <span class="nf">col2arr_py</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes a list of parameters for each energy channel from a .rmf </span>
+<span class="sd">    file and returns it in the correct format [1].</span>
+
+<span class="sd">    This original function is taken from Sunkit-spex [2]</span>
+<span class="sd">    - Tweaked to change `r` below to `[r]` since the values in data </span>
+<span class="sd">    aren&#39;t lists (e.g., NuSTAR)</span>
+
+<span class="sd">    [1] https://lost-contact.mit.edu/afs/physics.wisc.edu/home/craigm/lib/idl/util/vcol2arr.pro</span>
+<span class="sd">    [2] https://github.com/sunpy/sunkit-spex</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array/list-like object</span>
+<span class="sd">        One parameter&#39;s array/list from the .rmf file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    A 2D numpy array of the correctly ordered input data.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; data = FITS_rec([(  1.6 ,   1.64,   1, [0]   , [18]  , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),</span>
+<span class="sd">                         (  1.64,   1.68,   1, [0]   , [20]  , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),</span>
+<span class="sd">                         (  1.68,   1.72,   2, [0,22], [20,1], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),</span>
+<span class="sd">                         dtype=(numpy.record, [(&#39;ENERG_LO&#39;, &#39;&gt;f4&#39;), (&#39;ENERG_HI&#39;, &#39;&gt;f4&#39;), (&#39;N_GRP&#39;, &#39;&gt;i2&#39;),</span>
+<span class="sd">                                               (&#39;F_CHAN&#39;, &#39;&gt;i4&#39;, (2,)), (&#39;N_CHAN&#39;, &#39;&gt;i4&#39;, (2,)), (&#39;MATRIX&#39;, &#39;&gt;i4&#39;, (2,))]))</span>
+<span class="sd">    # max row length of 2 so 2 columns, each row is an energy channel.</span>
+<span class="sd">    &gt;&gt;&gt; col2arr_py(data[&#39;F_CHAN&#39;])</span>
+<span class="sd">    array([[  0.,   0.],</span>
+<span class="sd">           [  0.,   0.],</span>
+<span class="sd">           [  0.,  22.]])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># this is the quicker way I have chosen to do in Python (this may be revised later but is ~30x faster than way below in Python)</span>
+    <span class="n">max_len</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="nb">len</span><span class="p">([</span><span class="n">r</span><span class="p">])</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span>  <span class="c1"># find max row length</span>
+    <span class="n">chan_array_py</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="o">*</span><span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="o">*</span><span class="p">(</span><span class="n">max_len</span> <span class="o">-</span> <span class="nb">len</span><span class="p">([</span><span class="n">r</span><span class="p">]))</span> <span class="o">*</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+    <span class="p">)</span>  <span class="c1"># make each row that length (padding with 0)</span>
+
+    <span class="k">return</span> <span class="n">chan_array_py</span></div>
+
+
+<div class="viewcode-block" id="vrmf2arr_py">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.detector_response.vrmf2arr_py">[docs]</a>
+<span class="k">def</span> <span class="nf">vrmf2arr_py</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_grp_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">f_chan_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_chan_array</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes redistribution parameters for each energy channel from a </span>
+<span class="sd">    .rmf file and returns it in the correct format [1].</span>
+
+<span class="sd">    This original function is taken from Sunkit-spex [2].</span>
+
+<span class="sd">    [1] https://lost-contact.mit.edu/afs/physics.wisc.edu/home/craigm/lib/idl/spectral/vrmf2arr.pro</span>
+<span class="sd">    [2] https://github.com/sunpy/sunkit-spex</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array/list-like object</span>
+<span class="sd">            Redistribution matrix parameter array/list from the .rmf </span>
+<span class="sd">            file. Units are counts per photon.</span>
+<span class="sd">            Default : None</span>
+
+<span class="sd">    no_of_channels : int</span>
+<span class="sd">            Number of entries is the total number of photon channels, </span>
+<span class="sd">            the entries themselves show the total number</span>
+<span class="sd">            of count channels to which that photon channel contributes.</span>
+<span class="sd">            Default : None</span>
+
+<span class="sd">    f_chan_array : numpy.array</span>
+<span class="sd">            The index of each sub-set channel from each energy bin from </span>
+<span class="sd">            the .rmf file run through col2arr_py().</span>
+<span class="sd">            Default : None</span>
+
+<span class="sd">    n_chan_array : numpy.array</span>
+<span class="sd">            The number of sub-set channels in each index for each energy </span>
+<span class="sd">            bin from the .rmf file run through col2arr_py().</span>
+<span class="sd">            Default : None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    A 2D numpy array of the correctly ordered input data with dimensions </span>
+<span class="sd">    of energy in the rows and channels in the columns.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; d_rmf = &#39;directory/&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f_rmf = &#39;file.rmf&#39;</span>
+<span class="sd">    &gt;&gt;&gt; e_lo, e_hi, ngrp, fchan, nchan, matrix = det_io._read_rmf(d_rmf+f_rmf)</span>
+<span class="sd">    &gt;&gt;&gt; fchan_array = nu_spec.col2arr_py(fchan)</span>
+<span class="sd">    &gt;&gt;&gt; nchan_array = nu_spec.col2arr_py(nchan)</span>
+<span class="sd">    &gt;&gt;&gt; rmf = nu_spec.vrmf2arr_py(data=matrix,</span>
+<span class="sd">                                  n_grp_list=ngrp,</span>
+<span class="sd">                                  f_chan_array=fchan_array,</span>
+<span class="sd">                                  n_chan_array=nchan_array)</span>
+<span class="sd">    # rows = photon/energy channels, columns = counts channels</span>
+<span class="sd">    &gt;&gt;&gt; rmf</span>
+<span class="sd">    array([[0.00033627, 0.0007369 , 0.00113175, ..., 0.        , 0.        , 0.        ],</span>
+<span class="sd">           [0.00039195, 0.00079259, 0.00138341, ..., 0.        , 0.        , 0.        ],</span>
+<span class="sd">           [0.00042811, 0.00083381, 0.00157794, ..., 0.        , 0.        , 0.        ],</span>
+<span class="sd">                                                ...,</span>
+<span class="sd">           [0.        , 0.        , 0.        , ..., 0.00408081, 0.00409889, 0.00403308],</span>
+<span class="sd">           [0.        , 0.        , 0.        , ..., 0.00405333, 0.00413722, 0.00413216],</span>
+<span class="sd">           [0.        , 0.        , 0.        , ..., 0.        , 0.        , 0.        ]])</span>
+
+<span class="sd">    What&#39;s Going On?</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    The RMF file has the photon-to-counts conversion information in it.</span>
+<span class="sd">    The martix has the photon-to-count conversion value for each count </span>
+<span class="sd">    channel (column) that is involved with theach photon channel (rows).</span>
+<span class="sd">    E.g., matrix = [ [a, b, c, d, e, f, ...] , ... ]</span>
+<span class="sd">    F_chan is the starting index of contiguous counts channels that are </span>
+<span class="sd">    involved with the photon channel.</span>
+<span class="sd">    E.g., f_chan = [ [0, 5, 0, 0, 0, ...] , ... ]</span>
+<span class="sd">    For the first photon channel, there are rows of counts channels </span>
+<span class="sd">    starting at index 0 and 5 N_chan is the corresponding number of </span>
+<span class="sd">    counts channels from each index in the f_chan array.</span>
+<span class="sd">    E.g., n_chan = [ [2, 3, 0, 0, 0, ...] , ... ]</span>
+<span class="sd">    Starting at index 0 for the first photon channel we have the first 2 </span>
+<span class="sd">    matrix values, then at index 5 we have the next 3.</span>
+<span class="sd">    The total of each row is the same as the n_grp_list and the number </span>
+<span class="sd">    of entries in each row of the matrix entry.</span>
+<span class="sd">    Putting all this together, the rmf matrix is:</span>
+<span class="sd">    rmf_matrix = [ [a, b, 0, 0, 0, c , d , e, 0 , 0 , ...] , ... ]</span>
+<span class="sd">    Index 0 (f_chan) with 2 entries (n_chan) with photon-to-counts </span>
+<span class="sd">    conversion (matrix).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># this was is about &gt;6x quicker in than the IDL code written in Python</span>
+
+    <span class="n">n_grp_list</span> <span class="o">=</span> <span class="n">n_grp_list</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;&lt;i2&quot;</span><span class="p">)</span>  <span class="c1"># change from ‘big-endian’ (&quot;&gt;i2&quot;) to ‘little-endian’ (&quot;&lt;i2&quot;)</span>
+
+    <span class="c1"># find the non-zero entries in Nchan, this is the number to counts channels</span>
+    <span class="c1">#  in a row that contribute so will have a value if it is useful</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">n_chan_array</span><span class="p">)</span>
+
+    <span class="c1"># now only want the useful entries from the pre-formatted Nchan and Fchan arrays</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">f_chan_array</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">n_chan_array</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+
+    <span class="c1"># to help with indexing, this provides a running sum of the number of counts</span>
+    <span class="c1">#  channels that a single photon channel contributes to</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">n_chan_array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># these entries will give the final indices in the row on counts channels</span>
+    <span class="n">final_inds</span> <span class="o">=</span> <span class="n">e</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+
+    <span class="c1"># need to find the starting index so -1, but that means any entry that is</span>
+    <span class="c1">#  -1 will be where a zero is needed</span>
+    <span class="n">starting_inds</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="c1"># get the  starting indices but the ones that should be 0 are replaced with</span>
+    <span class="c1">#  the final one in the list at the minute (-1 in starting_inds)</span>
+    <span class="n">start_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">n_chan_array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">starting_inds</span><span class="p">)]</span>
+
+    <span class="c1"># where starting_inds==-1 that value should be 0, i.e. starting from the first</span>
+    <span class="c1">#  value in the rmf matrix</span>
+    <span class="n">new_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">starting_inds</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">start_inds</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># initialise the rmf matrix</span>
+    <span class="n">mat_array_py</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">n_grp_list</span><span class="p">)))</span>
+
+    <span class="c1"># now go through row by row (this is the slowest part and needs to be made faster).</span>
+    <span class="c1">#  Here we go through each photon channel&#39;s number of discrete rows of counts channels.</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)):</span>
+        <span class="n">mat_array_py</span><span class="p">[</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">r</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="n">r</span><span class="p">]]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">r</span><span class="p">]][</span><span class="n">new_e</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="p">:</span> <span class="n">final_inds</span><span class="p">[</span><span class="n">r</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="n">mat_array_py</span></div>
+
+
+<div class="viewcode-block" id="asset_cmos_resp">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.detector_response.asset_cmos_resp">[docs]</a>
+<span class="k">def</span> <span class="nf">asset_cmos_resp</span><span class="p">(</span><span class="n">save_location</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the CMOS responses.&quot;&quot;&quot;</span>
+    <span class="c1"># CMOS</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+
+    <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">gs_ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">telescope</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cmos0_resp</span> <span class="o">=</span> <span class="n">cmos_det_resp</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">telescope</span><span class="o">=</span><span class="n">telescope</span><span class="p">)</span>
+    <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cmos0_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cmos0_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+              <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cmos0_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cmos0_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">gs_ax0</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cmos0_resp</span><span class="o">.</span><span class="n">detector_response</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">extent</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">-</span><span class="n">extent</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">())</span>
+    <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">])</span>
+    <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Counts [</span><span class="si">{</span><span class="n">cmos0_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Energy [</span><span class="si">{</span><span class="n">cmos0_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CMOS</span><span class="si">{</span><span class="n">telescope</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">cax</span> <span class="o">=</span> <span class="n">gs_ax0</span><span class="o">.</span><span class="n">inset_axes</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">],)</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cmos0_resp</span><span class="o">.</span><span class="n">detector_response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">labelpad</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">cax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+
+    <span class="n">gs_ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">telescope</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">cmos1_resp</span> <span class="o">=</span> <span class="n">cmos_det_resp</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">telescope</span><span class="o">=</span><span class="n">telescope</span><span class="p">)</span>
+    <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cmos1_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cmos1_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+              <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cmos1_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cmos1_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">gs_ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cmos1_resp</span><span class="o">.</span><span class="n">detector_response</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">extent</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">-</span><span class="n">extent</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">())</span>
+    <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">])</span>
+    <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Counts [</span><span class="si">{</span><span class="n">cmos1_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Energy [</span><span class="si">{</span><span class="n">cmos1_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CMOS</span><span class="si">{</span><span class="n">telescope</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">cax</span> <span class="o">=</span> <span class="n">gs_ax1</span><span class="o">.</span><span class="n">inset_axes</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">],)</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cmos1_resp</span><span class="o">.</span><span class="n">detector_response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">labelpad</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">cax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">save_location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">save_location</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_location</span><span class="p">,</span><span class="s2">&quot;cmos-response-matrices.png&quot;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="asset_cdte_resp">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.detector_response.asset_cdte_resp">[docs]</a>
+<span class="k">def</span> <span class="nf">asset_cdte_resp</span><span class="p">(</span><span class="n">save_location</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the CdTe1, region 0, 1-hit response.&quot;&quot;&quot;</span>
+    <span class="c1"># CdTe</span>
+    <span class="n">d_rmf</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FILE_PATH</span><span class="p">,</span> <span class="n">RESPONSE_INFO_TYPE</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;cdte_det_pt_resp&quot;</span><span class="p">])</span>
+    <span class="n">f_rmf</span> <span class="o">=</span> <span class="s2">&quot;Resp_3keVto30keV_CdTe1_reg0_1hit.rmf&quot;</span>
+
+    <span class="n">cdte_resp</span> <span class="o">=</span> <span class="n">cdte_det_resp_rmf</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">d_rmf</span><span class="p">,</span> <span class="n">f_rmf</span><span class="p">))</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">gs_ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">gs_ax0</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">detector_response</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> 
+                      <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> 
+                      <span class="n">norm</span><span class="o">=</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> 
+                                     <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">detector_response</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">*</span><span class="mf">0.9</span><span class="p">),</span> 
+                      <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+                      <span class="p">)</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response [</span><span class="si">{</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">detector_response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count Energy [</span><span class="si">{</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Linear Scale&quot;</span><span class="p">)</span>
+
+    <span class="n">gs_ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">gs_ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">detector_response</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> 
+                      <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> 
+                      <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> 
+                                   <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">detector_response</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">*</span><span class="mf">0.9</span><span class="p">),</span> 
+                      <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+                      <span class="p">)</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response [</span><span class="si">{</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">detector_response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count Energy [</span><span class="si">{</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">cdte_resp</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Log Scale&quot;</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">f_rmf</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">save_location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">save_location</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_location</span><span class="p">,</span><span class="s2">&quot;cdte-response-matrix.png&quot;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">save_location</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># ASSETS_PATH</span>
+    <span class="n">asset_cdte_resp</span><span class="p">(</span><span class="n">save_location</span><span class="o">=</span><span class="n">save_location</span><span class="p">)</span>
+    <span class="n">asset_cmos_resp</span><span class="p">(</span><span class="n">save_location</span><span class="o">=</span><span class="n">save_location</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

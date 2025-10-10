@@ -1,0 +1,187 @@
+:orphan:
+
+Response-tools Examples |:fox:|
+=================================
+
+This module contains functions to handle the visualization of the various response data products.
+
+Data handling examples
+----------------------
+
+* **Functions & Outputs**
+
+  * File: ``plot_functions_and_outputs.py``.
+  * Shows how to use the functions and their outputs in the package.
+
+* **Create an ARF from scratch**
+
+  * File: ``plot_arf_from_scratch.py``.
+  * Shows how to compile a telescope ARF from individual components.
+
+* **Example FOXSI-4 RMFs**
+
+  * File: ``plot_rmf_examples.py``.
+  * Shows how to obtain and work with a detector's RMF data-class.
+
+Plotting examples
+-----------------
+
+* **Generating and plotting ARFs, RMFs, and SRMs**
+
+  * File: ``plot_arf_rmf_srm.py``.
+  * Shows how to obtain and plot the ARF, RMF, and SRM for Telescope 2.
+
+* **Telescope ARFs, RMFs, and SRMs**
+
+  * File: ``plot_telescope_arfs_rmfs_srms.py``.
+  * Shows a test ``asset`` function to produce a response plot for all of FOXSI-4's telescopes.
+
+Whole example gallery
+---------------------
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Throughout the modules in the codebase  there are a variety of functions with names starting wtih asset.  These functions were created to mainly test the functions being written but they might be useful to see and compare a lot of the response  elements.">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_telescope_arfs_rmfs_srms_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_telescope_arfs_rmfs_srms.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Telescope ARFs, RMFs, and SRMs</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Script showing a quick example on how to use the functions.">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_functions_and_outputs_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_functions_and_outputs.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Functions & Outputs</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="An example showing the constituants and, therefore, photon paths of all  FOXSI-4 telescopes.">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_telescope_summary_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_telescope_summary.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Telescope Summary</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Script showing a quick example how to obtain and plot the Redistribution  Matrix Functions (RMFs) for a Hard and Soft X-ray (H/SXR) FOXSI-4  telescope.">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_rmf_examples_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_rmf_examples.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Example FOXSI-4 RMFs</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Script showing a quick example how to plot the Ancillary Response  Function (ARF), Redistribution Matrix Function (RMF), and the Spectral  Response Matrix (SRM) of a FOXSI-4 telescope.">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_arf_rmf_srm_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_arf_rmf_srm.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Generating and plotting ARFs, RMFs, and SRMs</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Script showing a quick example how to create an Ancillary Response  Function (ARF) from scratch from a FOXSI-4 telescope.">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_arf_from_scratch_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_arf_from_scratch.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Create an ARF from scratch</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_telescope_arfs_rmfs_srms
+   /auto_examples/plot_functions_and_outputs
+   /auto_examples/telescope_summary
+   /auto_examples/plot_rmf_examples
+   /auto_examples/plot_arf_rmf_srm
+   /auto_examples/plot_arf_from_scratch
+
+
+.. only:: html
+
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
+
+    .. container:: sphx-glr-download sphx-glr-download-python
+
+      :download:`Download all examples in Python source code: auto_examples_python.zip </auto_examples/auto_examples_python.zip>`
+
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+      :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip </auto_examples/auto_examples_jupyter.zip>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

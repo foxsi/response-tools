@@ -1,0 +1,191 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Response-tools Code 🦊 &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Response-tools code tips" href="code_tips.html" />
+    <link rel="prev" title="Create an ARF from scratch" href="auto_examples/plot_arf_from_scratch.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            response-tools
+              <img src="_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Response-tools Examples 🦊</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Response-tools Code 🦊</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="code_tips.html">Response-tools code tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html">response_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api-level-design">API level design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#even-lower-level-handling">Even lower level handling</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Response-tools Code 🦊</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/code.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="response-tools-code-fox">
+<h1>Response-tools Code 🦊<a class="headerlink" href="#response-tools-code-fox" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code_tips.html">Response-tools code tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">response_tools</a></li>
+</ul>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">response-tools</span></code> Github repository developed for the FOXSI-4 sounding rocket mission can be found <a class="reference external" href="https://github.com/foxsi/response-tools">here</a>. This page contains the automated documentation for the <code class="docutils literal notranslate"><span class="pre">response-tools</span></code> Python package.</p>
+<p>The code is written in Python and is relatively bare-bones. There are two things that have
+been made use of that the user might want to know:</p>
+<ol class="arabic simple">
+<li><p>Values and functions in the code have been made to be <em>unit aware</em> where possible.</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>When it comes to response elements, the biggest annoyance is units and keeping track of them. The code makes use of <a class="reference external" href="https://docs.astropy.org/en/stable/units/index.html">Astropy Units</a> to help the user track what they’re working with and to avoid making mistakes.</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Functions return custom data-class objects, not just tuples of values or arrays.</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>To find out what fields are stored in the data-class, all you have to do is either print the returned <code class="docutils literal notranslate"><span class="pre">object</span></code>, inspect <code class="docutils literal notranslate"><span class="pre">object.contents</span></code>, or run the method <code class="docutils literal notranslate"><span class="pre">object.print_contents</span></code>. (Note for IDL users: Using these objects is similar to using an IDL structure.)</p></li>
+<li><p>The data-class object the functions returned can be accessed by either indexing with the field name à la <code class="docutils literal notranslate"><span class="pre">[“field_name”]</span></code> or doing <code class="docutils literal notranslate"><span class="pre">.field_name</span></code> on the returned object.</p></li>
+</ul>
+</div></blockquote>
+<p>Remember, with any function you can always run <code class="docutils literal notranslate"><span class="pre">help(function_name)</span></code> and this should let you inspect the documentation written for that function and should explain what the function is, how to use it, and what it returns.</p>
+<p>Thank you for considering to use the codebase. If you enjoy (or hate) using the code please consider helping the project via <a class="reference external" href="https://github.com/foxsi/response-tools/pulls">Pull Requests</a> and <a class="reference external" href="https://github.com/foxsi/response-tools/issues">Issues</a>.</p>
+<section id="api-level-design">
+<h2>API level design<a class="headerlink" href="#api-level-design" title="Link to this heading"></a></h2>
+<p>The Python code is designed to have three API levels:</p>
+<style> .colourbold {color:#e16b27;font-weight:bold;} </style><style> .coloursmall {color:#e16b27;font-size:12px;;} </style><ul class="simple">
+<li><p><span class="colourbold">Level 3</span> <span class="coloursmall">(recommended use)</span>: Full telescope loaders for the FOXSI(-4) instrument. These are designed to return the ancillary response function (ARF) and redistribution matrix function (RMF) composed of all the relevant telescope components.</p>
+<ul>
+<li><p>These can be found in the <code class="docutils literal notranslate"><span class="pre">responses</span></code> module.</p></li>
+<li><p>E.g., the function <code class="docutils literal notranslate"><span class="pre">foxsi4_telescope2_arf</span></code> will return the ARF data for FOXSI-4 telescope 2.</p></li>
+</ul>
+</li>
+<li><p><span class="colourbold">Level 2</span> <span class="coloursmall">(recommended use)</span>: Loader functions that are named after their position in the FOXSI(-4) payload. All of these functions start with <code class="docutils literal notranslate"><span class="pre">foxsi4_position#</span></code> where <code class="docutils literal notranslate"><span class="pre">#</span></code> refers to the telescope position to which the response product belongs.</p>
+<ul>
+<li><p>These can be found in the <code class="docutils literal notranslate"><span class="pre">telescope_parts</span></code> module.</p></li>
+<li><p>E.g., the function <code class="docutils literal notranslate"><span class="pre">foxsi4_position2_optics</span></code> will return the optics information relating to position 2 using the predetermined and appropriate function from the <code class="docutils literal notranslate"><span class="pre">effective_area</span></code> module.</p></li>
+</ul>
+</li>
+<li><p><span class="colourbold">Level 1</span>: Loader functions that have as little as possible description to its place in the FOXSI(-4) instrument, relying on its own description.</p>
+<ul>
+<li><p>These can be found in modules like <code class="docutils literal notranslate"><span class="pre">attenuation</span></code>, <code class="docutils literal notranslate"><span class="pre">detector_response</span></code>, <code class="docutils literal notranslate"><span class="pre">effective_area</span></code>, and <code class="docutils literal notranslate"><span class="pre">quantum_efficiency</span></code>.</p></li>
+</ul>
+</li>
+</ul>
+<section id="even-lower-level-handling">
+<h3>Even lower level handling<a class="headerlink" href="#even-lower-level-handling" title="Link to this heading"></a></h3>
+<p>A user can decide in which way they would like to interact with the response products. A potential <span class="colourbold">Level 0</span> would be the user interacting with the files themselves directly. Depending on how the package is installed the files may be stored in different locations on your machine.</p>
+<p>To find where the files are stored in the package, and indeed your local machine, you can use the global package variable, <code class="docutils literal notranslate"><span class="pre">responseFilePath</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">response_tools</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response_tools</span><span class="o">.</span><span class="n">responseFilePath</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The functions in the package use this path to automatically find the correct files.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="auto_examples/plot_arf_from_scratch.html" class="btn btn-neutral float-left" title="Create an ARF from scratch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="code_tips.html" class="btn btn-neutral float-right" title="Response-tools code tips" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
