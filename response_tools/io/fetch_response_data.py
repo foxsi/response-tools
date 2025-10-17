@@ -129,28 +129,94 @@ class DownloadPrompt:
 
 def green_str(text:str):
     return "\033[92m" + text + "\033[0m"
+        
+def foxsi4_list_missing_response_info():
+    """Check which response files need downloading, according to 
+    ``response-information/info.yaml``.
+    
+    Look at all the required files in ``info.yaml``, and see which of them are not 
+    already on the local disk.
+    
+    .. note:: Folders will always be flagged for download.
+        Some response products are just identified by their folder on the server. 
+        There's no knowing if their contents are already downloaded until we go talk to 
+        the server (which this function does not do).
+    
+    Returns
+    -------
+    A tuple describing two items: ``files_to_get`` and ``folders_to_get``.
+    
+    ``files_to_get`` is a ``dict`` of each file that should be downloaded from the remote server. The keys in this dictionary are the file names from the ``info.yaml`` file. The value for that key is another ``dict``, which contains the remote server path to the file (under the "remote" key) and the local disk path to save the file (under the "local" key). Like this:
+    
+        .. code:: python
+            
+            files_to_get["a_response_file_name"] == {
+                "remote": "http://foxsi.space.umn.edu/data/response/response-components/attenuation-data/a_response_file.fits",
+                "local":  "response-tools/response_tools/response-information/attenuation-data/a_response_file.fits"
+            }
 
+    ``folders_to_get`` is a ``dict`` of each folder that should be downloaded from the remote server. The keys in this dictionary are the folder names from the ``info.yaml`` file. The value for that key is another ``dict``, which contains the remote server path to the folder (under the "remote" key) and the local disk path to save the folder (under the "local" key). Like this:
+    
+        .. code:: python
+            
+            folders_to_get["a_response_folder_name/"] == {
+                "remote": "http://foxsi.space.umn.edu/data/response/response-components/attenuation-data/a_response_folder/",
+                "local":  "response-tools/response_tools/response-information/attenuation-data/a_response_folder/"
+            }
+    """
+    req = load_response_context()
+    server_url = req["remote_server"]
+    # for urllib.parse.urljoin to work correctly, server path prefix must end in `/`:
+    if server_url[-1] != "/":
+        server_url += "/"
+    local_info_dir = os.path.abspath(responseFilePath)
+    files_to_get = {}
+    folders_to_get = {}
+    for comp_name in req["files"].keys():
+        for ftitle, fname in req["files"][comp_name].items():
+            path,ext = os.path.splitext(fname)
+            if not ext and path[-1] == '/':
+                # this is a folder.
+                # always add folders to folders_to_get. No way to know if they're full until we read the server.
+                
+                folders_to_get[ftitle] = {
+                    "remote": urljoin(server_url, fname), 
+                    "local": os.path.join(local_info_dir, fname)
+                }
+                # folders_to_get[urljoin(server_url, fname)] = os.path.join(local_info_dir, fname)
+            else:
+                # this is a file.
+                # check if it is on the disk already.
+                dest_path = os.path.join(local_info_dir, fname)
+                if not os.path.exists(dest_path):
+                    files_to_get[ftitle] = {
+                        "remote": urljoin(server_url, fname),
+                        "local": os.path.join(local_info_dir, fname)
+                    }
+                    # files_to_get[urljoin(server_url, fname)] = os.path.join(local_info_dir, fname)
+    return files_to_get, folders_to_get
+    
 def foxsi4_download_required(replace_existing=False, verbose=False):
-    """Download all response component files specified in `response-information/info.yaml`.
+    """Download all response component files specified in ``response-information/info.yaml``.
 
-        Download data products from a remote server to the local filesystem. Retrieves server
-        URL and all local paths for saving data from a config file:
-        `response-tools/response-information/info.yaml`. All downloaded response data will be
-        saved under `response-tools/response-information`.
+        Download data products from a remote server to the local filesystem. Retrieves 
+        server URL and all local paths for saving data from a config file:
+        ``response-tools/response-information/info.yaml``. All downloaded response data will 
+        be saved under ``response-tools/response-information``.
 
         Parameters
         ----------
-        replace_existing : `bool`
+        replace_existing : ``bool``
             Whether to replace local files with newer versions, if newer versions are
-            downloaded. Currently throws `NotImplementedError`.
+            downloaded. Currently throws ``NotImplementedError``.
 
-        verbose : `bool`
-            Toggle for printing verbosely. If `True`, download progress indicators and
-            filenames are displayed. If `False`, nothing is printed at all.
+        verbose : ``bool``
+            Toggle for printing verbosely. If ``True``, download progress indicators and
+            filenames are displayed. If ``False``, nothing is printed at all.
 
         Returns
         -------
-        : `downloaded`
+        downloaded : ``dict``
             A dict of downloaded data. Keys are the same file identifiers from the YAML
             source. Values are the absolute paths on the local filesystem to the downloaded
             file. Files which were already existed in the local filesystem (required no
@@ -160,15 +226,15 @@ def foxsi4_download_required(replace_existing=False, verbose=False):
     if replace_existing == True:
         raise NotImplementedError("No support yet for replacement of old file versions.")
 
-    # print if the verbose flag is set:
+
     def verbose_print(*something):
         if verbose:
             print(*something)
-
+            
     req = load_response_context()
     server_url = req["remote_server"]
 
-    # for urllib.parse.urljoin to work correctly, server path prefix must end in `/`:
+    # # for urllib.parse.urljoin to work correctly, server path prefix must end in `/`:
     if server_url[-1] != "/":
         server_url += "/"
 
@@ -177,63 +243,57 @@ def foxsi4_download_required(replace_existing=False, verbose=False):
     verbose_print("Retrieving response products from:", green_str(server_url))
     verbose_print("Saving response products to:", green_str(local_info_dir))
 
-    # record which files already exist on-disk (don't waste time downloading):
-    existing_files = []
-    for r,_,fs in os.walk(local_info_dir):
-        for f in fs:
-            existing_files.append(os.path.join(r,f))
-
-    desired_files = []      # list of the files to download
-    destination_path = []   # local path to save them to
-    source_name = []        # identifier of the file (YAML key)
-    do_get = []             # flag whether to download (if the file already exists locally)
-
-    for comp_name in req["files"].keys():
-        for f_name, suffix in req["files"][comp_name].items():
-            desired_files.append(urljoin(server_url, suffix))
-            dest = os.path.join(local_info_dir, suffix)
-            destination_path.append(dest)
-            source_name.append(f_name)
-
-            if os.path.exists(dest):
-                do_get.append(False)
-            else:
-                do_get.append(True)
-
-    downloaded = {}
-    if any(do_get):
-        verbose_print("Retrieving files...")
-        for (k, f) in enumerate(tqdm(desired_files, disable=not verbose)):
-
-            if do_get[k]:
-                try:
-                    # create the folders along the save path, if needed
-                    os.makedirs(os.path.dirname(destination_path[k]))
-                except:
-                    pass
-
-                # check if the URL ends in "/" which indicates a folder
-                if f.endswith("/"):
-                    # get the contents of the folder
-                    page = requests.get(f).text
-                    soup = BeautifulSoup(page, 'html.parser')
-                    # make sure we extract all the hrefs then check the link has a "." in it for an extension
-                    linked_files = [node.get('href') for node in soup.find_all('a') if ("." in node.get('href'))]
-                    # just download the folder contents
-                    for link in linked_files:
-                        urllib.request.urlretrieve(f+link, os.path.join(destination_path[k], link))
-                    downloaded[source_name[k]] = f
-                    green_name = f
-                else:
-                    # download the file:
-                    fname, head = urllib.request.urlretrieve(f, destination_path[k])
-                    green_name = os.path.basename(fname)
-                # record the identifier and path of the downloaded file:
-                downloaded[source_name[k]] = fname
-                if verbose:
-                    tqdm.write("Downloaded " + green_str(green_name))
-    else:
+    files_to_get, folders_to_get = foxsi4_list_missing_response_info()
+    
+    downloaded:dict = {}   
+    if not files_to_get and not folders_to_get:
         verbose_print("Found nothing new to download")
+    else:
+        verbose_print("Retrieving files...")
+        for ftitle, finfo in tqdm(files_to_get.items(), disable=not verbose):
+            remote_path = finfo["remote"]
+            local_path = finfo["local"]
+            try:
+                # create the folders along the save path, if needed
+                os.makedirs(os.path.dirname(local_path))
+            except FileExistsError:
+                pass
+                
+            fname, head = urllib.request.urlretrieve(remote_path, local_path)
+            green_name = os.path.basename(fname)
+            downloaded[ftitle] = fname
+            if verbose:
+                tqdm.write("Downloaded " + green_str(green_name))
+        for ftitle, finfo in folders_to_get.items():
+            remote_path = finfo["remote"]
+            local_path = finfo["local"]
+            try:
+                # create the folders along the save path, if needed
+                os.makedirs(os.path.dirname(local_path))
+            except FileExistsError:
+                pass
+                
+            # get the contents of the folder
+            page = requests.get(remote_path, timeout=10).text
+            soup = BeautifulSoup(page, 'html.parser')
+            # make sure we extract all the hrefs then check the link has a "." in it for an extension
+            linked_files = [node.get('href') for node in soup.find_all('a') if ("." in node.get('href'))]
+            # just download the folder contents
+            total_to_get = 0
+            for link in tqdm(linked_files, disable=not verbose):
+                if os.path.exists(os.path.join(local_path, link)):
+                    continue
+                else:
+                    total_to_get += 1
+                    urllib.request.urlretrieve(remote_path+link, os.path.join(local_path, link))
+                    green_name = link
+                    if verbose:
+                        tqdm.write("Downloaded " + green_str(green_name))
+            if total_to_get == 0:
+                verbose_print("Found nothing new to download under", remote_path)
+            else:
+                downloaded[ftitle] = local_path
+            
     return downloaded
 
 if __name__ == "__main__":
