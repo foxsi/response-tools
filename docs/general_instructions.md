@@ -95,6 +95,15 @@ print(response_tools.responseFilePath)
 
 This allows a user to easily find where the response files are for their own purposes.
 
+A user can also inspect if there are any files missing from what is expected in the `responseFilePath` directory. This is done with:
+
+```python
+import response_tools.io.fetch_response_data as fetch
+missing_files = fetch.foxsi4_list_missing_response_info()
+```
+
+Here, `missing_files` is a tuple where the two entries are the files to get and folders to get, respectively. This function is run on import of the `response-tools` package and will warn the user if files are missing.
+
 ## Locations of example code
 
 There are a few existing example scripts showing how to use a lot of tools in the repository.

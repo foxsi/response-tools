@@ -45,8 +45,8 @@ responseFilePath = os.path.join(pathlib.Path(__file__).parent, "response-informa
 
 try:
     import response_tools.io.fetch_response_data as fetch
-    _needed_files = fetch.foxsi4_list_missing_response_info()
-    if _needed_files!=({},{}):
+    _missing_files = fetch.foxsi4_list_missing_response_info()
+    if _missing_files!=({},{}):
         logging.warning("On `response_tools` package import, it is noticed response files are missing from:")
         logging.warning(f"{responseFilePath}")
         logging.warning("")
