@@ -42,6 +42,7 @@ extensions = [
 ]
 myst_enable_extensions = [
     "dollarmath",
+    "html_image",
 ]
 
 source_suffix = [".rst", ".md"]
