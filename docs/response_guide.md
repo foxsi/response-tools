@@ -1,14 +1,14 @@
 # What Is a Response? <span>&#129418;</span>
 
-There are many elements to a response and there are many important derived products, not to mention the units (uhh! <span>&#128580;</span>). Here we will go into some detail on what different response components mean so it is clearer what a user might actually be working with.
+There are many elements to a response to track and there are many important derived products, not to mention the units (uhh! <span>&#128580;</span>). Here we will go into some detail on what different response components mean so it is clearer what a user might actually be working with.
 
-Each telescope component has a response that impacts the photon distribution eventually being read off of the detector (e.g., the optics module, any attenuators, and the detector's own efficiency). All of these elements need to be combined for various scientific spectral analysis investigations. therefore, it is common to discuss the respons eof the telescope as a whole in terms of its **Ancillary Response Function/File (ARF)**, its **Redistribution Matrix Function/File (RMF)**, and its **Spectral Response Matrix (SRM)**.
+Each telescope component has a response that impacts the photon distribution eventually being read off of the detector (e.g., the optics module, any attenuators, and the detector's own efficiency). All of these elements need to be combined for various scientific spectral analysis investigations. therefore, it is common to discuss the response of the telescope as a whole in terms of its **Ancillary Response Function/File (ARF)**, its **Redistribution Matrix Function/File (RMF)**, and its **Spectral Response Matrix (SRM)**.
 
 It can be difficult to find nice information on these combined elements. It usually comes down to how active individual instrument teams are when uploading their own documentation. [The NICER team is a good example](https://heasarc.gsfc.nasa.gov/docs/nicer/analysis_threads/arf-rmf/#:~:text=Introduction) when documenting their ARF/RMF pipeline for spectral analysis.
 
 ## What is an ancillary response function/file (ARF)?
 
-The ARF, at heart, is the combination of an instrument's 1D transmission, effective area, and efficiency information that affect an incoming photon. For example, it can be easily computed for a simple telescope (only an optic and detector) by multiplying together the optic's effective area and the detector's efficiency. The units of the ARF will, therefore, be cm<sup>2</sup>.
+The ARF, at heart, is the combination of an instrument's transmission, effective area, and efficiency information that affect an incoming photon and so is a function of photon energy. For example, it can be easily computed for a simple telescope (only an optic and detector) by multiplying together the optic's effective area and the detector's efficiency. The units of the ARF will, therefore, be cm<sup>2</sup>.
 
 FOXSI-4 contains 7 telescopes (telescopes 0-6), all with different combinations of components. Below is an example of the ARF being created from telescope 2's 1D response components:
 
@@ -28,7 +28,7 @@ For a coded runthrough of creating an ARF, see the [Create an ARF from scratch](
 
 ## What is a redistribution matrix function/file (RMF)?
 
-The RMF is a matrix that contains the energy redistribution information of the detector, this is the photon-to-count conversion probability. An incoming photon of energy $\epsilon$ can be detected by the telescope's sensor as a count with an energy $\lesssim\epsilon$ (say, $E$) due to scattering, detection efficiency, and energy resolution. Therefore, the energies we are interested in are the ones defined for the RMF creation. I.e., the defined photon energies/input axis controls the energies the ARF and photon models should be evaluated and the defined count bin energies/observable bins/output axis controls the binning of the observed data.
+The RMF is a matrix that contains the energy redistribution information of the detector, this is the photon-to-count conversion probability. An incoming photon of energy $\epsilon$ can be detected by the telescope's sensor as a count with an energy $\lesssim\epsilon$ (say, $E$) due to scattering, detection efficiency, and energy resolution. Therefore, the energies we are interested in are the ones defined for the RMF creation. I.e., the defined photon energies (input axis) controls the energies the ARF and photon models should be evaluated and the defined count bin energies (observable bins or output axis) controls the binning of the observed data.
 
 Example RMFs for the CdTe and CMOS can be seen below (see the [Example FOXSI-4 RMFs](https://foxsi.github.io/response-tools/auto_examples/plot_rmf_examples.html#sphx-glr-auto-examples-plot-rmf-examples-py) example in the example gallery) which show the conversion probability of a photon being recorded as detector observable (i.e., either a count with a calibrated energy or DN). The units of a response matrix will be observable/photon (e.g., counts/photon or DN/photon).
 
