@@ -1,0 +1,269 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Response-tools code tips &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="response_tools" href="modules.html" />
+    <link rel="prev" title="Response-tools Code 🦊" href="code.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            response-tools
+              <img src="_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Response-tools Examples 🦊</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="code.html">Response-tools Code 🦊</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Response-tools code tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-data-class-object">The data-class object</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#accessing-data-class-fields">Accessing data-class fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#common-data-class-fields">Common data-class fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#different-data-class-fields">Different data-class fields</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-data-class-and-units">Plotting: data-class and units</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html">response_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#api-level-design">API level design</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="code.html">Response-tools Code 🦊</a></li>
+      <li class="breadcrumb-item active">Response-tools code tips</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/code_tips.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="response-tools-code-tips">
+<h1>Response-tools code tips<a class="headerlink" href="#response-tools-code-tips" title="Link to this heading"></a></h1>
+<p>This page showcases some of the ways the code can be interacted with rather than specific examples of response elements being derived.</p>
+<section id="the-data-class-object">
+<h2>The data-class object<a class="headerlink" href="#the-data-class-object" title="Link to this heading"></a></h2>
+<p>All functions in the <code class="docutils literal notranslate"><span class="pre">response-tools</span></code> code returns a data-class object. The data-class object is here to help keep track of all the metadata of the product a user is working with. Therefore, there is no need to worry about which file the data came from or with what inputs the user previous used to produce the response element. All of this information is stored in the data-class fields.</p>
+<section id="accessing-data-class-fields">
+<h3>Accessing data-class fields<a class="headerlink" href="#accessing-data-class-fields" title="Link to this heading"></a></h3>
+<p>All fields can be accessed with <code class="docutils literal notranslate"><span class="pre">[“field_name”]</span></code> or doing <code class="docutils literal notranslate"><span class="pre">.field_name</span></code> on the returned object from agiven function. E.g.,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">response_function</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span>
+<span class="go">[&#39;filename&#39;, &#39;function_path&#39;, ...]</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">...</span></code> represents other fields the <code class="docutils literal notranslate"><span class="pre">output</span></code> object might contain.</p>
+<p>We can access the fields in a few different ways, but they are not all seen as equally valid. All thress of the following will access the <code class="docutils literal notranslate"><span class="pre">filename</span></code> associated with <code class="docutils literal notranslate"><span class="pre">output</span></code> from the previous example.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">output</span><span class="o">.</span><span class="n">filename</span> <span class="c1"># recommended</span>
+<span class="n">output</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="c1"># recommended</span>
+<span class="n">output</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="c1"># not recommended</span>
+</pre></div>
+</div>
+</section>
+<section id="common-data-class-fields">
+<h3>Common data-class fields<a class="headerlink" href="#common-data-class-fields" title="Link to this heading"></a></h3>
+<p>There are a number of fields common to all data-class types used in the package.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field Example</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contents</span></code></p></td>
+<td><p>Returns the data-class contents in a dictionary format.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fields</span></code></p></td>
+<td><p>Returns a list of all the fields contained in the data-class.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filename</span></code></p></td>
+<td><p>Returns the file name and path source of the output.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">function_path</span></code></p></td>
+<td><p>Returns a string that tracks the functions used to produce the output.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">print_contents</span></code></p></td>
+<td><p>This should nicely print the output of the <code class="docutils literal notranslate"><span class="pre">contents</span></code> field and make it easier to read (<em>does not</em> return anything).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="different-data-class-fields">
+<h3>Different data-class fields<a class="headerlink" href="#different-data-class-fields" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field Example</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">attenuation_type</span></code></p></td>
+<td><p>A descriptive label for the attenuator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">detector</span></code></p></td>
+<td><p>A descriptive label for the detector.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">detector_response</span></code></p></td>
+<td><p>A unit aware matrix (e.g., counts/photon or DN/photon) describing a detector’s photon-to-observable probability.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">effective_areas</span></code></p></td>
+<td><p>A unit aware array (likely cm<sup>2</sup>) of the optic’s effective area.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">elements</span></code></p></td>
+<td><p>A tuple of the data-classes used to create the one containing this field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">input_energy_edges</span></code></p></td>
+<td><p>A unit aware array (likely in keV) of the bin edges of a matrix response. The “input” edges referring to the incoming photon energies.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mid_energies</span></code></p></td>
+<td><p>A unit aware array (likely in keV) of the energies at which the data was evaluated.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">model</span></code></p></td>
+<td><p>A boolean indicating whether the returned data is from a model (<code class="docutils literal notranslate"><span class="pre">True</span></code>) or measurement (<code class="docutils literal notranslate"><span class="pre">False</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">off_axis_angle</span></code></p></td>
+<td><p>A unit aware value (likely in arc-minutes) of the off axis angle at which the data was evaluated.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">optic_id</span></code></p></td>
+<td><p>A descriptive label for the optic.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">output_energy_edges</span></code></p></td>
+<td><p>A unit aware array (likely in keV or DN) of the bin edges of a matrix response. The “output” edges referring to the exiting detector channels.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">quantum_efficiency</span></code></p></td>
+<td><p>A unit aware array (likely dimensionless) of the detector’s quantum efficiency.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">response</span></code></p></td>
+<td><p>A unit aware array, likely the combination of several telescope components to make part or the whole of a telescope’s response.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">response_type</span></code></p></td>
+<td><p>Describes whether the response in the data-class is an ARF, RMF, or SRM.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">telescope</span></code></p></td>
+<td><p>Details the telescope to which the data, or components of the data, belongs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">times</span></code></p></td>
+<td><p>A unit aware list (likely in seconds) of the times at which the data was evaluated and then processed.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">transmissions</span></code></p></td>
+<td><p>A unit aware array (likely dimensionless) of the attenuator’s transmission.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Inspecting a returned output and observing a subset of these fields should make it extra clear to a user as to exactly what they are handling when it comes to the output of the function.</p>
+<p>The above tables need to be manually updated. To ensure you are viewing the most accurate and up-to-date abilities of the data-classes and code please utilize the <a class="reference external" href="https://foxsi.github.io/response-tools/modules.html">auto-generated code documentation</a> (this shows and describes all functions and classes in the codebase). You can also make use of Python’s <a class="reference external" href="https://docs.python.org/3/library/functions.html#help"><code class="docutils literal notranslate"><span class="pre">help</span></code></a> built-in function. The <code class="docutils literal notranslate"><span class="pre">help</span></code> function use is shown in the <a class="reference external" href="https://foxsi.github.io/response-tools/auto_examples/plot_functions_and_outputs.html">Functions &amp; Outputs</a> gallery example.</p>
+</section>
+</section>
+<section id="plotting-data-class-and-units">
+<h2>Plotting: data-class and units<a class="headerlink" href="#plotting-data-class-and-units" title="Link to this heading"></a></h2>
+<p>After you have your object(s), you might want to plot the contents for visual inspection. We can use the information in the data-class object to avoid a lot of manual bookkeeping jobs like tracking units.</p>
+<p>A user will likely be happy just getting the ARF, RMF, and SRM and will be on their way to do science (e.g., spectral fitting) with the product. However, a user might want to actually inspect what they have before running off. Even if they are not so familiar with and ARF and RMF, they still might be able to pick up on something that is not quite what they expect it to be. At the very least a user might want to ask very sensible questions about what they are working with as these products will heavily influence any spectral fitting results.</p>
+<p>We can plot the response function outputs similar to any other normal way in Python. Here we use the <code class="docutils literal notranslate"><span class="pre">output</span></code> example from earlier and we assume this was for an optic’s effective area:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">mid_energies</span><span class="p">,</span>
+         <span class="n">output</span><span class="o">.</span><span class="n">effective_areas</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Energy [</span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">mid_energies</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Effective Area [</span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">effective_areas</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FOXSI-4 Optic : </span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">optic_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>As a brief example, we’ll show what this code would plot if the optic being looked at is the MSFC heritage X-7 optic. The plot would look something like this:</p>
+<p><img alt="MSFC-heritage-x7" src="_images/asset_msfc_heritage_x7_example.png" /></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="code.html" class="btn btn-neutral float-left" title="Response-tools Code 🦊" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="response_tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

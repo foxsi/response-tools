@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Telescope ARFs, RMFs, and SRMs &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="../_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Functions &amp; Outputs" href="plot_functions_and_outputs.html" />
+    <link rel="prev" title="Response-tools Examples 🦊" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            response-tools
+              <img src="../_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Response-tools Examples 🦊</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#data-handling-examples">Data handling examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#plotting-examples">Plotting examples</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#whole-example-gallery">Whole example gallery</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Telescope ARFs, RMFs, and SRMs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_functions_and_outputs.html">Functions &amp; Outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telescope_summary.html">Telescope Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_rmf_examples.html">Example FOXSI-4 RMFs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_arf_rmf_srm.html">Generating and plotting ARFs, RMFs, and SRMs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_arf_from_scratch.html">Create an ARF from scratch</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Response-tools Code 🦊</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Response-tools Examples 🦊</a></li>
+      <li class="breadcrumb-item active">Telescope ARFs, RMFs, and SRMs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/plot_telescope_arfs_rmfs_srms.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-plot-telescope-arfs-rmfs-srms-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="telescope-arfs-rmfs-and-srms">
+<span id="sphx-glr-auto-examples-plot-telescope-arfs-rmfs-srms-py"></span><h1>Telescope ARFs, RMFs, and SRMs<a class="headerlink" href="#telescope-arfs-rmfs-and-srms" title="Link to this heading"></a></h1>
+<p>Throughout the <a class="reference external" href="https://foxsi.github.io/response-tools/modules.html">modules in the codebase</a>
+there are a variety of functions with names starting wtih <code class="docutils literal notranslate"><span class="pre">asset</span></code>.
+These functions were created to mainly test the functions being written
+but they might be useful to see and compare a lot of the response
+elements.</p>
+<p>One such example is an <code class="docutils literal notranslate"><span class="pre">asset</span></code> function that generates a plot showing
+all of FOXSI-4’s telescope ARFs, RMFs, and SRMs in one plot.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">response_tools.responses</span> <span class="k">as</span> <span class="nn">responses</span>
+</pre></div>
+</div>
+<p>Some caveats come with these asset functions as many choices that the
+user can make are obviously chosen then hidden in the function but it
+might still be useful to see an idea of what these elements look like:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">responses</span><span class="o">.</span><span class="n">asset_response_chain_plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_telescope_arfs_rmfs_srms_001.png" srcset="../_images/sphx_glr_plot_telescope_arfs_rmfs_srms_001.png" alt="Pos. 0: ARF, Pos. 0: RMF, Pos. 0: SRM, Pos. 1: ARF, Pos. 1: RMF, Pos. 1: SRM, Pos. 2: ARF, Pos. 2: RMF, Pos. 2: SRM, Pos. 3: ARF, Pos. 3: RMF, Pos. 3: SRM, Pos. 4: ARF, Pos. 4: RMF, Pos. 4: SRM, Pos. 5: ARF, Pos. 5: RMF, Pos. 5: SRM, Pos. 6: ARF" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>WARNING:root:The `off_axis_angle` input for Position 0&#39;s optics (foxsi4_position0_optics) is not yet implemented.
+WARNING:root:The `off_axis_angle` input for MSFC high-resolution optics (eff_area_msfc_hi_res) is not yet implemented.
+WARNING:root:In foxsi4_telescope_spectral_response, the &quot;telescope&quot; fields from `arf_response` (foxsi4-telescope0) and `rmf_response` (foxsi4-telescope1) do not match.
+An output shall be produced if possible (check the returned objects&quot;telescope&quot; field) but the user should be cautious.
+WARNING:root:The `off_axis_angle` input for Position 1&#39;s optics (foxsi4_position1_optics) is not yet implemented.
+WARNING:root:The `off_axis_angle` input for Nagoya high-resolution optics (eff_area_nagoya_sxt) is not yet implemented.
+WARNING:root:The `off_axis_angle` input for Telescope 3&#39;s optics (foxsi4_telescope3_arf) is not yet implemented.
+WARNING:root:The `off_axis_angle` input for Telescope 4&#39;s optics (foxsi4_telescope4_arf) is not yet implemented.
+WARNING:root:The Telescope 6 Timepix detector response from foxsi4_telescope6_rmf does not yet exist.
+WARNING:root:The Position 6 Timepix detector response from foxsi4_position6_detector_response does not yet exist.
+WARNING:root:The `off_axis_angle` input for Position 3&#39;s optics (foxsi4_position6_optics) is not yet implemented.
+WARNING:root:The `off_axis_angle` input for MSFC high-resolution optics (eff_area_msfc_hi_res) is not yet implemented.
+</pre></div>
+</div>
+<p><strong>Note</strong> these functions are not usually names the best since they
+were originally for testing purposes and so the names might change.
+Please utilize the <a class="reference external" href="https://foxsi.github.io/response-tools/modules.html">auto-generated code documentation</a>
+to keep up-to-date.</p>
+<p>All figures produced using all of the <code class="docutils literal notranslate"><span class="pre">asset</span></code> functions can be found
+in the codebase. The <code class="docutils literal notranslate"><span class="pre">assets</span></code> folder is on the same directory level
+as the <code class="docutils literal notranslate"><span class="pre">response-information</span></code> folder that can be found using the
+Python package global variable: <code class="docutils literal notranslate"><span class="pre">response_tools.responseFilePath</span></code>
+(more on the <code class="docutils literal notranslate"><span class="pre">responseFilePath</span></code> global variable
+<a class="reference external" href="https://foxsi.github.io/response-tools/general_instructions.html#python-interface-to-pull-data">here</a>).</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 4.688 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-telescope-arfs-rmfs-srms-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/bd715cb0e449954e3e6fbae13e66ed71/plot_telescope_arfs_rmfs_srms.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_telescope_arfs_rmfs_srms.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/b6348a1bc32255021f64ce27c22693c4/plot_telescope_arfs_rmfs_srms.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_telescope_arfs_rmfs_srms.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/ee6bec9d1d21be84864417e91d7c4d1e/plot_telescope_arfs_rmfs_srms.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_telescope_arfs_rmfs_srms.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Response-tools Examples 🦊" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot_functions_and_outputs.html" class="btn btn-neutral float-right" title="Functions &amp; Outputs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

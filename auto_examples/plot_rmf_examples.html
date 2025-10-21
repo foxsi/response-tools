@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Example FOXSI-4 RMFs &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="../_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Generating and plotting ARFs, RMFs, and SRMs" href="plot_arf_rmf_srm.html" />
+    <link rel="prev" title="Telescope Summary" href="telescope_summary.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            response-tools
+              <img src="../_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Response-tools Examples 🦊</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#data-handling-examples">Data handling examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#plotting-examples">Plotting examples</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#whole-example-gallery">Whole example gallery</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="plot_telescope_arfs_rmfs_srms.html">Telescope ARFs, RMFs, and SRMs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_functions_and_outputs.html">Functions &amp; Outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telescope_summary.html">Telescope Summary</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Example FOXSI-4 RMFs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#a-note-on-usage-and-user-options">A note on usage and user options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#choosing-the-rmf-parameters">Choosing the RMF parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getting-the-rmfs">Getting the RMFs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exploring-the-rmf-information">Exploring the RMF information</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plotting-rmf-products">Plotting RMF products</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lower-level-rmf-access-extra">Lower level RMF access (Extra)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="plot_arf_rmf_srm.html">Generating and plotting ARFs, RMFs, and SRMs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_arf_from_scratch.html">Create an ARF from scratch</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Response-tools Code 🦊</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Response-tools Examples 🦊</a></li>
+      <li class="breadcrumb-item active">Example FOXSI-4 RMFs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/plot_rmf_examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-plot-rmf-examples-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="example-foxsi-4-rmfs">
+<span id="sphx-glr-auto-examples-plot-rmf-examples-py"></span><h1>Example FOXSI-4 RMFs<a class="headerlink" href="#example-foxsi-4-rmfs" title="Link to this heading"></a></h1>
+<p>Script showing a quick example how to obtain and plot the Redistribution
+Matrix Functions (RMFs) for a Hard and Soft X-ray (H/SXR) FOXSI-4
+telescope.</p>
+<p>The chosen SXR and HXR telescopes are Telescope 0 and 2, respectively.
+Telescope 0 utilizes a CMOS detector and Telescope 2 has a CdTe
+Double-sided Strip Detector (CdTe-DSD).</p>
+<p>For telescope components to choose, see the
+<a class="reference external" href="https://foxsi.github.io/response-tools/instrument.html">FOXSI-4 Instrumentation</a>
+documentation</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">LogNorm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">response_tools.responses</span> <span class="k">as</span> <span class="nn">responses</span>
+</pre></div>
+</div>
+<section id="a-note-on-usage-and-user-options">
+<h2>A note on usage and user options<a class="headerlink" href="#a-note-on-usage-and-user-options" title="Link to this heading"></a></h2>
+<p>One great thing about the unit-awareness of the inputs/outputs is that
+you can pass any reasonable input units and they’ll be converted for
+you so you don’t need to worry about conversion factors throughout
+your code to use the functions.</p>
+<p>As other examples will likely go into more detail than here, to
+generate a telescope response you only need to make a few core
+decisions related to the <strong>FOXSI-4 observation</strong> and the data in which
+the user is interested.</p>
+<style> .colour {color:#e16b27;font-style:italic;} </style><p><span class="colour">Please look over the FOXSI-4 observation resources to add</span>
+<span class="colour">more context as to how a user might decide on their choice</span>
+<span class="colour">of the following parameters. Additionally, look over the</span>
+<span class="colour">FOXSI-4 instrumentation resources when deciding which</span>
+<span class="colour">functions to use.</span></p>
+<p>These crucial choices will be:</p>
+<ul class="simple">
+<li><p><strong>A source location</strong> to obtain:</p>
+<ul>
+<li><p>A detector region.</p></li>
+</ul>
+</li>
+<li><p><strong>A time range during the flight</strong>.</p></li>
+<li><p><strong>An energy array</strong> <em>(sometimes)</em>.</p></li>
+</ul>
+<p>For more detail on choices:</p>
+<ul class="simple">
+<li><p><strong>A detector region</strong> (for CdTe, input: <code class="docutils literal notranslate"><span class="pre">region</span></code> xor <code class="docutils literal notranslate"><span class="pre">pitch</span></code>):</p>
+<ul>
+<li><p>For CdTe Redistribution Matrix Function (RMF) code.</p>
+<ul>
+<li><p>Of course, this should be consistent with the off axis angle being used.</p></li>
+</ul>
+</li>
+<li><p>Use either, not both, inputs:</p>
+<ul>
+<li><p>An integer for <code class="docutils literal notranslate"><span class="pre">region</span></code> input in [0,1,2].</p></li>
+<li><p>Astropy.units unit convertable to micrometers for <code class="docutils literal notranslate"><span class="pre">pitch</span></code> input in [60 um,80 um,100 um].</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="choosing-the-rmf-parameters">
+<h2>Choosing the RMF parameters<a class="headerlink" href="#choosing-the-rmf-parameters" title="Link to this heading"></a></h2>
+<p>When it comes to the CdTe detectors a user needs to decide which
+detector region(s) their data comes from in order to obtain the
+correct RMF. The strips vary in pitch across the detector and have 3
+different regions:</p>
+<ul class="simple">
+<li><p>Region 0, pitch 60 $mu$m</p></li>
+<li><p>Region 1, pitch 80 $mu$m</p></li>
+<li><p>Region 2, pitch 100 $mu$m</p></li>
+</ul>
+<p>(For observational choices, see the
+<a class="reference external" href="https://foxsi.github.io/response-tools/observation.html">FOXSI-4 Observation</a>
+documentation)</p>
+<p>Luckily, for CMOS, it is less complicated as the RMF <strong>does not</strong> vary
+across the detector so no choice on region is necessary.</p>
+<p>Let’s assume the CdTe region the user wants is for data in the center
+of the detector and so pick region 0 (60 $mu$m):</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">user_region</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># equivalent to defining ``user_pitch=60&lt;&lt;u.um``</span>
+</pre></div>
+</div>
+</section>
+<section id="getting-the-rmfs">
+<h2>Getting the RMFs<a class="headerlink" href="#getting-the-rmfs" title="Link to this heading"></a></h2>
+<p>Now that the user has made their choices, the RMFs for any telescope
+are easily obtained:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># CMOS RMF</span>
+<span class="n">pos0_rmf</span> <span class="o">=</span> <span class="n">responses</span><span class="o">.</span><span class="n">foxsi4_telescope0_rmf</span><span class="p">()</span>
+<span class="c1"># CdTe RMF</span>
+<span class="c1"># if pitch is defined instead, pass as ``responses.foxsi4_telescope2_rmf(pitch=user_pitch)``</span>
+<span class="n">pos2_rmf</span> <span class="o">=</span> <span class="n">responses</span><span class="o">.</span><span class="n">foxsi4_telescope2_rmf</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">user_region</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="exploring-the-rmf-information">
+<h2>Exploring the RMF information<a class="headerlink" href="#exploring-the-rmf-information" title="Link to this heading"></a></h2>
+<p>The <a class="reference external" href="https://foxsi.github.io/response-tools/code_tips.html">Response-tools code tips</a>
+section describes the fields a user might find in the returned data
+class; however, it is worth noting the very important energy
+information that comes with the RMF object.</p>
+<p>The two fields, <code class="docutils literal notranslate"><span class="pre">input_energy_edges</span></code> and <code class="docutils literal notranslate"><span class="pre">output_energy_edges</span></code>,
+define the energies at which all other analysis components should be
+evaluated and compared.</p>
+<p>For example, if an <a class="reference external" href="https://foxsi.github.io/response-tools/response_guide.html#what-is-an-ancillary-response-function-file-arf">ARF</a> (<a class="reference external" href="https://foxsi.github.io/response-tools/auto_examples/plot_arf_from_scratch.html#sphx-glr-auto-examples-plot-arf-from-scratch-py">example</a>)
+is also being created then this should be evaluated with respect to
+the <cite>input_energy_edges`</cite>, most like the bin mid-points. This is the
+same for model evaluation in, say, spectral fitting analysis. The
+<code class="docutils literal notranslate"><span class="pre">output_energy_edges</span></code> define the bins at which the data is taken and
+for which the data calibrated.</p>
+</section>
+<section id="plotting-rmf-products">
+<h2>Plotting RMF products<a class="headerlink" href="#plotting-rmf-products" title="Link to this heading"></a></h2>
+<p>This might be unlikely but a user can then, of course, plot the RMFs
+they have loaded in:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># CMOS, telescope 0 RMF</span>
+<span class="n">gs_ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">pos0_rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+          <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">pos0_rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+          <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">pos0_rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+          <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">pos0_rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">gs_ax0</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pos0_rmf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+                <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">3e-2</span><span class="p">),</span>
+                <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span>
+                <span class="n">aspect</span><span class="o">=</span><span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">extent</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">-</span><span class="n">extent</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="p">)</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response [</span><span class="si">{</span><span class="n">pos0_rmf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output Edges - Observable Bin [</span><span class="si">{</span><span class="n">pos0_rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input Edges - Photon Energy [</span><span class="si">{</span><span class="n">pos0_rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pos0_rmf</span><span class="o">.</span><span class="n">response_type</span><span class="si">}</span><span class="s2">:: </span><span class="si">{</span><span class="n">pos0_rmf</span><span class="o">.</span><span class="n">telescope</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># CdTe, telescope 2 RMF</span>
+<span class="n">gs_ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">gs_ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pos2_rmf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+                <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">8e-1</span><span class="p">),</span>
+                <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">pos2_rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">pos2_rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">pos2_rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">pos2_rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+                <span class="p">)</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response [</span><span class="si">{</span><span class="n">pos2_rmf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output Edges - Count Energy [</span><span class="si">{</span><span class="n">pos2_rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input Edges - Photon Energy [</span><span class="si">{</span><span class="n">pos2_rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pos2_rmf</span><span class="o">.</span><span class="n">response_type</span><span class="si">}</span><span class="s2">:: </span><span class="si">{</span><span class="n">pos2_rmf</span><span class="o">.</span><span class="n">telescope</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_rmf_examples_001.png" srcset="../_images/sphx_glr_plot_rmf_examples_001.png" alt="RMF:: foxsi4-telescope1, RMF:: foxsi4-telescope2" class = "sphx-glr-single-img"/></section>
+<section id="lower-level-rmf-access-extra">
+<h2>Lower level RMF access (Extra)<a class="headerlink" href="#lower-level-rmf-access-extra" title="Link to this heading"></a></h2>
+<p>In the above example, the imaginary user has used the <a class="reference external" href="https://foxsi.github.io/response-tools/code.html">Level 3 API</a>
+but the RMF/detector response can be accessed at the lower levels as
+well.</p>
+<style> .colourbold {color:#e16b27;font-weight:bold;} </style><p><span class="colourbold">Level 2:</span></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">response_tools.telescope_parts.foxsi4_position#_detector_response</span></code> where <code class="docutils literal notranslate"><span class="pre">#</span></code> refers to the telescope position number of interest.</p></li>
+</ul>
+<p><span class="colourbold">Level 1:</span></p>
+<ul class="simple">
+<li><p>CdTe: <code class="docutils literal notranslate"><span class="pre">response_tools.detector_response.cdte_det_resp</span></code></p></li>
+<li><p>CMOS: <code class="docutils literal notranslate"><span class="pre">response_tools.detector_response.cmos_det_resp</span></code></p></li>
+</ul>
+<p><span class="colourbold">Level 0:</span></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">f&quot;{response_tools.responseFilePath}/detector-response-data/&quot;</span></code></p></li>
+</ul>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.802 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-rmf-examples-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/132a4673f78e18ad01aded67cade3edd/plot_rmf_examples.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_rmf_examples.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/d3e993b8939c7f2bc5bc873af86e9d74/plot_rmf_examples.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_rmf_examples.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/528941baa29a10cfe3a47722447e85f9/plot_rmf_examples.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_rmf_examples.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="telescope_summary.html" class="btn btn-neutral float-left" title="Telescope Summary" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot_arf_rmf_srm.html" class="btn btn-neutral float-right" title="Generating and plotting ARFs, RMFs, and SRMs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

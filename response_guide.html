@@ -1,0 +1,178 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What Is a Response? 🦊 &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Response-tools for FOXSI-4 🦊" href="general_instructions.html" />
+    <link rel="prev" title="FOXSI-4 Observation 🦊" href="observation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            response-tools
+              <img src="_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">What Is a Response? <span>🦊</span></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-is-an-ancillary-response-function-file-arf">What is an ancillary response function/file (ARF)?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-is-a-redistribution-matrix-function-file-rmf">What is a redistribution matrix function/file (RMF)?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-is-a-spectral-response-matrix-srm">What is a spectral response matrix (SRM)?</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#how-does-combining-the-arf-and-rmf-into-an-srm-work">How does combining the ARF and RMF into an SRM work?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Response-tools Examples 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Response-tools Code 🦊</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">What Is a Response? <span>🦊</span></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/response_guide.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="what-is-a-response">
+<h1>What Is a Response? <span>🦊</span><a class="headerlink" href="#what-is-a-response" title="Link to this heading"></a></h1>
+<p>There are many elements to a response to track and there are many important derived products, not to mention the units (uhh! <span>🙄</span>). Here we will go into some detail on what different response components mean so it is clearer what a user might actually be working with.</p>
+<p>Each telescope component has a response that impacts the photon distribution eventually being read off of the detector (e.g., the optics module, any attenuators, and the detector’s own efficiency). All of these elements need to be combined for various scientific spectral analysis investigations. therefore, it is common to discuss the response of the telescope as a whole in terms of its <strong>Ancillary Response Function/File (ARF)</strong>, its <strong>Redistribution Matrix Function/File (RMF)</strong>, and its <strong>Spectral Response Matrix (SRM)</strong>.</p>
+<p>It can be difficult to find nice information on these combined elements. It usually comes down to how active individual instrument teams are when uploading their own documentation. <a class="reference external" href="https://heasarc.gsfc.nasa.gov/docs/nicer/analysis_threads/arf-rmf/#:~:text=Introduction">The NICER team is a good example</a> when documenting their ARF/RMF pipeline for spectral analysis.</p>
+<section id="what-is-an-ancillary-response-function-file-arf">
+<h2>What is an ancillary response function/file (ARF)?<a class="headerlink" href="#what-is-an-ancillary-response-function-file-arf" title="Link to this heading"></a></h2>
+<p>The ARF, at heart, is the combination of an instrument’s transmission, effective area, and efficiency information that affect an incoming photon and so is a function of photon energy. For example, it can be easily computed for a simple telescope (only an optic and detector) by multiplying together the optic’s effective area and the detector’s efficiency. The units of the ARF will, therefore, be cm<sup>2</sup>.</p>
+<p>FOXSI-4 contains 7 telescopes (telescopes 0-6), all with different combinations of components. Below is an example of the ARF being created from telescope 2’s 1D response components:</p>
+<ul class="simple">
+<li><p>Thermal blanket -&gt; Marshall 10-shell X-7 -&gt; Al (0.015”)</p></li>
+</ul>
+<p><img alt="FOXSI-4-telescope2-1D-elements" src="_images/arf_components_tel2.png" /></p>
+<p>These elements are then multiplied together and combined to produce the ARF:</p>
+<p><img alt="FOXSI-4-telescope2-1D-ARF" src="_images/arf_manual_tel2.png" /></p>
+<p>Comparing the two figures, a user can see different features in the ARF and might be able to attribute those features to the individual components (e.g., the thermal blanket, the Marshall 10-shell X-7 optics, and/or the Al attenuator). A user can then visually see what photons of different energies experience travelling through the telescope on their way to the detector.</p>
+<p>For a coded runthrough of creating an ARF, see the <a class="reference external" href="https://foxsi.github.io/response-tools/auto_examples/plot_arf_from_scratch.html#sphx-glr-auto-examples-plot-arf-from-scratch-py">Create an ARF from scratch</a> example in the example gallery.</p>
+<p><span style="color:#e16b27">For scientific analysis, a user may also consider effects outside the telescope, such as atmospheric transmission/attenuation, which would be incorporated into the ARF.</span></p>
+</section>
+<section id="what-is-a-redistribution-matrix-function-file-rmf">
+<h2>What is a redistribution matrix function/file (RMF)?<a class="headerlink" href="#what-is-a-redistribution-matrix-function-file-rmf" title="Link to this heading"></a></h2>
+<p>The RMF is a matrix that contains the energy redistribution information of the detector, this is the photon-to-count conversion probability. An incoming photon of energy <span class="math notranslate nohighlight">\(\epsilon\)</span> can be detected by the telescope’s sensor as a count with an energy <span class="math notranslate nohighlight">\(\lesssim\epsilon\)</span> (say, <span class="math notranslate nohighlight">\(E\)</span>) due to scattering, detection efficiency, and energy resolution. Therefore, the energies we are interested in are the ones defined for the RMF creation. I.e., the defined photon energies (input axis) controls the energies the ARF and photon models should be evaluated and the defined count bin energies (observable bins or output axis) controls the binning of the observed data.</p>
+<p>Example RMFs for the CdTe and CMOS can be seen below (see the <a class="reference external" href="https://foxsi.github.io/response-tools/auto_examples/plot_rmf_examples.html#sphx-glr-auto-examples-plot-rmf-examples-py">Example FOXSI-4 RMFs</a> example in the example gallery) which show the conversion probability of a photon being recorded as detector observable (i.e., either a count with a calibrated energy or DN). The units of a response matrix will be observable/photon (e.g., counts/photon or DN/photon).</p>
+<p><img alt="FOXSI-4-telescope0-and-2-2D-RMF" src="_images/tel0_and_2_rmf.png" /></p>
+<p>The RMF is a single product made of many measurements or simulations and should have a strong response along the diagonal (<span class="math notranslate nohighlight">\(\epsilon\)</span>=<span class="math notranslate nohighlight">\(E\)</span>). The RMF will contain features at <span class="math notranslate nohighlight">\(E&lt;\epsilon\)</span> produced by different interactions. E.g., the escape peak for each energy will run parallel to the diagonal, elemental fluorescence lines will be vertical at constant <span class="math notranslate nohighlight">\(E\)</span>, and so on.</p>
+</section>
+<section id="what-is-a-spectral-response-matrix-srm">
+<h2>What is a spectral response matrix (SRM)?<a class="headerlink" href="#what-is-a-spectral-response-matrix-srm" title="Link to this heading"></a></h2>
+<p>The SRM describes the total response of the telescope in question. It takes into account both the ARF and the RMF.</p>
+<section id="how-does-combining-the-arf-and-rmf-into-an-srm-work">
+<h3>How does combining the ARF and RMF into an SRM work?<a class="headerlink" href="#how-does-combining-the-arf-and-rmf-into-an-srm-work" title="Link to this heading"></a></h3>
+<p>The SRM is the combination of the ARF and RMF:</p>
+<div class="math notranslate nohighlight">
+\[\textrm{SRM} = \textrm{ARF} \times \textrm{RMF} \quad \textrm{and} \quad \textrm{SRM}_{a, b} = \textrm{ARF}_{a}\cdot\textrm{RMF}_{a,b}\]</div>
+<p>where <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are the elements along the input and output RMF axis, respectively. The units of the SRM will be something like observable photon<sup>-1</sup> cm<sup>2</sup> (e.g., counts photon<sup>-1</sup> cm<sup>2</sup> or DN photon<sup>-1</sup> cm<sup>2</sup>).</p>
+<p>Using the SRM, a user can perform a variety of scientific analysis, such as forward fitting and spectral inversion. The SRM describes the link between the incoming photon spectrum and the observed data spectrum.</p>
+<p>For example, for forward fitting, if a user has a model photon spectrum (<span class="math notranslate nohighlight">\(M_{\textrm{photon}}\)</span>) evaluated for the SRM input energy bins then they are able to obtain a model telescope observable spectrum (e.g., a count or DN spectrum):</p>
+<div class="math notranslate nohighlight">
+\[M_{\textrm{observable}} = M_{\textrm{photon}} \# \textrm{SRM} \quad \textrm{and} \quad M_{\textrm{observable}, b} = \sum_{a=0}^{n} M_{\textrm{photon}, a} \cdot \textrm{SRM}_{a, b}\]</div>
+<p>where <span class="math notranslate nohighlight">\(M_{\textrm{observable}}\)</span> is the model observable spectrum that can be compared to the measured observable spectrum from, say, the flight and <span class="math notranslate nohighlight">\(\#\)</span> represents matrix multiplication. A user can make use of spectral fitting software for this analysis:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/sunpy/sunkit-spex">Sunkit-spex</a> (<code class="docutils literal notranslate"><span class="pre">Python</span></code>)</p></li>
+<li><p><a class="reference external" href="https://hesperia.gsfc.nasa.gov/ssw/packages/spex/doc/ospex_explanation.htm">OSPEX</a> (<code class="docutils literal notranslate"><span class="pre">IDL</span></code>)</p></li>
+<li><p><a class="reference external" href="https://heasarc.gsfc.nasa.gov/docs/software/xspec/">XSPEC</a> (Multiple interfaces)</p></li>
+</ul>
+<p>An example of Telescope 2’s ARF, RMF, and SRM is given below to show how the two former elements are combined into the latter (see the <a class="reference external" href="https://foxsi.github.io/response-tools/auto_examples/plot_arf_rmf_srm.html#sphx-glr-auto-examples-plot-arf-rmf-srm-py">Generating and plotting ARFs, RMFs, and SRMs</a> example in the example gallery).</p>
+<p><img alt="FOXSI-4-telescope-2-ARF-RMF-SRM" src="_images/tel2_arf_rmf_srm.png" /></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="observation.html" class="btn btn-neutral float-left" title="FOXSI-4 Observation 🦊" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="general_instructions.html" class="btn btn-neutral float-right" title="Response-tools for FOXSI-4 🦊" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

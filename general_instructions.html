@@ -1,0 +1,301 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Response-tools for FOXSI-4 🦊 &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Response-tools Examples 🦊" href="auto_examples/index.html" />
+    <link rel="prev" title="What Is a Response? 🦊" href="response_guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            response-tools
+              <img src="_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Response-tools for FOXSI-4 <span>🦊</span></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-the-code">Setting up the code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#downloading-the-code">Downloading the code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#python-virtual-environments">Python virtual environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-the-code">Installing the code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-the-response-files">Getting the response files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#where-the-data-lives">Where the data lives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#python-interface-to-pull-data">Python interface to pull data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#locations-of-example-code">Locations of example code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-response-information-directory">The <code class="docutils literal notranslate"><span class="pre">response-information</span></code> directory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contributing-to-the-repository">Contributing to the repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#versioning">Versioning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#software-versioning">Software versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-versioning">File versioning</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Response-tools Examples 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Response-tools Code 🦊</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Response-tools for FOXSI-4 <span>🦊</span></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/general_instructions.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="response-tools-for-foxsi-4">
+<h1>Response-tools for FOXSI-4 <span>🦊</span><a class="headerlink" href="#response-tools-for-foxsi-4" title="Link to this heading"></a></h1>
+<p>Repository to manage response elements, originally for the FOXSI-4 sounding rocket mission and it can be extended.</p>
+<p><strong>Note:</strong> This repository can be extended to any other instrument (e.g., FOXSI-1, -2, and -3) but only currently supports FOXSI-4 use.</p>
+<section id="setting-up-the-code">
+<h2>Setting up the code<a class="headerlink" href="#setting-up-the-code" title="Link to this heading"></a></h2>
+<p>The code does not live in a place accessible to package managers like <code class="docutils literal notranslate"><span class="pre">pip</span></code> yet so there are a few steps to take to be able to operate the code.</p>
+<section id="downloading-the-code">
+<h3>Downloading the code<a class="headerlink" href="#downloading-the-code" title="Link to this heading"></a></h3>
+<p>The first step will likely be installing the Python code. The repository, <a class="reference external" href="https://github.com/foxsi/response-tools"><code class="docutils literal notranslate"><span class="pre">response-tools</span></code></a>, is very lightweight and does not require many dependencies. You can either:</p>
+<ul class="simple">
+<li><p>Do the usual to download the repository contents and retain Git version control via</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/foxsi/response-tools.git</span></code></p></li>
+</ul>
+</li>
+<li><p>Or just download the repository contents as a ZIP folder and extract the contents</p>
+<ul>
+<li><p>Click the <span style="color:green">green Code button</span> then select “Download ZIP”</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="python-virtual-environments">
+<h3>Python virtual environments<a class="headerlink" href="#python-virtual-environments" title="Link to this heading"></a></h3>
+<p>It is still recommended to create a Python virtual environment in your preferred manner to house the response code; however, this is completely your own choice.</p>
+<p>I will quickly run through an example of creating a virtual environment using <a class="reference external" href="https://docs.conda.io/projects/conda/en/stable/index.html">conda</a>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">create</span> <span class="pre">-n</span> <span class="pre">response-tools-env</span> <span class="pre">python==3.12</span></code></p></li>
+</ul>
+<p>We recommend using Python 3.12 just because this has been proven to be stable with the software, feel free to test other versions if you like.</p>
+<p>Remember to activate your environment with:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">response-tools-env</span></code></p></li>
+</ul>
+<p>You can check you’re working out of your environment by running:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">which</span> <span class="pre">python</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">which</span> <span class="pre">pip</span></code></p></li>
+</ul>
+<p>And making sure the environment is in the returned path (I get something like “/Users/kris/miniconda3/envs/response-tools-env/bin/python”). Note the environment name should be in the path.</p>
+<p>It might be a good idea to look into (<a class="reference external" href="https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html">conda</a>) virtual environments if you are not familiar, this includes looking into them yourself or getting in touch with someone to help explain. This requires downloading <a class="reference external" href="https://docs.anaconda.com/miniconda/install/#quick-command-line-install">miniconda</a> (or just conda if you prefer).</p>
+</section>
+<section id="installing-the-code">
+<h3>Installing the code<a class="headerlink" href="#installing-the-code" title="Link to this heading"></a></h3>
+<p>The Python code can then be installed with:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code></p></li>
+</ul>
+<p>while in the directory the <code class="docutils literal notranslate"><span class="pre">response-tools</span></code> directory that contains the <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> file.</p>
+<p>Any time the code is updated and, say, you pull/download it from Github, make sure to perform the <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> line from above again in your environment. Most of the time this is unnecessary but ensures any new changes, updated versions, etc. definitely take effect.</p>
+</section>
+</section>
+<section id="getting-the-response-files">
+<h2>Getting the response files<a class="headerlink" href="#getting-the-response-files" title="Link to this heading"></a></h2>
+<p>The response files live somewhere in the University of Minnesota. A user can either:</p>
+<ul class="simple">
+<li><p>Use their own methods to trek through the data storage themselves and navigate the plethora of different file formats, standards, personal choices; or,</p></li>
+<li><p>Use a Python interface developed to download the files.</p></li>
+</ul>
+<section id="where-the-data-lives">
+<h3>Where the data lives<a class="headerlink" href="#where-the-data-lives" title="Link to this heading"></a></h3>
+<p>Public access to the FOXSI-4 flight data is provided at the site:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://foxsi.space.umn.edu/data/response/response-components/">https://foxsi.space.umn.edu/data/response/response-components/</a></p></li>
+</ul>
+<p>That link contains several subfolders of response data:</p>
+<ul class="simple">
+<li><p>Attenuation data</p></li>
+<li><p>Detector response data</p></li>
+<li><p>Effective area data</p></li>
+<li><p>Quantum efficiency data</p></li>
+</ul>
+<p>Users can also access the data via FTP at <code class="docutils literal notranslate"><span class="pre">foxsi.space.umn.edu/FOXSI</span></code>. There is no username or password required. Once connected to the FTP server, navigate to <code class="docutils literal notranslate"><span class="pre">data/response/response-components</span></code> to access response files.</p>
+<p><strong>Note:</strong> users on the UMN eduroam WiFi network will not be able to access the <code class="docutils literal notranslate"><span class="pre">foxsi.space.umn.edu/data</span></code> site or the FTP server. All other networks tested have been able to access without issue.</p>
+</section>
+<section id="python-interface-to-pull-data">
+<h3>Python interface to pull data<a class="headerlink" href="#python-interface-to-pull-data" title="Link to this heading"></a></h3>
+<p>The following will download all the response files to your machine:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">response_tools.io.fetch_response_data</span> <span class="k">as</span> <span class="nn">fetch</span>
+<span class="n">fetch</span><span class="o">.</span><span class="n">foxsi4_download_required</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># stop trying to make &quot;fetch&quot; happen</span>
+</pre></div>
+</div>
+<p>The functions in the package are designed to know where these function are and just use them as expected.</p>
+<p>To find where the files are stored in your filesystem, you can use the global package variable, <code class="docutils literal notranslate"><span class="pre">responseFilePath</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">response_tools</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response_tools</span><span class="o">.</span><span class="n">responseFilePath</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This allows a user to easily find where the response files are for their own purposes.</p>
+<p>A user can also inspect if there are any files missing from what is expected in the <code class="docutils literal notranslate"><span class="pre">responseFilePath</span></code> directory. This is done with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">response_tools.io.fetch_response_data</span> <span class="k">as</span> <span class="nn">fetch</span>
+<span class="n">missing_files</span> <span class="o">=</span> <span class="n">fetch</span><span class="o">.</span><span class="n">foxsi4_list_missing_response_info</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">missing_files</span></code> is a tuple where the two entries are the files to get and folders to get, respectively. This function is run on import of the <code class="docutils literal notranslate"><span class="pre">response-tools</span></code> package and will warn the user if files are missing.</p>
+</section>
+</section>
+<section id="locations-of-example-code">
+<h2>Locations of example code<a class="headerlink" href="#locations-of-example-code" title="Link to this heading"></a></h2>
+<p>There are a few existing example scripts showing how to use a lot of tools in the repository.</p>
+<p>An <a class="reference internal" href="auto_examples/index.html"><span class="doc std std-doc">example gallery</span></a> exists.</p>
+<p>Original Python example scripts can be found in response-tools <a class="reference external" href="https://github.com/foxsi/response-tools/tree/main/examples">examples</a> folder.</p>
+</section>
+<section id="the-response-information-directory">
+<h2>The <code class="docutils literal notranslate"><span class="pre">response-information</span></code> directory<a class="headerlink" href="#the-response-information-directory" title="Link to this heading"></a></h2>
+<p>This directory contains context information about the response files that can be shared between a lot of different scripts. E.g., the latest versions of the files the code should be using.</p>
+<p>The <a class="reference external" href="https://github.com/foxsi/response-tools/tree/main/response_tools/response-information">YAML</a> file contained in this directory is used to track the latest versions of files to be used and this directory also stores the data files after being downloaded.</p>
+<p>Response data files can be downloaded using:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">response_tools.io.fetch_response_data.foxsi4_download_required</span></code></p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">response_tools.io.fetch_response_data</span> <span class="k">as</span> <span class="nn">fetch</span>
+<span class="n">fetch</span><span class="o">.</span><span class="n">foxsi4_download_required</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+</pre></div>
+</div>
+<p>This directory can be found on your local machine using a global variable in the package:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">response_tools</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response_tools</span><span class="o">.</span><span class="n">responseFilePath</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="contributing-to-the-repository">
+<h2>Contributing to the repository<a class="headerlink" href="#contributing-to-the-repository" title="Link to this heading"></a></h2>
+<p>If you are thinking about contributing to the repository, thank you so much for considering! <span>🎉</span></p>
+<p>Any help would be appreciated and can come in the form of contributing code, fixing bugs, or pointing out errors or places for improvement via <a class="reference external" href="https://github.com/foxsi/response-tools/pulls">Pull Requests</a> and <a class="reference external" href="https://github.com/foxsi/response-tools/issues">Issues</a>.</p>
+<p>In order to contribute code, we ask that you first <a class="reference external" href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo">create your own fork</a> of the repository and then clone that fork to your local machine. Branches of your new fork can be created to develop new features or fix bugs (exciting!). When you are happy with the code in that new branch, <a class="reference external" href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request">a pull request (PR) can be opened</a> which aims to merge the code in your fork’s branch into the <code class="docutils literal notranslate"><span class="pre">main</span></code> <code class="docutils literal notranslate"><span class="pre">foxsi/response-tools</span></code> repository. A lot of discussion can be facilitated in an open PR.</p>
+<p><strong>Note:</strong> We <em>never</em> <code class="docutils literal notranslate"><span class="pre">push</span></code> to this repository directly. If this happens then it can be very difficult for other contributers to understand what changes are being made and how it affects their own PRs. <em>If the repository is pushed to directly, in order to help track changes and make them visible to other contributers, the repository will be reverted back to it’s state before the push and the undone changes will be asked to be proposed via a PR to then be merged.</em></p>
+</section>
+<section id="versioning">
+<h2>Versioning<a class="headerlink" href="#versioning" title="Link to this heading"></a></h2>
+<p>This software, and the response data files it uses, are versioned with different syntax. If you are interacting with <a class="reference external" href="https://www.github.com/foxsi/response-tools">Response-tools</a> at a high level, (e.g. <a class="reference external" href="https://foxsi.github.io/response-tools/code.html#api-level-design">through the Level 3 or Level 2 API</a>), you don’t need to worry about individual response file versions.</p>
+<section id="software-versioning">
+<h3>Software versioning<a class="headerlink" href="#software-versioning" title="Link to this heading"></a></h3>
+<p>The versioning approach for this software package is <a class="reference external" href="https://en.wikipedia.org/wiki/Software_versioning#Semantic_versioning">semantic versioning</a>.</p>
+<p>This means that we represent the item with one-three digits indicating <code class="docutils literal notranslate"><span class="pre">major</span></code>.<code class="docutils literal notranslate"><span class="pre">minor</span></code>.<code class="docutils literal notranslate"><span class="pre">patch</span></code> changes made.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">major</span></code>: Increment to include breaking changes from previous versions.</p>
+<ul>
+<li><p>E.g., the pre-existing code’s behaviour is changed and is no longer backwards-compatible.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">minor</span></code>: Increment to include new additions to the software.</p>
+<ul>
+<li><p>E.g., code has new tools.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">patch</span></code>: Increment to include all other small changes.</p>
+<ul>
+<li><p>E.g., the code has had a couple of small typo or bug fixes.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="file-versioning">
+<h3>File versioning<a class="headerlink" href="#file-versioning" title="Link to this heading"></a></h3>
+<p>Response files are versioned using only an integer version number. File versions are updated <em>any time</em> their data content changes (modifications, removals, or additions). The developers of Response-tools keep the available software tools aligned with the available response data.</p>
+<p>Response files may be added as new aspects of the instrument response are understood. Response files may update their version if e.g. improved calibration results are available.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="response_guide.html" class="btn btn-neutral float-left" title="What Is a Response? 🦊" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="auto_examples/index.html" class="btn btn-neutral float-right" title="Response-tools Examples 🦊" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

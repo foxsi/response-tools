@@ -1,0 +1,1147 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>response_tools.telescope_parts &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="../../_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            response-tools
+              <img src="../../_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Response-tools Examples 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code.html">Response-tools Code 🦊</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">response_tools.telescope_parts</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for response_tools.telescope_parts</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Wrappers for position aliases for more specific functions.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+
+<span class="kn">from</span> <span class="nn">response_tools.attenuation</span> <span class="kn">import</span> <span class="p">(</span><span class="n">att_al_mylar</span><span class="p">,</span>
+                                        <span class="n">att_cmos_collimator_ratio</span><span class="p">,</span>
+                                        <span class="n">att_cmos_filter</span><span class="p">,</span>
+                                        <span class="n">att_cmos_obfilter</span><span class="p">,</span>
+                                        <span class="n">att_pixelated</span><span class="p">,</span> 
+                                        <span class="n">att_thermal_blanket</span><span class="p">,</span>
+                                        <span class="n">att_uniform_al_cdte</span>
+                                        <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">response_tools.detector_response</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cdte_det_resp</span><span class="p">,</span> 
+                                              <span class="n">cmos_det_resp</span><span class="p">,</span>
+                                              <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">response_tools.effective_area</span> <span class="kn">import</span> <span class="p">(</span><span class="n">eff_area_msfc_10shell</span><span class="p">,</span>
+                                           <span class="n">eff_area_msfc_hi_res</span><span class="p">,</span>
+                                           <span class="n">eff_area_nagoya_hxt</span><span class="p">,</span>
+                                           <span class="n">eff_area_nagoya_sxt</span><span class="p">,</span>
+                                           <span class="p">)</span>
+
+<span class="c1"># position 0</span>
+<div class="viewcode-block" id="foxsi4_position0_prefilter">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position0_prefilter">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position0_prefilter</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 0 pre-filter for the optics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the pre-filter transmission is required. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the pre-filter. See accessible information using `.contents` on </span>
+<span class="sd">        the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos0_det</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_cmos_filter</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">telescope</span><span class="o">=</span><span class="n">pos0_det</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position0_collimator">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position0_collimator">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position0_collimator</span><span class="p">(</span><span class="n">off_axis_angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 0 collimator for the optics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the collimator ratio. See accessible </span>
+<span class="sd">        information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos0_det</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_cmos_collimator_ratio</span><span class="p">(</span><span class="n">off_axis_angle</span><span class="p">,</span> <span class="n">telescope</span><span class="o">=</span><span class="n">pos0_det</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position0_optics">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position0_optics">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position0_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 0 MSFC high resolution optic effective areas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the position 0 optics is required. If </span>
+<span class="sd">        `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for all </span>
+<span class="sd">        native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+<span class="sd">        *** Not implemented yet. ***</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `effective_area.EffAreaOutput`</span>
+<span class="sd">        An object containing the effective area information of the MSFC </span>
+<span class="sd">        high resolution optic. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">off_axis_angle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The `off_axis_angle` input for Position 0&#39;s optics (</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">) is not yet implemented.&quot;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">eff_area_msfc_hi_res</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                             <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">,</span>
+                             <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+                             <span class="n">use_model</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position0_obf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position0_obf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position0_obf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 0 optical blocking filter for the detector.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the OBF transmission is required. If </span>
+<span class="sd">        `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for all </span>
+<span class="sd">        native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the OBF. See accessible information using `.contents` on the </span>
+<span class="sd">        output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos0_det</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_cmos_obfilter</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">telescope</span><span class="o">=</span><span class="n">pos0_det</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position0_detector_response">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position0_detector_response">[docs]</a>
+<span class="k">def</span> <span class="nf">foxsi4_position0_detector_response</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 0 CMOS1 detector response.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `detector_response.DetectorResponseOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">pos0_det</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">cmos_det_resp</span><span class="p">(</span><span class="n">telescope</span><span class="o">=</span><span class="n">pos0_det</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">detector</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;CMOS</span><span class="si">{</span><span class="n">pos0_det</span><span class="si">}</span><span class="s2">-Detector-Response&quot;</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<span class="c1"># position 1</span>
+<div class="viewcode-block" id="foxsi4_position1_prefilter">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position1_prefilter">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position1_prefilter</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 1 pre-filter for the optics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the pre-filter transmission is required. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the pre-filter. See accessible information using `.contents` on </span>
+<span class="sd">        the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos1_det</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_cmos_filter</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">telescope</span><span class="o">=</span><span class="n">pos1_det</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position1_collimator">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position1_collimator">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position1_collimator</span><span class="p">(</span><span class="n">off_axis_angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 1 collimator for the optics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the collimator ratio. See accessible </span>
+<span class="sd">        information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos1_det</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_cmos_collimator_ratio</span><span class="p">(</span><span class="n">off_axis_angle</span><span class="p">,</span> <span class="n">telescope</span><span class="o">=</span><span class="n">pos1_det</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position1_optics">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position1_optics">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position1_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 1 Nagoya high resolution optic effective areas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the position 1 optics is required. If </span>
+<span class="sd">        `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for all </span>
+<span class="sd">        native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+<span class="sd">        *** Not implemented yet. ***</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `effective_area.EffAreaOutput`</span>
+<span class="sd">        An object containing the effective area information of the </span>
+<span class="sd">        Nagoya high resolution optic. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">off_axis_angle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The `off_axis_angle` input for Position 1&#39;s optics (</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">) is not yet implemented.&quot;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">eff_area_nagoya_sxt</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                            <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">,</span>
+                            <span class="n">use_model</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position1_obf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position1_obf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position1_obf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 1 optical blocking filter for the detector.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the OBF transmission is required. If </span>
+<span class="sd">        `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for all </span>
+<span class="sd">        native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the OBF. See accessible information using `.contents` on the </span>
+<span class="sd">        output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos1_det</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_cmos_obfilter</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">telescope</span><span class="o">=</span><span class="n">pos1_det</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position1_detector_response">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position1_detector_response">[docs]</a>
+<span class="k">def</span> <span class="nf">foxsi4_position1_detector_response</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 1 CMOS2 detector response.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `detector_response.DetectorResponseOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">pos1_det</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">cmos_det_resp</span><span class="p">(</span><span class="n">telescope</span><span class="o">=</span><span class="n">pos1_det</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">detector</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;CMOS</span><span class="si">{</span><span class="n">pos1_det</span><span class="si">}</span><span class="s2">-Detector-Response&quot;</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<span class="c1"># position 2</span>
+<div class="viewcode-block" id="foxsi4_position2_thermal_blanket">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position2_thermal_blanket">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position2_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 2 thermal blanket transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the thermal blanketing transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the thermal blanket. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position2_optics">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position2_optics">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position2_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 2 MSFC heritage X-7 optic effective areas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the position 2 optics is required. If </span>
+<span class="sd">        `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for all </span>
+<span class="sd">        native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `effective_area.EffAreaOutput`</span>
+<span class="sd">        An object containing the effective area information of the MSFC </span>
+<span class="sd">        heritage X-7 optic. See accessible information using `.contents` </span>
+<span class="sd">        on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">eff_area_msfc_10shell</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                              <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">,</span> 
+                              <span class="n">optic_id</span><span class="o">=</span><span class="s2">&quot;X-7&quot;</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position2_uniform_al">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position2_uniform_al">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position2_uniform_al</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 2 uniform Al attenuator transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the uniform Al attenuator transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the uniform Al attenuator. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_uniform_al_cdte</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                            <span class="n">position</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position2_detector_response">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position2_detector_response">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position2_detector_response</span><span class="p">(</span><span class="n">region</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_side</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;merged&quot;</span><span class="p">,</span> <span class="n">_event_type</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 2 CdTe4 detector response.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    region : `int`</span>
+<span class="sd">        The region of the CdTe detector required. Either provide </span>
+<span class="sd">        `region` _xor_ `pitch`. The `region` maps onto the pitches used </span>
+<span class="sd">        across the detector. </span>
+<span class="sd">        - Region 0 -&gt; 60&lt;&lt;astropy.units.um </span>
+<span class="sd">        - Region 1 -&gt; 80&lt;&lt;astropy.units.um</span>
+<span class="sd">        - Region 2 -&gt; 100&lt;&lt;astropy.units.um</span>
+
+<span class="sd">    pitch : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        Instead of `region`, it might be more usefule to specify the </span>
+<span class="sd">        pitch in physical units (must b convertable to </span>
+<span class="sd">        `astropy.units.um`). Either provide `region` _xor_ `pitch`.</span>
+<span class="sd">        The pitches map onto the `region` input.</span>
+<span class="sd">        - 60&lt;&lt;astropy.units.um -&gt; Region 0</span>
+<span class="sd">        - 80&lt;&lt;astropy.units.um -&gt; Region 1</span>
+<span class="sd">        - 100&lt;&lt;astropy.units.um -&gt; Region 2</span>
+
+<span class="sd">    _side : `str`</span>
+<span class="sd">        Define the side on the detector the user requires the response </span>
+<span class="sd">        from. Must be in [&quot;pt&quot;, &quot;merged&quot;].</span>
+<span class="sd">        Default: &quot;merged&quot;</span>
+
+<span class="sd">    _event_type : `str`</span>
+<span class="sd">        Define the type of event trigger being considered in the </span>
+<span class="sd">        response. Must be in [&quot;1hit&quot;, &quot;2hit&quot;, (&quot;all&quot;, &quot;mix&quot;)]. </span>
+<span class="sd">        Note: \&quot;all\&quot; and \&quot;mix\&quot; are the same but some from different </span>
+<span class="sd">        naming conventions on the merged and individual detector sides. </span>
+<span class="sd">        This will be fixed at some point in the future.</span>
+<span class="sd">        Default: &quot;all&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `detector_response.DetectorResponseOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos2_det</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">cdte_det_resp</span><span class="p">(</span><span class="n">cdte</span><span class="o">=</span><span class="n">pos2_det</span><span class="p">,</span> 
+                      <span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span> 
+                      <span class="n">pitch</span><span class="o">=</span><span class="n">pitch</span><span class="p">,</span> 
+                      <span class="n">side</span><span class="o">=</span><span class="n">_side</span><span class="p">,</span> 
+                      <span class="n">event_type</span><span class="o">=</span><span class="n">_event_type</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">detector</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;CdTe</span><span class="si">{</span><span class="n">pos2_det</span><span class="si">}</span><span class="s2">-Detector-Response&quot;</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<span class="c1"># position 3</span>
+<div class="viewcode-block" id="foxsi4_position3_thermal_blanket">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position3_thermal_blanket">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position3_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 3 thermal blanket transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the thermal blanketing transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the thermal blanket. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position3_optics">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position3_optics">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position3_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 3 MSFC high resolution optic effective areas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the position 3 optics is required. If </span>
+<span class="sd">        `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for all </span>
+<span class="sd">        native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+<span class="sd">        *** Not implemented yet. ***</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `effective_area.EffAreaOutput`</span>
+<span class="sd">        An object containing the effective area information of the MSFC </span>
+<span class="sd">        high resolution optic. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">off_axis_angle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The `off_axis_angle` input for Position 3&#39;s optics (</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">) is not yet implemented.&quot;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">eff_area_msfc_hi_res</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                             <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">,</span>
+                             <span class="n">position</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> 
+                             <span class="n">use_model</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position3_al_mylar">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position3_al_mylar">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position3_al_mylar</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 3 thin Mylar window transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the thin Mylar window transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the thin Mylar window. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_al_mylar</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position3_pixelated_attenuator">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position3_pixelated_attenuator">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position3_pixelated_attenuator</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 3 pixelated attenuator transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the pixelated attenuator transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the pixelated attenuator. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_pixelated</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                      <span class="n">use_model</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position3_detector_response">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position3_detector_response">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position3_detector_response</span><span class="p">(</span><span class="n">region</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_side</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;merged&quot;</span><span class="p">,</span> <span class="n">_event_type</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 3 CdTe2 detector response.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    region : `int`</span>
+<span class="sd">        The region of the CdTe detector required. Either provide </span>
+<span class="sd">        `region` _xor_ `pitch`. The `region` maps onto the pitches used </span>
+<span class="sd">        across the detector. </span>
+<span class="sd">        - Region 0 -&gt; 60&lt;&lt;astropy.units.um </span>
+<span class="sd">        - Region 1 -&gt; 80&lt;&lt;astropy.units.um</span>
+<span class="sd">        - Region 2 -&gt; 100&lt;&lt;astropy.units.um</span>
+
+<span class="sd">    pitch : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        Instead of `region`, it might be more usefule to specify the </span>
+<span class="sd">        pitch in physical units (must b convertable to </span>
+<span class="sd">        `astropy.units.um`). Either provide `region` _xor_ `pitch`.</span>
+<span class="sd">        The pitches map onto the `region` input.</span>
+<span class="sd">        - 60&lt;&lt;astropy.units.um -&gt; Region 0</span>
+<span class="sd">        - 80&lt;&lt;astropy.units.um -&gt; Region 1</span>
+<span class="sd">        - 100&lt;&lt;astropy.units.um -&gt; Region 2</span>
+
+<span class="sd">    _side : `str`</span>
+<span class="sd">        Define the side on the detector the user requires the response </span>
+<span class="sd">        from. Must be in [&quot;pt&quot;, &quot;merged&quot;].</span>
+<span class="sd">        Default: &quot;merged&quot;</span>
+
+<span class="sd">    _event_type : `str`</span>
+<span class="sd">        Define the type of event trigger being considered in the </span>
+<span class="sd">        response. Must be in [&quot;1hit&quot;, &quot;2hit&quot;, (&quot;all&quot;, &quot;mix&quot;)]. </span>
+<span class="sd">        Note: \&quot;all\&quot; and \&quot;mix\&quot; are the same but some from different </span>
+<span class="sd">        naming conventions on the merged and individual detector sides. </span>
+<span class="sd">        This will be fixed at some point in the future.</span>
+<span class="sd">        Default: &quot;all&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `detector_response.DetectorResponseOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos3_det</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">cdte_det_resp</span><span class="p">(</span><span class="n">cdte</span><span class="o">=</span><span class="n">pos3_det</span><span class="p">,</span> 
+                      <span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span> 
+                      <span class="n">pitch</span><span class="o">=</span><span class="n">pitch</span><span class="p">,</span> 
+                      <span class="n">side</span><span class="o">=</span><span class="n">_side</span><span class="p">,</span> 
+                      <span class="n">event_type</span><span class="o">=</span><span class="n">_event_type</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">detector</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;CdTe</span><span class="si">{</span><span class="n">pos3_det</span><span class="si">}</span><span class="s2">-Detector-Response&quot;</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<span class="c1"># position 4</span>
+<div class="viewcode-block" id="foxsi4_position4_thermal_blanket">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position4_thermal_blanket">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position4_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 4 thermal blanket transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the thermal blanketing transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the thermal blanket. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position4_optics">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position4_optics">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position4_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 4 Nagoya high resolution optic effective areas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the position 4 optics is required. If </span>
+<span class="sd">        `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for all </span>
+<span class="sd">        native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+<span class="sd">        *** Not implemented yet. ***</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `effective_area.EffAreaOutput`</span>
+<span class="sd">        An object containing the effective area information of the </span>
+<span class="sd">        Nagoya high resolution optic. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">off_axis_angle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The `off_axis_angle` input for Position 4&#39;s optics (</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">) is not yet implemented.&quot;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">eff_area_nagoya_hxt</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                            <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">,</span>
+                            <span class="n">use_model</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position4_uniform_al">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position4_uniform_al">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position4_uniform_al</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 4 uniform Al attenuator transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the uniform Al attenuator transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the uniform Al attenuator. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_uniform_al_cdte</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                            <span class="n">position</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position4_detector_response">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position4_detector_response">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position4_detector_response</span><span class="p">(</span><span class="n">region</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_side</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;merged&quot;</span><span class="p">,</span> <span class="n">_event_type</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 4 CdTe3 detector response.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    region : `int`</span>
+<span class="sd">        The region of the CdTe detector required. Either provide </span>
+<span class="sd">        `region` _xor_ `pitch`. The `region` maps onto the pitches used </span>
+<span class="sd">        across the detector. </span>
+<span class="sd">        - Region 0 -&gt; 60&lt;&lt;astropy.units.um </span>
+<span class="sd">        - Region 1 -&gt; 80&lt;&lt;astropy.units.um</span>
+<span class="sd">        - Region 2 -&gt; 100&lt;&lt;astropy.units.um</span>
+
+<span class="sd">    pitch : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        Instead of `region`, it might be more usefule to specify the </span>
+<span class="sd">        pitch in physical units (must b convertable to </span>
+<span class="sd">        `astropy.units.um`). Either provide `region` _xor_ `pitch`.</span>
+<span class="sd">        The pitches map onto the `region` input.</span>
+<span class="sd">        - 60&lt;&lt;astropy.units.um -&gt; Region 0</span>
+<span class="sd">        - 80&lt;&lt;astropy.units.um -&gt; Region 1</span>
+<span class="sd">        - 100&lt;&lt;astropy.units.um -&gt; Region 2</span>
+
+<span class="sd">    _side : `str`</span>
+<span class="sd">        Define the side on the detector the user requires the response </span>
+<span class="sd">        from. Must be in [&quot;pt&quot;, &quot;merged&quot;].</span>
+<span class="sd">        Default: &quot;merged&quot;</span>
+
+<span class="sd">    _event_type : `str`</span>
+<span class="sd">        Define the type of event trigger being considered in the </span>
+<span class="sd">        response. Must be in [&quot;1hit&quot;, &quot;2hit&quot;, (&quot;all&quot;, &quot;mix&quot;)]. </span>
+<span class="sd">        Note: \&quot;all\&quot; and \&quot;mix\&quot; are the same but some from different </span>
+<span class="sd">        naming conventions on the merged and individual detector sides. </span>
+<span class="sd">        This will be fixed at some point in the future.</span>
+<span class="sd">        Default: &quot;all&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `detector_response.DetectorResponseOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos4_det</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">cdte_det_resp</span><span class="p">(</span><span class="n">cdte</span><span class="o">=</span><span class="n">pos4_det</span><span class="p">,</span> 
+                      <span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span> 
+                      <span class="n">pitch</span><span class="o">=</span><span class="n">pitch</span><span class="p">,</span> 
+                      <span class="n">side</span><span class="o">=</span><span class="n">_side</span><span class="p">,</span> 
+                      <span class="n">event_type</span><span class="o">=</span><span class="n">_event_type</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">detector</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;CdTe</span><span class="si">{</span><span class="n">pos4_det</span><span class="si">}</span><span class="s2">-Detector-Response&quot;</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<span class="c1"># position 5</span>
+<div class="viewcode-block" id="foxsi4_position5_thermal_blanket">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position5_thermal_blanket">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position5_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 5 thermal blanket transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the thermal blanketing transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the thermal blanket. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position5_optics">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position5_optics">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position5_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 5 MSFC heritage X-8 optic effective areas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the position 5 optics is required. If </span>
+<span class="sd">        `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for all </span>
+<span class="sd">        native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `effective_area.EffAreaOutput`</span>
+<span class="sd">        An object containing the effective area information of the MSFC </span>
+<span class="sd">        heritage X-8 optic. See accessible information using `.contents` </span>
+<span class="sd">        on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">eff_area_msfc_10shell</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                              <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="o">&lt;&lt;</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> 
+                              <span class="n">optic_id</span><span class="o">=</span><span class="s2">&quot;X-8&quot;</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position5_al_mylar">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position5_al_mylar">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position5_al_mylar</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 5 thin Mylar window transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the thin Mylar window transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the thin Mylar window. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_al_mylar</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position5_pixelated_attenuator">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position5_pixelated_attenuator">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position5_pixelated_attenuator</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 5 pixelated attenuator transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the pixelated attenuator transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the pixelated attenuator. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_pixelated</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                      <span class="n">use_model</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position5_detector_response">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position5_detector_response">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position5_detector_response</span><span class="p">(</span><span class="n">region</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_side</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;merged&quot;</span><span class="p">,</span> <span class="n">_event_type</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 5 CdTe1 detector response.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    region : `int`</span>
+<span class="sd">        The region of the CdTe detector required. Either provide </span>
+<span class="sd">        `region` _xor_ `pitch`. The `region` maps onto the pitches used </span>
+<span class="sd">        across the detector. </span>
+<span class="sd">        - Region 0 -&gt; 60&lt;&lt;astropy.units.um </span>
+<span class="sd">        - Region 1 -&gt; 80&lt;&lt;astropy.units.um</span>
+<span class="sd">        - Region 2 -&gt; 100&lt;&lt;astropy.units.um</span>
+
+<span class="sd">    pitch : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        Instead of `region`, it might be more usefule to specify the </span>
+<span class="sd">        pitch in physical units (must b convertable to </span>
+<span class="sd">        `astropy.units.um`). Either provide `region` _xor_ `pitch`.</span>
+<span class="sd">        The pitches map onto the `region` input.</span>
+<span class="sd">        - 60&lt;&lt;astropy.units.um -&gt; Region 0</span>
+<span class="sd">        - 80&lt;&lt;astropy.units.um -&gt; Region 1</span>
+<span class="sd">        - 100&lt;&lt;astropy.units.um -&gt; Region 2</span>
+
+<span class="sd">    _side : `str`</span>
+<span class="sd">        Define the side on the detector the user requires the response </span>
+<span class="sd">        from. Must be in [&quot;pt&quot;, &quot;merged&quot;].</span>
+<span class="sd">        Default: &quot;merged&quot;</span>
+
+<span class="sd">    _event_type : `str`</span>
+<span class="sd">        Define the type of event trigger being considered in the </span>
+<span class="sd">        response. Must be in [&quot;1hit&quot;, &quot;2hit&quot;, (&quot;all&quot;, &quot;mix&quot;)]. </span>
+<span class="sd">        Note: \&quot;all\&quot; and \&quot;mix\&quot; are the same but some from different </span>
+<span class="sd">        naming conventions on the merged and individual detector sides. </span>
+<span class="sd">        This will be fixed at some point in the future.</span>
+<span class="sd">        Default: &quot;all&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `detector_response.DetectorResponseOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pos5_det</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">cdte_det_resp</span><span class="p">(</span><span class="n">cdte</span><span class="o">=</span><span class="n">pos5_det</span><span class="p">,</span> 
+                      <span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span> 
+                      <span class="n">pitch</span><span class="o">=</span><span class="n">pitch</span><span class="p">,</span> 
+                      <span class="n">side</span><span class="o">=</span><span class="n">_side</span><span class="p">,</span> 
+                      <span class="n">event_type</span><span class="o">=</span><span class="n">_event_type</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">detector</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;CdTe</span><span class="si">{</span><span class="n">pos5_det</span><span class="si">}</span><span class="s2">-Detector-Response&quot;</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<span class="c1"># position 6</span>
+<div class="viewcode-block" id="foxsi4_position6_thermal_blanket">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position6_thermal_blanket">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position6_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 6 thermal blanket transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the thermal blanketing transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the thermal blanket. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position6_optics">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position6_optics">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position6_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 6 MSFC high resolution optic effective areas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the position 6 optics is required. If </span>
+<span class="sd">        `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for all </span>
+<span class="sd">        native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+<span class="sd">        *** Not implemented yet. ***</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `effective_area.EffAreaOutput`</span>
+<span class="sd">        An object containing the effective area information of the MSFC </span>
+<span class="sd">        high resolution optic. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">off_axis_angle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The `off_axis_angle` input for Position 3&#39;s optics (</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">) is not yet implemented.&quot;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">eff_area_msfc_hi_res</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                             <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">,</span>
+                             <span class="n">position</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> 
+                             <span class="n">use_model</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position6_al_mylar">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position6_al_mylar">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_position6_al_mylar</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 6 thin Mylar window transmissions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the thin Mylar window transmission is </span>
+<span class="sd">        required. If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an </span>
+<span class="sd">        entry for all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `attenuation.AttOutput`</span>
+<span class="sd">        An object containing the attenuation/transmission information of</span>
+<span class="sd">        the thin Mylar window. See accessible information using </span>
+<span class="sd">        `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">att_al_mylar</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_position6_detector_response">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.telescope_parts.foxsi4_position6_detector_response">[docs]</a>
+<span class="k">def</span> <span class="nf">foxsi4_position6_detector_response</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position 6 Timepix detector response.</span>
+
+<span class="sd">    **Not Implemented.**</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `None`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The Position 6 Timepix detector response from </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2"> does not yet exist.&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">p2_dr_reg</span> <span class="o">=</span> <span class="n">foxsi4_position2_detector_response</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">p2_dr_pitch</span> <span class="o">=</span> <span class="n">foxsi4_position2_detector_response</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="mi">60</span><span class="o">&lt;&lt;</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">)</span>
+    <span class="n">foxsi4_position2_detector_response</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="mi">60</span><span class="o">&lt;&lt;</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">)</span>
+    <span class="n">foxsi4_position2_detector_response</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="mi">80</span><span class="o">&lt;&lt;</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">,</span> <span class="n">_side</span><span class="o">=</span><span class="s2">&quot;merged&quot;</span><span class="p">,</span> <span class="n">_event_type</span><span class="o">=</span><span class="s2">&quot;1hit&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

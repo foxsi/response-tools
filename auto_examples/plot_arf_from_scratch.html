@@ -1,0 +1,485 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create an ARF from scratch &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="../_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Response-tools Code 🦊" href="../code.html" />
+    <link rel="prev" title="Generating and plotting ARFs, RMFs, and SRMs" href="plot_arf_rmf_srm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            response-tools
+              <img src="../_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Response-tools Examples 🦊</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#data-handling-examples">Data handling examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#plotting-examples">Plotting examples</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#whole-example-gallery">Whole example gallery</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="plot_telescope_arfs_rmfs_srms.html">Telescope ARFs, RMFs, and SRMs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_functions_and_outputs.html">Functions &amp; Outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telescope_summary.html">Telescope Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_rmf_examples.html">Example FOXSI-4 RMFs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_arf_rmf_srm.html">Generating and plotting ARFs, RMFs, and SRMs</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Create an ARF from scratch</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#a-note-on-usage-and-user-options">A note on usage and user options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#identify-the-telescope-components">Identify the telescope components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#evaluating-the-telescope-components">Evaluating the telescope components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#creating-the-telescope-arf">Creating the telescope ARF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#creating-the-telescope-arf-advanced">Creating the telescope ARF <strong>(Advanced)</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Response-tools Code 🦊</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Response-tools Examples 🦊</a></li>
+      <li class="breadcrumb-item active">Create an ARF from scratch</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/plot_arf_from_scratch.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-plot-arf-from-scratch-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="create-an-arf-from-scratch">
+<span id="sphx-glr-auto-examples-plot-arf-from-scratch-py"></span><h1>Create an ARF from scratch<a class="headerlink" href="#create-an-arf-from-scratch" title="Link to this heading"></a></h1>
+<p>Script showing a quick example how to create an Ancillary Response
+Function (ARF) from scratch from a FOXSI-4 telescope.</p>
+<p>Check out the <a class="reference external" href="https://foxsi.github.io/response-tools/response_guide.html">What is a Response</a>
+section in the online documentation for more details on an ARF’s
+purpose.</p>
+<p>The chosen telescope is Telescope 2 with photon path:</p>
+<ul class="simple">
+<li><p>Thermal blanket -&gt; Marshall 10-shell X-7 -&gt; Al (0.015”) -&gt; CdTe4</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">response_tools.telescope_parts</span> <span class="k">as</span> <span class="nn">tp</span>
+</pre></div>
+</div>
+<section id="a-note-on-usage-and-user-options">
+<h2>A note on usage and user options<a class="headerlink" href="#a-note-on-usage-and-user-options" title="Link to this heading"></a></h2>
+<p>One great thing about the unit-awareness of the inputs/outputs is that
+you can pass any reasonable input units and they’ll be converted for
+you so you don’t need to worry about conversion factors throughout
+your code to use the functions.</p>
+<p>As other examples will likely go into more detail than here, to
+generate a telescope response you only need to make a few core
+decisions related to the <strong>FOXSI-4 observation</strong> and the data in which
+the user is interested.</p>
+<style> .colour {color:#e16b27;font-style:italic;} </style><p><span class="colour">Please look over the FOXSI-4 observation resources to add</span>
+<span class="colour">more context as to how a user might decide on their choice</span>
+<span class="colour">of the following parameters. Additionally, look over the</span>
+<span class="colour">FOXSI-4 instrumentation resources when deciding which</span>
+<span class="colour">functions to use.</span></p>
+<p>These crucial choices will be:</p>
+<ul class="simple">
+<li><p><strong>A source location</strong> to obtain:</p>
+<ul>
+<li><p>An off axis angle.</p></li>
+</ul>
+</li>
+<li><p><strong>A time range during the flight</strong>.</p></li>
+<li><p><strong>An energy array</strong> <em>(sometimes)</em>.</p></li>
+</ul>
+<p>For more detail on choices:</p>
+<ul class="simple">
+<li><p><strong>An off axis angle</strong> (input: <code class="docutils literal notranslate"><span class="pre">off_axis_angle</span></code>):</p>
+<ul>
+<li><p>For Ancillary Response Function (ARF) code.</p></li>
+<li><p>Astropy.units unit convertable to arc-minutes.</p></li>
+</ul>
+</li>
+<li><p><strong>A time range during the flight</strong> (input: <code class="docutils literal notranslate"><span class="pre">time_range</span></code>):</p>
+<ul>
+<li><p>For Ancillary Response Function (ARF) code.</p></li>
+<li><p><em>Input ``time_range`` will change to something more readable after some time calibration:</em></p>
+<ul>
+<li><p>E.g., converted to use UTC time strings.</p></li>
+</ul>
+</li>
+<li><p>Inputs in functions that reference the flight:</p>
+<ul>
+<li><p>E.g., in <code class="docutils literal notranslate"><span class="pre">response_tools.responses.foxsi4_telescope2_flight_arf</span></code>.</p></li>
+</ul>
+</li>
+<li><p>Astropy.units unit convertable to seconds:</p>
+<ul>
+<li><p>Launch: 0 s.</p></li>
+<li><p>Observation start: 100 s.</p></li>
+<li><p>Observation end: 461 s.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>An energy array</strong> (input: <code class="docutils literal notranslate"><span class="pre">mid_energies</span></code>):</p>
+<ul>
+<li><p>For Ancillary Response Function (ARF) code.</p></li>
+<li><p>Astropy.units unit convertable to keV.</p></li>
+<li><p>Input should come from the redistribution matrix function (RMF).</p>
+<ul>
+<li><p>The RMF defines the energy resolution/sampling of the detector.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="identify-the-telescope-components">
+<h2>Identify the telescope components<a class="headerlink" href="#identify-the-telescope-components" title="Link to this heading"></a></h2>
+<p>First, a user has to be aware of the telescope components in which
+they are interested. The example we will look at is telescope 2.</p>
+<p>From the photon path described above, the user can see telescope 2 has
+three 1D components to be involved in its ARF</p>
+<ul class="simple">
+<li><p>Thermal blanket</p></li>
+<li><p>Marshall 10-shell X-7</p></li>
+<li><p>Al (0.015”)</p></li>
+</ul>
+<p>(For telescope components, see the
+<a class="reference external" href="https://foxsi.github.io/response-tools/instrument.html">FOXSI-4 Instrumentation</a>
+documentation)</p>
+<p>The thermal blanket and the Al attenuator trnsmissions are monolithic
+so the only <em>real</em> choice needed here is to pick an off-axis angle for
+the optic. Let’s go for a simple value of 0 arc-minutes.</p>
+<p>Additionally, since we’re only looking at the ARF components, we can
+take the liberty of making up our own energies at which to evaluate
+all of these components.</p>
+<p>(For observational choices, see the
+<a class="reference external" href="https://foxsi.github.io/response-tools/observation.html">FOXSI-4 Observation</a>
+documentation)</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set up the ARF with the RMF information then make the SRM</span>
+<span class="n">user_off_axis_angle</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">&lt;&lt;</span> <span class="n">u</span><span class="o">.</span><span class="n">arcmin</span>
+<span class="n">user_energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">u</span><span class="o">.</span><span class="n">keV</span> <span class="c1"># 50 energies between 4-20 keV</span>
+</pre></div>
+</div>
+</section>
+<section id="evaluating-the-telescope-components">
+<h2>Evaluating the telescope components<a class="headerlink" href="#evaluating-the-telescope-components" title="Link to this heading"></a></h2>
+<p>Now a user can get the response elements they want evaluated at the
+parameters they’ve chosen:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">pos2_tb</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position2_thermal_blanket</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span>
+<span class="n">pos2_op</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position2_optics</span><span class="p">(</span><span class="n">user_energies</span><span class="p">,</span>
+                                     <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">user_off_axis_angle</span><span class="p">)</span>
+<span class="n">pos2_at</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position2_uniform_al</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A user can quickly plot these individual telescope response components
+to see if they make sense and what is expected:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># the thermal blanket result</span>
+<span class="n">gs_ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos2_tb</span><span class="o">.</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">pos2_tb</span><span class="o">.</span><span class="n">transmissions</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">pos2_tb</span><span class="o">.</span><span class="n">mid_energies</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transmission [</span><span class="si">{</span><span class="n">pos2_tb</span><span class="o">.</span><span class="n">transmissions</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Telecope 2: </span><span class="si">{</span><span class="n">pos2_tb</span><span class="o">.</span><span class="n">attenuation_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
+
+<span class="c1"># the optics effective areas result</span>
+<span class="n">gs_ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos2_op</span><span class="o">.</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">pos2_op</span><span class="o">.</span><span class="n">effective_areas</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">pos2_op</span><span class="o">.</span><span class="n">mid_energies</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Effective Area [</span><span class="si">{</span><span class="n">pos2_op</span><span class="o">.</span><span class="n">effective_areas</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Telecope 2: </span><span class="si">{</span><span class="n">pos2_op</span><span class="o">.</span><span class="n">optic_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
+
+<span class="c1"># the fixed attenuator result</span>
+<span class="n">gs_ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">gs_ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos2_at</span><span class="o">.</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">pos2_at</span><span class="o">.</span><span class="n">transmissions</span><span class="p">)</span>
+<span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">pos2_at</span><span class="o">.</span><span class="n">mid_energies</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transmission [</span><span class="si">{</span><span class="n">pos2_at</span><span class="o">.</span><span class="n">transmissions</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Telecope 2: </span><span class="si">{</span><span class="n">pos2_at</span><span class="o">.</span><span class="n">attenuation_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_arf_from_scratch_001.png" srcset="../_images/sphx_glr_plot_arf_from_scratch_001.png" alt="Telecope 2: Thermal-Blanket, Telecope 2: X-7, Telecope 2: Uniform-Al-Filter" class = "sphx-glr-single-img"/><p>A user can see the three components together and investigate the
+individual features in each response element.</p>
+<p>This might be useful if the user wanted to investigate any features at
+certain energies where a response element might have a unique
+behaviour compared to other elements.</p>
+</section>
+<section id="creating-the-telescope-arf">
+<h2>Creating the telescope ARF<a class="headerlink" href="#creating-the-telescope-arf" title="Link to this heading"></a></h2>
+<p>Now the user has the individual components, they might want to combine
+them to make an ARF.</p>
+<p>A user can easily do this to get the ARF 1D array:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1D ARF from components</span>
+<span class="n">arf_array</span> <span class="o">=</span> <span class="n">pos2_tb</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">pos2_op</span><span class="o">.</span><span class="n">effective_areas</span> <span class="o">*</span> <span class="n">pos2_at</span><span class="o">.</span><span class="n">transmissions</span>
+</pre></div>
+</div>
+<p>This will produce a valid ARF; however, notice that all the useful
+data-class fucntionality is now gone. Unit-awareness will be
+preserved.</p>
+<p>A user can see what their ARF looks like by plotting the array as
+normal:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># the manually made ARF array result</span>
+<span class="n">gs_ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">user_energies</span><span class="p">,</span> <span class="n">arf_array</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">user_energies</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ARF [</span><span class="si">{</span><span class="n">arf_array</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Telecope 2: Manually Made ARF&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># A user can then see different features in the ARF and might be able to</span>
+<span class="c1"># attribute those features to the individual components (e.g., the</span>
+<span class="c1"># thermal blanket, the Marshall 10-shell X-7 optics, and/or the Al</span>
+<span class="c1"># attenuator). A user can then visually see what photons of different</span>
+<span class="c1"># enegies experience travelling through the telescope on their way to</span>
+<span class="c1"># the detector.</span>
+<span class="c1">#</span>
+<span class="c1"># **A user can take advantage of pre-prepared functions that create the</span>
+<span class="c1"># total ARF for each telescope** while maintaining the data-class</span>
+<span class="c1"># structure:</span>
+
+<span class="kn">import</span> <span class="nn">response_tools.responses</span> <span class="k">as</span> <span class="nn">responses</span>
+<span class="n">pos2_arf</span> <span class="o">=</span> <span class="n">responses</span><span class="o">.</span><span class="n">foxsi4_telescope2_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">user_energies</span><span class="p">,</span>
+                                          <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">user_off_axis_angle</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_arf_from_scratch_002.png" srcset="../_images/sphx_glr_plot_arf_from_scratch_002.png" alt="Telecope 2: Manually Made ARF" class = "sphx-glr-single-img"/><p>Now, <cite>pos2_arf</cite> will contain fields and track items for the user.</p>
+<p>A user can plot both ARFs (<cite>arf_array</cite> and the one from <cite>pos2_arf</cite>) to
+validate they are the same result:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># the manually made ARF array result</span>
+<span class="n">gs_ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">user_energies</span><span class="p">,</span> <span class="n">arf_array</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">user_energies</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ARF [</span><span class="si">{</span><span class="n">arf_array</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Telecope 2: Manually Made ARF&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
+
+<span class="c1"># the pre-prepared ARF result</span>
+<span class="n">gs_ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos2_arf</span><span class="o">.</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">pos2_arf</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">pos2_arf</span><span class="o">.</span><span class="n">mid_energies</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Effective Area [</span><span class="si">{</span><span class="n">pos2_arf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pos2_arf</span><span class="o">.</span><span class="n">response_type</span><span class="si">}</span><span class="s2">:: </span><span class="si">{</span><span class="n">pos2_arf</span><span class="o">.</span><span class="n">telescope</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_arf_from_scratch_003.png" srcset="../_images/sphx_glr_plot_arf_from_scratch_003.png" alt="Telecope 2: Manually Made ARF, ARF:: foxsi4-telescope2" class = "sphx-glr-single-img"/></section>
+<section id="creating-the-telescope-arf-advanced">
+<h2>Creating the telescope ARF <strong>(Advanced)</strong><a class="headerlink" href="#creating-the-telescope-arf-advanced" title="Link to this heading"></a></h2>
+<p>If a user wishes to manually create their own data-class result, this
+is also possible.</p>
+<p>First, the correct data-class should be identified. The user here is
+looking at an data-class similar to thos in
+<cite>response_tools.responses</cite>; therefore, looking at the
+<a class="reference external" href="https://foxsi.github.io/response-tools/response_tools.html#module-response_tools.responses">online documentation for this</a>
+the user can see the <cite>Response1DOutput</cite> data-class object so let’s use
+that:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">custom_arf_dataclass</span> <span class="o">=</span> <span class="n">responses</span><span class="o">.</span><span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                                                  <span class="n">function_path</span><span class="o">=</span><span class="s2">&quot;No-Function&quot;</span><span class="p">,</span>
+                                                  <span class="n">mid_energies</span><span class="o">=</span><span class="n">user_energies</span><span class="p">,</span>
+                                                  <span class="n">response</span><span class="o">=</span><span class="n">arf_array</span><span class="p">,</span>
+                                                  <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF&quot;</span><span class="p">,</span>
+                                                  <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;custom-foxsi4-telescope2&quot;</span><span class="p">,</span>
+                                                  <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">pos2_tb</span><span class="p">,</span>
+                                                            <span class="n">pos2_op</span><span class="p">,</span>
+                                                            <span class="n">pos2_at</span><span class="p">,</span>
+                                                            <span class="p">),</span>
+                                                  <span class="p">)</span>
+</pre></div>
+</div>
+<p>The user can plot this with the previous examples to check the output:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># the manually made ARF array result</span>
+<span class="n">gs_ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">user_energies</span><span class="p">,</span> <span class="n">arf_array</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">user_energies</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ARF [</span><span class="si">{</span><span class="n">arf_array</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Telecope 2: Manually Made ARF&quot;</span><span class="p">)</span>
+<span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
+
+<span class="c1"># the pre-prepared ARF result</span>
+<span class="n">gs_ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos2_arf</span><span class="o">.</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">pos2_arf</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">pos2_arf</span><span class="o">.</span><span class="n">mid_energies</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Effective Area [</span><span class="si">{</span><span class="n">pos2_arf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pos2_arf</span><span class="o">.</span><span class="n">response_type</span><span class="si">}</span><span class="s2">:: </span><span class="si">{</span><span class="n">pos2_arf</span><span class="o">.</span><span class="n">telescope</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
+
+<span class="c1"># the pre-prepared ARF result</span>
+<span class="n">gs_ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">gs_ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">custom_arf_dataclass</span><span class="o">.</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">custom_arf_dataclass</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
+<span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">custom_arf_dataclass</span><span class="o">.</span><span class="n">mid_energies</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Effective Area [</span><span class="si">{</span><span class="n">custom_arf_dataclass</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Custom:: </span><span class="si">{</span><span class="n">custom_arf_dataclass</span><span class="o">.</span><span class="n">response_type</span><span class="si">}</span><span class="s2">:: </span><span class="si">{</span><span class="n">custom_arf_dataclass</span><span class="o">.</span><span class="n">telescope</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">user_energies</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_plot_arf_from_scratch_004.png" srcset="../_images/sphx_glr_plot_arf_from_scratch_004.png" alt="Telecope 2: Manually Made ARF, ARF:: foxsi4-telescope2, Custom:: ARF:: custom-foxsi4-telescope2" class = "sphx-glr-single-img"/><p>If the user is wrapping this in a function then it might be a good
+idea to use the <cite>update_function_path</cite> method on the response
+components before passing them as elements to the class. E.g.,</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">custom_telescope_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manual Telescope ARF. &quot;&quot;&quot;</span>
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position2_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position2_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span>
+                                     <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">)</span>
+    <span class="n">uni_al</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position2_uniform_al</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">opt</span><span class="o">.</span><span class="n">effective_areas</span> <span class="o">*</span> <span class="n">uni_al</span><span class="o">.</span><span class="n">transmissions</span>
+
+    <span class="c1"># get the function name automatically _or_ manually type the function name</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="c1"># update the elements to show they&#39;ve passed through this function</span>
+    <span class="n">tb</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">uni_al</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">responses</span><span class="o">.</span><span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                                      <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                                      <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                                      <span class="n">response</span><span class="o">=</span><span class="n">arf</span><span class="p">,</span>
+                                      <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF&quot;</span><span class="p">,</span>
+                                      <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;custom-telescope2&quot;</span><span class="p">,</span>
+                                      <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">tb</span><span class="p">,</span>
+                                                <span class="n">opt</span><span class="p">,</span>
+                                                <span class="n">uni_al</span><span class="p">,</span>
+                                                <span class="p">),</span>
+                                      <span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.782 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-arf-from-scratch-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/8d1634afebabb9da59e706e734001cdb/plot_arf_from_scratch.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_arf_from_scratch.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/2ff53fa5f65852261c6ef7208aebba38/plot_arf_from_scratch.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_arf_from_scratch.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/beb4672e6be1ee9b124bc4d12300f0ac/plot_arf_from_scratch.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_arf_from_scratch.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="plot_arf_rmf_srm.html" class="btn btn-neutral float-left" title="Generating and plotting ARFs, RMFs, and SRMs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../code.html" class="btn btn-neutral float-right" title="Response-tools Code 🦊" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

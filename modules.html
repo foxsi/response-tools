@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>response_tools &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="response_tools package" href="response_tools.html" />
+    <link rel="prev" title="Response-tools code tips" href="code_tips.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            response-tools
+              <img src="_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Response-tools Examples 🦊</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="code.html">Response-tools Code 🦊</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="code_tips.html">Response-tools code tips</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">response_tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html">response_tools package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#api-level-design">API level design</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="code.html">Response-tools Code 🦊</a></li>
+      <li class="breadcrumb-item active">response_tools</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="response-tools">
+<h1>response_tools<a class="headerlink" href="#response-tools" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="response_tools.html">response_tools package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.io.html">response_tools.io package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.io.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.io.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.io.html#module-response_tools.io.fetch_response_data">response_tools.io.fetch_response_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.io.html#module-response_tools.io.load_yaml">response_tools.io.load_yaml module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.io.html#module-response_tools.io">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#module-response_tools.attenuation">response_tools.attenuation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.AttOutput"><code class="docutils literal notranslate"><span class="pre">AttOutput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.attenuation.AttOutput.attenuation_type"><code class="docutils literal notranslate"><span class="pre">AttOutput.attenuation_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.attenuation.AttOutput.mid_energies"><code class="docutils literal notranslate"><span class="pre">AttOutput.mid_energies</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.attenuation.AttOutput.model"><code class="docutils literal notranslate"><span class="pre">AttOutput.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.attenuation.AttOutput.off_axis_angle"><code class="docutils literal notranslate"><span class="pre">AttOutput.off_axis_angle</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.attenuation.AttOutput.times"><code class="docutils literal notranslate"><span class="pre">AttOutput.times</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.attenuation.AttOutput.transmissions"><code class="docutils literal notranslate"><span class="pre">AttOutput.transmissions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.asset_atm"><code class="docutils literal notranslate"><span class="pre">asset_atm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.asset_att"><code class="docutils literal notranslate"><span class="pre">asset_att()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.asset_sigmoid"><code class="docutils literal notranslate"><span class="pre">asset_sigmoid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.att_al_mylar"><code class="docutils literal notranslate"><span class="pre">att_al_mylar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.att_cmos_collimator_ratio"><code class="docutils literal notranslate"><span class="pre">att_cmos_collimator_ratio()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.att_cmos_filter"><code class="docutils literal notranslate"><span class="pre">att_cmos_filter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.att_cmos_obfilter"><code class="docutils literal notranslate"><span class="pre">att_cmos_obfilter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.att_foxsi4_atmosphere"><code class="docutils literal notranslate"><span class="pre">att_foxsi4_atmosphere()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.att_pixelated"><code class="docutils literal notranslate"><span class="pre">att_pixelated()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.att_sigmoid"><code class="docutils literal notranslate"><span class="pre">att_sigmoid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.att_thermal_blanket"><code class="docutils literal notranslate"><span class="pre">att_thermal_blanket()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.attenuation.att_uniform_al_cdte"><code class="docutils literal notranslate"><span class="pre">att_uniform_al_cdte()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#module-response_tools.detector_response">response_tools.detector_response module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.detector_response.DetectorResponseOutput"><code class="docutils literal notranslate"><span class="pre">DetectorResponseOutput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.detector_response.DetectorResponseOutput.detector"><code class="docutils literal notranslate"><span class="pre">DetectorResponseOutput.detector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.detector_response.DetectorResponseOutput.detector_response"><code class="docutils literal notranslate"><span class="pre">DetectorResponseOutput.detector_response</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.detector_response.DetectorResponseOutput.input_energy_edges"><code class="docutils literal notranslate"><span class="pre">DetectorResponseOutput.input_energy_edges</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.detector_response.DetectorResponseOutput.output_energy_edges"><code class="docutils literal notranslate"><span class="pre">DetectorResponseOutput.output_energy_edges</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.detector_response.asset_cdte_resp"><code class="docutils literal notranslate"><span class="pre">asset_cdte_resp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.detector_response.asset_cmos_resp"><code class="docutils literal notranslate"><span class="pre">asset_cmos_resp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.detector_response.cdte_det_resp"><code class="docutils literal notranslate"><span class="pre">cdte_det_resp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.detector_response.cdte_det_resp_rmf"><code class="docutils literal notranslate"><span class="pre">cdte_det_resp_rmf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.detector_response.cmos_det_resp"><code class="docutils literal notranslate"><span class="pre">cmos_det_resp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.detector_response.col2arr_py"><code class="docutils literal notranslate"><span class="pre">col2arr_py()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.detector_response.vrmf2arr_py"><code class="docutils literal notranslate"><span class="pre">vrmf2arr_py()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#module-response_tools.effective_area">response_tools.effective_area module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.effective_area.EffAreaOutput"><code class="docutils literal notranslate"><span class="pre">EffAreaOutput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.effective_area.EffAreaOutput.effective_areas"><code class="docutils literal notranslate"><span class="pre">EffAreaOutput.effective_areas</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.effective_area.EffAreaOutput.mid_energies"><code class="docutils literal notranslate"><span class="pre">EffAreaOutput.mid_energies</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.effective_area.EffAreaOutput.model"><code class="docutils literal notranslate"><span class="pre">EffAreaOutput.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.effective_area.EffAreaOutput.off_axis_angle"><code class="docutils literal notranslate"><span class="pre">EffAreaOutput.off_axis_angle</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.effective_area.EffAreaOutput.optic_id"><code class="docutils literal notranslate"><span class="pre">EffAreaOutput.optic_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.effective_area.asset_all_optics"><code class="docutils literal notranslate"><span class="pre">asset_all_optics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.effective_area.asset_cmos_files"><code class="docutils literal notranslate"><span class="pre">asset_cmos_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.effective_area.asset_cmos_plot"><code class="docutils literal notranslate"><span class="pre">asset_cmos_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.effective_area.asset_msfc_heritage_x7_example"><code class="docutils literal notranslate"><span class="pre">asset_msfc_heritage_x7_example()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.effective_area.eff_area_cmos"><code class="docutils literal notranslate"><span class="pre">eff_area_cmos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.effective_area.eff_area_cmos_telescope"><code class="docutils literal notranslate"><span class="pre">eff_area_cmos_telescope()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.effective_area.eff_area_msfc_10shell"><code class="docutils literal notranslate"><span class="pre">eff_area_msfc_10shell()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.effective_area.eff_area_msfc_hi_res"><code class="docutils literal notranslate"><span class="pre">eff_area_msfc_hi_res()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.effective_area.eff_area_nagoya_hxt"><code class="docutils literal notranslate"><span class="pre">eff_area_nagoya_hxt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.effective_area.eff_area_nagoya_sxt"><code class="docutils literal notranslate"><span class="pre">eff_area_nagoya_sxt()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#module-response_tools.ir_plots">response_tools.ir_plots module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.ir_plots.foxsi4_response_paths"><code class="docutils literal notranslate"><span class="pre">foxsi4_response_paths()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#module-response_tools.phot_spec">response_tools.phot_spec module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.create_energy_edges"><code class="docutils literal notranslate"><span class="pre">create_energy_edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.create_energy_midpoints"><code class="docutils literal notranslate"><span class="pre">create_energy_midpoints()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.gaussian_blur"><code class="docutils literal notranslate"><span class="pre">gaussian_blur()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.get_energy_delta"><code class="docutils literal notranslate"><span class="pre">get_energy_delta()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.hxr_blur"><code class="docutils literal notranslate"><span class="pre">hxr_blur()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.hxr_res"><code class="docutils literal notranslate"><span class="pre">hxr_res()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.nans2zeroes"><code class="docutils literal notranslate"><span class="pre">nans2zeroes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.sim_energy_edges"><code class="docutils literal notranslate"><span class="pre">sim_energy_edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.sim_footpoints"><code class="docutils literal notranslate"><span class="pre">sim_footpoints()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.sim_full_loop"><code class="docutils literal notranslate"><span class="pre">sim_full_loop()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.sim_loop_top"><code class="docutils literal notranslate"><span class="pre">sim_loop_top()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.sxr_blur"><code class="docutils literal notranslate"><span class="pre">sxr_blur()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.sxr_res"><code class="docutils literal notranslate"><span class="pre">sxr_res()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.phot_spec.zeroes2nans"><code class="docutils literal notranslate"><span class="pre">zeroes2nans()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#module-response_tools.quantum_efficiency">response_tools.quantum_efficiency module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.quantum_efficiency.QuantumEffOutput"><code class="docutils literal notranslate"><span class="pre">QuantumEffOutput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.quantum_efficiency.QuantumEffOutput.detector"><code class="docutils literal notranslate"><span class="pre">QuantumEffOutput.detector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.quantum_efficiency.QuantumEffOutput.mid_energies"><code class="docutils literal notranslate"><span class="pre">QuantumEffOutput.mid_energies</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.quantum_efficiency.QuantumEffOutput.quantum_efficiency"><code class="docutils literal notranslate"><span class="pre">QuantumEffOutput.quantum_efficiency</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.quantum_efficiency.asset_qe"><code class="docutils literal notranslate"><span class="pre">asset_qe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.quantum_efficiency.qe_cmos"><code class="docutils literal notranslate"><span class="pre">qe_cmos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#module-response_tools.responses">response_tools.responses module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.Response1DOutput"><code class="docutils literal notranslate"><span class="pre">Response1DOutput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.responses.Response1DOutput.elements"><code class="docutils literal notranslate"><span class="pre">Response1DOutput.elements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.responses.Response1DOutput.mid_energies"><code class="docutils literal notranslate"><span class="pre">Response1DOutput.mid_energies</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.responses.Response1DOutput.response"><code class="docutils literal notranslate"><span class="pre">Response1DOutput.response</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.responses.Response1DOutput.response_type"><code class="docutils literal notranslate"><span class="pre">Response1DOutput.response_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.responses.Response1DOutput.telescope"><code class="docutils literal notranslate"><span class="pre">Response1DOutput.telescope</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.Response2DOutput"><code class="docutils literal notranslate"><span class="pre">Response2DOutput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.responses.Response2DOutput.elements"><code class="docutils literal notranslate"><span class="pre">Response2DOutput.elements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.responses.Response2DOutput.input_energy_edges"><code class="docutils literal notranslate"><span class="pre">Response2DOutput.input_energy_edges</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.responses.Response2DOutput.output_energy_edges"><code class="docutils literal notranslate"><span class="pre">Response2DOutput.output_energy_edges</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.responses.Response2DOutput.response"><code class="docutils literal notranslate"><span class="pre">Response2DOutput.response</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.responses.Response2DOutput.response_type"><code class="docutils literal notranslate"><span class="pre">Response2DOutput.response_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.responses.Response2DOutput.telescope"><code class="docutils literal notranslate"><span class="pre">Response2DOutput.telescope</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.asset_response_chain_plot"><code class="docutils literal notranslate"><span class="pre">asset_response_chain_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.asset_response_hit_combination_plot"><code class="docutils literal notranslate"><span class="pre">asset_response_hit_combination_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope0_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope0_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope0_flight_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope0_flight_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope0_rmf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope0_rmf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope1_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope1_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope1_flight_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope1_flight_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope1_rmf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope1_rmf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope2_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope2_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope2_flight_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope2_flight_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope2_rmf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope2_rmf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope3_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope3_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope3_flight_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope3_flight_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope3_rmf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope3_rmf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope4_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope4_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope4_flight_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope4_flight_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope4_rmf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope4_rmf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope5_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope5_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope5_flight_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope5_flight_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope5_rmf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope5_rmf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope6_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope6_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope6_flight_arf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope6_flight_arf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope6_rmf"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope6_rmf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.responses.foxsi4_telescope_spectral_response"><code class="docutils literal notranslate"><span class="pre">foxsi4_telescope_spectral_response()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#module-response_tools.telescope_parts">response_tools.telescope_parts module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position0_collimator"><code class="docutils literal notranslate"><span class="pre">foxsi4_position0_collimator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position0_detector_response"><code class="docutils literal notranslate"><span class="pre">foxsi4_position0_detector_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position0_obf"><code class="docutils literal notranslate"><span class="pre">foxsi4_position0_obf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position0_optics"><code class="docutils literal notranslate"><span class="pre">foxsi4_position0_optics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position0_prefilter"><code class="docutils literal notranslate"><span class="pre">foxsi4_position0_prefilter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position1_collimator"><code class="docutils literal notranslate"><span class="pre">foxsi4_position1_collimator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position1_detector_response"><code class="docutils literal notranslate"><span class="pre">foxsi4_position1_detector_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position1_obf"><code class="docutils literal notranslate"><span class="pre">foxsi4_position1_obf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position1_optics"><code class="docutils literal notranslate"><span class="pre">foxsi4_position1_optics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position1_prefilter"><code class="docutils literal notranslate"><span class="pre">foxsi4_position1_prefilter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position2_detector_response"><code class="docutils literal notranslate"><span class="pre">foxsi4_position2_detector_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position2_optics"><code class="docutils literal notranslate"><span class="pre">foxsi4_position2_optics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position2_thermal_blanket"><code class="docutils literal notranslate"><span class="pre">foxsi4_position2_thermal_blanket()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position2_uniform_al"><code class="docutils literal notranslate"><span class="pre">foxsi4_position2_uniform_al()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position3_al_mylar"><code class="docutils literal notranslate"><span class="pre">foxsi4_position3_al_mylar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position3_detector_response"><code class="docutils literal notranslate"><span class="pre">foxsi4_position3_detector_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position3_optics"><code class="docutils literal notranslate"><span class="pre">foxsi4_position3_optics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position3_pixelated_attenuator"><code class="docutils literal notranslate"><span class="pre">foxsi4_position3_pixelated_attenuator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position3_thermal_blanket"><code class="docutils literal notranslate"><span class="pre">foxsi4_position3_thermal_blanket()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position4_detector_response"><code class="docutils literal notranslate"><span class="pre">foxsi4_position4_detector_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position4_optics"><code class="docutils literal notranslate"><span class="pre">foxsi4_position4_optics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position4_thermal_blanket"><code class="docutils literal notranslate"><span class="pre">foxsi4_position4_thermal_blanket()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position4_uniform_al"><code class="docutils literal notranslate"><span class="pre">foxsi4_position4_uniform_al()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position5_al_mylar"><code class="docutils literal notranslate"><span class="pre">foxsi4_position5_al_mylar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position5_detector_response"><code class="docutils literal notranslate"><span class="pre">foxsi4_position5_detector_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position5_optics"><code class="docutils literal notranslate"><span class="pre">foxsi4_position5_optics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position5_pixelated_attenuator"><code class="docutils literal notranslate"><span class="pre">foxsi4_position5_pixelated_attenuator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position5_thermal_blanket"><code class="docutils literal notranslate"><span class="pre">foxsi4_position5_thermal_blanket()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position6_al_mylar"><code class="docutils literal notranslate"><span class="pre">foxsi4_position6_al_mylar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position6_detector_response"><code class="docutils literal notranslate"><span class="pre">foxsi4_position6_detector_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position6_optics"><code class="docutils literal notranslate"><span class="pre">foxsi4_position6_optics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.telescope_parts.foxsi4_position6_thermal_blanket"><code class="docutils literal notranslate"><span class="pre">foxsi4_position6_thermal_blanket()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#module-response_tools.util">response_tools.util module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.util.BaseOutput"><code class="docutils literal notranslate"><span class="pre">BaseOutput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.util.BaseOutput.contents"><code class="docutils literal notranslate"><span class="pre">BaseOutput.contents</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.util.BaseOutput.fields"><code class="docutils literal notranslate"><span class="pre">BaseOutput.fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.util.BaseOutput.filename"><code class="docutils literal notranslate"><span class="pre">BaseOutput.filename</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.util.BaseOutput.function_path"><code class="docutils literal notranslate"><span class="pre">BaseOutput.function_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.util.BaseOutput.print_contents"><code class="docutils literal notranslate"><span class="pre">BaseOutput.print_contents</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="response_tools.html#response_tools.util.BaseOutput.update_function_path"><code class="docutils literal notranslate"><span class="pre">BaseOutput.update_function_path()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#response_tools.util.native_resolution"><code class="docutils literal notranslate"><span class="pre">native_resolution()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#module-response_tools.version">response_tools.version module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="response_tools.html#module-response_tools">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="response_tools.html#namespace">Namespace</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="code_tips.html" class="btn btn-neutral float-left" title="Response-tools code tips" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="response_tools.html" class="btn btn-neutral float-right" title="response_tools package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

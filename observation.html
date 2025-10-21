@@ -1,0 +1,211 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FOXSI-4 Observation 🦊 &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="What Is a Response? 🦊" href="response_guide.html" />
+    <link rel="prev" title="FOXSI-4 Instrumentation 🦊" href="instrument.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            response-tools
+              <img src="_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">FOXSI-4 Observation <span>🦊</span></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#choosing-a-time-range">Choosing a time range</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#choosing-a-source-location">Choosing a source location</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#choosing-energies">Choosing energies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Response-tools Examples 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Response-tools Code 🦊</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">FOXSI-4 Observation <span>🦊</span></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/observation.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="foxsi-4-observation">
+<h1>FOXSI-4 Observation <span>🦊</span><a class="headerlink" href="#foxsi-4-observation" title="Link to this heading"></a></h1>
+<p>Details on the the FOXSI-4 flight and observation. This page will help a user decide and understand the inputs they need for their relevant response components when using the response files and/or <a class="reference external" href="https://foxsi.github.io/response-tools">Response-tools</a> code.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>FOXSI-4 was launched from the Poker Flat Research Range in Alaska on April 17, 2024, at 22:13 UT. Solar observations began at 22:14:40 UT and lasted for 5.8 minutes. The instrument first observed an M1.6-class flare (primary target) near AR 13638/13643 for ~3.5 minutes, then pointed to a northern active region (AR 13639) for ~1 minute before returning to the primary flare for the final minute of the observation. (Note: pointing adjustments occurred during the last minute.) All telescopes equipped with a CMOS detector or CdTe strip detector (i.e., Telescopes 0–5) collected good scientific data, but Telescope 6’s data were unfortunately unusable due to a Timepix detector issue.</p>
+</section>
+<section id="choosing-a-time-range">
+<h2>Choosing a time range<a class="headerlink" href="#choosing-a-time-range" title="Link to this heading"></a></h2>
+<p><em>Relevant for functions with inputs like: <code class="docutils literal notranslate"><span class="pre">time_range</span></code>.</em></p>
+<p>The time range is important for calculating the atmospheric transmission, which is a key component of the ARF. Depending on the objectives of the analysis, the user may select the appropriate time range using the information provided below:</p>
+<p><strong>Observation time intervals with stable pointing for more than a few seconds:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p></p></th>
+<th class="head text-center"><p>Time interval (UT)</p></th>
+<th class="head text-center"><p>Seconds from launch</p></th>
+<th class="head text-center"><p>Target</p></th>
+<th class="head text-center"><p>Feature(s) within CdTe FOV</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>T1</p></td>
+<td class="text-center"><p>22:14:45-22:18:19</p></td>
+<td class="text-center"><p>105-319</p></td>
+<td class="text-center"><p>Primary flare</p></td>
+<td class="text-center"><p>Primary flare</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>T2</p></td>
+<td class="text-center"><p>22:18:22-22:19:15</p></td>
+<td class="text-center"><p>322-375</p></td>
+<td class="text-center"><p>Active region</p></td>
+<td class="text-center"><p>Active region<a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, primary flare<a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>T3</p></td>
+<td class="text-center"><p>22:19:39-22:20:08</p></td>
+<td class="text-center"><p>399-428</p></td>
+<td class="text-center"><p>Primary flare</p></td>
+<td class="text-center"><p>Primary flare, microflare</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>T4</p></td>
+<td class="text-center"><p>22:20:12-22:20:22</p></td>
+<td class="text-center"><p>432-442</p></td>
+<td class="text-center"><p>Primary flare</p></td>
+<td class="text-center"><p>Primary flare, microflare</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>T5</p></td>
+<td class="text-center"><p>22:20:23-22:20:30</p></td>
+<td class="text-center"><p>443-450</p></td>
+<td class="text-center"><p>Primary flare</p></td>
+<td class="text-center"><p>Primary flare, microflare</p></td>
+</tr>
+</tbody>
+</table>
+<p>The figure below shows the SPARCS pointing coordinates for each observation interval (note: minor pointing variations are ignored).
+<img alt="FOXSI-4 pointing" src="_images/foxsi4_obs_pointing.png" /></p>
+<p>The following figures show the approximate fields of view (FOVs) of different telescopes during the first two observation intervals. (See the later section for more information based on the CdTe quicklook images.)</p>
+<img alt="FOXSI-4 FOV during observation interval T1." src="_images/observation_fov_t1.png" />
+<img alt="FOXSI-4 FOV during observation interval T2." src="_images/observation_fov_t2.png" />
+<p><em>Blue: CdTe detector FOV; red: CMOS photon-counting region; grey: CMOS FOV.</em></p>
+</section>
+<section id="choosing-a-source-location">
+<h2>Choosing a source location<a class="headerlink" href="#choosing-a-source-location" title="Link to this heading"></a></h2>
+<p><em>Relevant for functions with inputs like: <code class="docutils literal notranslate"><span class="pre">off_axis_angle</span></code>, <code class="docutils literal notranslate"><span class="pre">region</span></code>, <code class="docutils literal notranslate"><span class="pre">pitch</span></code>.</em></p>
+<p>The source location is important for determining the off-axis angle used in the ARF calculation and for identifying which part of the detector those photons hit, which is relevant to the RMF.</p>
+<p>For CdTe strip detectors, users can refer to the following plots to find the corresponding off-axis angle and detector region/pitch for each observation interval. In each plot, concentric circles mark 1-arcminute increments from the detector center. Yellow lines separate detector regions with different Pt-side pitch sizes: Region 0 (60 μm pitch), Region 1 (80 μm pitch), and Region 2 (100 μm pitch), from the center to the edge of the detector.</p>
+<p><img alt="foxsi4_cdte_srcloc" src="_images/foxsi4_cdte_srcloc.png" /></p>
+<p><em>Note: The optical axis is currently assumed to align with the detector center, which is likely not true. This figure will be updated in the future.</em></p>
+</section>
+<section id="choosing-energies">
+<h2>Choosing energies<a class="headerlink" href="#choosing-energies" title="Link to this heading"></a></h2>
+<p><em>Relevant for functions with inputs like: <code class="docutils literal notranslate"><span class="pre">mid_energies</span></code>.</em></p>
+<p><span style="color:#e16b27"><b style='color:#e16b27 !important;'>For the vast majority of uses,</b> the energies <em style='color:#e16b27 !important;'>should</em> come from those defined by the redistribution matrix (RMF) relevant to the telescope a user is investigating. If a user is only working with 1D response elements (e.g., effective areas, transmission, etc.) they might want to supply their own energies; <b style='color:#e16b27 !important;'>however, a great deal of care should be taken</b>.</span></p>
+<p>During the FOXSI-4 flight, the CdTe strip detectors observed photons in the 4-20 keV range.</p>
+</section>
+</section>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id3" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Very few HXR photons were observed in CdTe strip detectors.</p>
+</aside>
+<aside class="footnote brackets" id="id4" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Partially observed in CdTe 1, 3, and 4; fully observed in CdTe 2.</p>
+</aside>
+</aside>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="instrument.html" class="btn btn-neutral float-left" title="FOXSI-4 Instrumentation 🦊" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="response_guide.html" class="btn btn-neutral float-right" title="What Is a Response? 🦊" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

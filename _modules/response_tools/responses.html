@@ -1,0 +1,1484 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>response_tools.responses &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="../../_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            response-tools
+              <img src="../../_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Response-tools Examples 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code.html">Response-tools Code 🦊</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">response_tools.responses</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for response_tools.responses</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Functions to make the RMFs and ARFs. &quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">LogNorm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">response_tools.attenuation</span> <span class="kn">import</span> <span class="n">att_foxsi4_atmosphere</span>
+<span class="kn">import</span> <span class="nn">response_tools.telescope_parts</span> <span class="k">as</span> <span class="nn">tp</span>
+<span class="kn">from</span> <span class="nn">response_tools.util</span> <span class="kn">import</span> <span class="n">BaseOutput</span>
+
+<span class="n">ASSETS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="s2">&quot;response-tools-figs&quot;</span><span class="p">,</span> <span class="s2">&quot;response-figs&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Response1DOutput">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.Response1DOutput">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Response1DOutput</span><span class="p">(</span><span class="n">BaseOutput</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for keeping track of 1D response response values.&quot;&quot;&quot;</span>
+    <span class="c1"># numbers</span>
+    <span class="n">mid_energies</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span>
+    <span class="n">response</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span>
+    <span class="c1"># bookkeeping</span>
+    <span class="n">response_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">telescope</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">elements</span><span class="p">:</span> <span class="nb">tuple</span></div>
+
+    <span class="c1"># any other fields needed can be added here</span>
+    <span class="c1"># can even add with a default so the input is not required for every other instance</span>
+
+<div class="viewcode-block" id="Response2DOutput">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.Response2DOutput">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Response2DOutput</span><span class="p">(</span><span class="n">BaseOutput</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for keeping track of 2D response response values.&quot;&quot;&quot;</span>
+    <span class="c1"># numbers</span>
+    <span class="n">input_energy_edges</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span> <span class="c1"># photon axis</span>
+    <span class="n">output_energy_edges</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span> <span class="c1"># count axis</span>
+    <span class="n">response</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span>
+    <span class="c1"># bookkeeping</span>
+    <span class="n">response_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">telescope</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">elements</span><span class="p">:</span> <span class="nb">tuple</span></div>
+
+    <span class="c1"># any other fields needed can be added here</span>
+    <span class="c1"># can even add with a default so the input is not required for every other instance</span>
+
+<div class="viewcode-block" id="foxsi4_telescope_spectral_response">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope_spectral_response">[docs]</a>
+<span class="k">def</span> <span class="nf">foxsi4_telescope_spectral_response</span><span class="p">(</span><span class="n">arf_response</span><span class="p">,</span> <span class="n">rmf_response</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Full Spectral Response Matrix (SRM) for a given telescope.</span>
+
+<span class="sd">    This function will check the Ancillary Response Function (ARF) </span>
+<span class="sd">    `mid_energies` field and the Redistribution Matrix Function (RMF) </span>
+<span class="sd">    `input_energy_edges` field mid-points to check they match before </span>
+<span class="sd">    combining both the ARF and RMF into the Spectral Response Matrix </span>
+<span class="sd">    (SRM).</span>
+
+<span class="sd">    This function will check both the ARF and RMF have come from the </span>
+<span class="sd">    same telescope using the &quot;telescope&quot; field. A warning will be </span>
+<span class="sd">    produce if they are different to inform the user but the function </span>
+<span class="sd">    will still output the product if possible.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arf_response : `responses.Response1DOutput`</span>
+<span class="sd">        The Ancillary Response Function (ARF) object for a telescope.</span>
+
+<span class="sd">    rmf_response : `responses.Response2DOutput`</span>
+<span class="sd">        The Redistribution Matrix Function (RMF) object for a telescope.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response2DOutput`</span>
+<span class="sd">        An object containing the 2D detector response information for a </span>
+<span class="sd">        given ARF and RMF. See accessible information using `.contents` </span>
+<span class="sd">        on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># check compatibility</span>
+    <span class="n">rmf_mids</span> <span class="o">=</span> <span class="p">(</span><span class="n">rmf_response</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">rmf_response</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">/</span><span class="mi">2</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arf_response</span><span class="o">.</span><span class="n">mid_energies</span><span class="o">==</span><span class="n">rmf_mids</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">, the `arf_response.mid_energies` do not match the bin centers of `rmf_response.input_energy_edges`.</span><span class="se">\n</span><span class="s2">SRM product cannot be calculated&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">arf_response</span><span class="o">.</span><span class="n">telescope</span><span class="o">!=</span><span class="n">rmf_response</span><span class="o">.</span><span class="n">telescope</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">, the </span><span class="se">\&quot;</span><span class="s2">telescope</span><span class="se">\&quot;</span><span class="s2"> fields from `arf_response` (</span><span class="si">{</span><span class="n">arf_response</span><span class="o">.</span><span class="n">telescope</span><span class="si">}</span><span class="s2">) and `rmf_response` (</span><span class="si">{</span><span class="n">rmf_response</span><span class="o">.</span><span class="n">telescope</span><span class="si">}</span><span class="s2">) do not match.</span><span class="se">\n</span><span class="s2">An output shall be produced if possible (check the returned objects</span><span class="se">\&quot;</span><span class="s2">telescope</span><span class="se">\&quot;</span><span class="s2"> field) but the user should be cautious.&quot;</span><span class="p">)</span>
+
+    <span class="n">total_response</span> <span class="o">=</span> <span class="n">arf_response</span><span class="o">.</span><span class="n">response</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">rmf_response</span><span class="o">.</span><span class="n">response</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">arf_response</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">rmf_response</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response2DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">input_energy_edges</span><span class="o">=</span><span class="n">rmf_response</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="p">,</span>
+                            <span class="n">output_energy_edges</span><span class="o">=</span><span class="n">rmf_response</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">total_response</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;SRM&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ARF:</span><span class="si">{</span><span class="n">arf_response</span><span class="o">.</span><span class="n">telescope</span><span class="si">}</span><span class="s2">,RMF:</span><span class="si">{</span><span class="n">rmf_response</span><span class="o">.</span><span class="n">telescope</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">arf_response</span><span class="p">,</span>
+                                      <span class="n">rmf_response</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<span class="c1"># telescope 0</span>
+<div class="viewcode-block" id="foxsi4_telescope0_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope0_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope0_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Ancillary Response Function (ARF) for Telescope 0.</span>
+<span class="sd">    </span>
+<span class="sd">    **DOES NOT** include atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 0 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 0. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pf</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position0_prefilter</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">co</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position0_collimator</span><span class="p">(</span><span class="n">off_axis_angle</span><span class="p">)</span>
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position0_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                     <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">)</span> 
+    <span class="n">obf</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position0_obf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">co</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">opt</span><span class="o">.</span><span class="n">effective_areas</span> <span class="o">*</span> <span class="n">obf</span><span class="o">.</span><span class="n">transmissions</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">pf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">co</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">obf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope0&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">pf</span><span class="p">,</span> 
+                                      <span class="n">co</span><span class="p">,</span>
+                                      <span class="n">opt</span><span class="p">,</span> 
+                                      <span class="n">obf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope0_flight_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope0_flight_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> <span class="n">time_range</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope0_flight_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">,</span> <span class="n">time_range</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The flight Ancillary Response Function (ARF) for telescope 0.</span>
+<span class="sd">    </span>
+<span class="sd">    Includes atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 0 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    time_range : `astropy.units.quantity.Quantity` or `None`</span>
+<span class="sd">        The time range the atmsopheric transmissions should be averaged</span>
+<span class="sd">        over. If `None`, `numpy.nan&lt;&lt;astropy.units.second`, or</span>
+<span class="sd">        `[numpy.nan, numpy.nan]&lt;&lt;astropy.units.second` then the full </span>
+<span class="sd">        time will be considered and the output will not be averaged but </span>
+<span class="sd">        a grid of the transmissions at all times and at any provided</span>
+<span class="sd">        energies.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 0. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atm</span> <span class="o">=</span> <span class="n">att_foxsi4_atmosphere</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                <span class="n">time_range</span><span class="o">=</span><span class="n">time_range</span><span class="p">)</span>
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">foxsi4_telescope0_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">)</span>
+
+    <span class="n">flight_arf</span> <span class="o">=</span> <span class="n">atm</span><span class="o">.</span><span class="n">transmissions</span><span class="o">*</span><span class="n">arf</span><span class="o">.</span><span class="n">response</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">atm</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">arf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">flight_arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF-flight&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;foxsi4-telescope0&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">atm</span><span class="p">,</span> 
+                                      <span class="n">arf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope0_rmf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope0_rmf">[docs]</a>
+<span class="k">def</span> <span class="nf">foxsi4_telescope0_rmf</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Redistribution Matrix Function (RMF) for Telescope 0. </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response2DOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">rmf</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position1_detector_response</span><span class="p">()</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">rmf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response2DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">input_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="p">,</span>
+                            <span class="n">output_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">detector_response</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;RMF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope1&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">rmf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<span class="c1"># telescope 1</span>
+<div class="viewcode-block" id="foxsi4_telescope1_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope1_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope1_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Ancillary Response Function (ARF) for Telescope 1.</span>
+<span class="sd">    </span>
+<span class="sd">    **DOES NOT** include atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 1 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 1. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pf</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position1_prefilter</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">co</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position1_collimator</span><span class="p">(</span><span class="n">off_axis_angle</span><span class="p">)</span>
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position1_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                     <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">)</span> 
+    <span class="n">obf</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position1_obf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">co</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">opt</span><span class="o">.</span><span class="n">effective_areas</span> <span class="o">*</span> <span class="n">obf</span><span class="o">.</span><span class="n">transmissions</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">pf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">co</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">obf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope1&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">pf</span><span class="p">,</span> 
+                                      <span class="n">co</span><span class="p">,</span>
+                                      <span class="n">opt</span><span class="p">,</span> 
+                                      <span class="n">obf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope1_flight_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope1_flight_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> <span class="n">time_range</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope1_flight_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">,</span> <span class="n">time_range</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The flight Ancillary Response Function (ARF) for telescope 1.</span>
+<span class="sd">    </span>
+<span class="sd">    Includes atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 1 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    time_range : `astropy.units.quantity.Quantity` or `None`</span>
+<span class="sd">        The time range the atmsopheric transmissions should be averaged</span>
+<span class="sd">        over. If `None`, `numpy.nan&lt;&lt;astropy.units.second`, or</span>
+<span class="sd">        `[numpy.nan, numpy.nan]&lt;&lt;astropy.units.second` then the full </span>
+<span class="sd">        time will be considered and the output will not be averaged but </span>
+<span class="sd">        a grid of the transmissions at all times and at any provided</span>
+<span class="sd">        energies.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 1. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atm</span> <span class="o">=</span> <span class="n">att_foxsi4_atmosphere</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                <span class="n">time_range</span><span class="o">=</span><span class="n">time_range</span><span class="p">)</span>
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">foxsi4_telescope1_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">)</span>
+
+    <span class="n">flight_arf</span> <span class="o">=</span> <span class="n">atm</span><span class="o">.</span><span class="n">transmissions</span><span class="o">*</span><span class="n">arf</span><span class="o">.</span><span class="n">response</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">atm</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">arf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">flight_arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF-flight&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;foxsi4-telescope1&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">atm</span><span class="p">,</span> 
+                                      <span class="n">arf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope1_rmf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope1_rmf">[docs]</a>
+<span class="k">def</span> <span class="nf">foxsi4_telescope1_rmf</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Redistribution Matrix Function (RMF) for Telescope 1. </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response2DOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">rmf</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position1_detector_response</span><span class="p">()</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">rmf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response2DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">input_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="p">,</span>
+                            <span class="n">output_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">detector_response</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;RMF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope1&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">rmf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<span class="c1"># telescope 2</span>
+<div class="viewcode-block" id="foxsi4_telescope2_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope2_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope2_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Ancillary Response Function (ARF) for Telescope 2.</span>
+<span class="sd">    </span>
+<span class="sd">    **DOES NOT** include atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 2 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 2. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position2_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span> 
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position2_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                     <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">)</span> 
+    <span class="n">uni_al</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position2_uniform_al</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">opt</span><span class="o">.</span><span class="n">effective_areas</span> <span class="o">*</span> <span class="n">uni_al</span><span class="o">.</span><span class="n">transmissions</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">tb</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">uni_al</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope2&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">tb</span><span class="p">,</span> 
+                                      <span class="n">opt</span><span class="p">,</span> 
+                                      <span class="n">uni_al</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope2_flight_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope2_flight_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> <span class="n">time_range</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope2_flight_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">,</span> <span class="n">time_range</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The flight Ancillary Response Function (ARF) for telescope 2.</span>
+<span class="sd">    </span>
+<span class="sd">    Includes atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 2 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    time_range : `astropy.units.quantity.Quantity` or `None`</span>
+<span class="sd">        The time range the atmsopheric transmissions should be averaged</span>
+<span class="sd">        over. If `None`, `numpy.nan&lt;&lt;astropy.units.second`, or</span>
+<span class="sd">        `[numpy.nan, numpy.nan]&lt;&lt;astropy.units.second` then the full </span>
+<span class="sd">        time will be considered and the output will not be averaged but </span>
+<span class="sd">        a grid of the transmissions at all times and at any provided</span>
+<span class="sd">        energies.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 2. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atm</span> <span class="o">=</span> <span class="n">att_foxsi4_atmosphere</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                <span class="n">time_range</span><span class="o">=</span><span class="n">time_range</span><span class="p">)</span>
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">foxsi4_telescope2_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">)</span>
+
+    <span class="n">flight_arf</span> <span class="o">=</span> <span class="n">atm</span><span class="o">.</span><span class="n">transmissions</span><span class="o">*</span><span class="n">arf</span><span class="o">.</span><span class="n">response</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">atm</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">arf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">flight_arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF-flight&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;foxsi4-telescope2&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">atm</span><span class="p">,</span> 
+                                      <span class="n">arf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope2_rmf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope2_rmf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope2_rmf</span><span class="p">(</span><span class="n">region</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_side</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;merged&quot;</span><span class="p">,</span> <span class="n">_event_type</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Redistribution Matrix Function (RMF) for Telescope 2. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    region : `int`</span>
+<span class="sd">        The region of the CdTe detector required. Either provide </span>
+<span class="sd">        `region` _xor_ `pitch`. The `region` maps onto the pitches used </span>
+<span class="sd">        across the detector. </span>
+<span class="sd">        - Region 0 -&gt; 60&lt;&lt;astropy.units.um </span>
+<span class="sd">        - Region 1 -&gt; 80&lt;&lt;astropy.units.um</span>
+<span class="sd">        - Region 2 -&gt; 100&lt;&lt;astropy.units.um</span>
+
+<span class="sd">    pitch : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        Instead of `region`, it might be more usefule to specify the </span>
+<span class="sd">        pitch in physical units (must b convertable to </span>
+<span class="sd">        `astropy.units.um`). Either provide `region` _xor_ `pitch`.</span>
+<span class="sd">        The pitches map onto the `region` input.</span>
+<span class="sd">        - 60&lt;&lt;astropy.units.um -&gt; Region 0</span>
+<span class="sd">        - 80&lt;&lt;astropy.units.um -&gt; Region 1</span>
+<span class="sd">        - 100&lt;&lt;astropy.units.um -&gt; Region 2</span>
+
+<span class="sd">    _side : `str`</span>
+<span class="sd">        Define the side on the detector the user requires the response </span>
+<span class="sd">        from. Must be in [&quot;pt&quot;, &quot;merged&quot;].</span>
+<span class="sd">        Default: &quot;merged&quot;</span>
+
+<span class="sd">    _event_type : `str`</span>
+<span class="sd">        Define the type of event trigger being considered in the </span>
+<span class="sd">        response. Must be in [&quot;1hit&quot;, &quot;2hit&quot;, (&quot;all&quot;, &quot;mix&quot;)]. </span>
+<span class="sd">        Note: \&quot;all\&quot; and \&quot;mix\&quot; are the same but some from different </span>
+<span class="sd">        naming conventions on the merged and individual detector sides. </span>
+<span class="sd">        This will be fixed at some point in the future.</span>
+<span class="sd">        Default: &quot;all&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response2DOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">rmf</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position2_detector_response</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span> 
+                                                <span class="n">pitch</span><span class="o">=</span><span class="n">pitch</span><span class="p">,</span> 
+                                                <span class="n">_side</span><span class="o">=</span><span class="n">_side</span><span class="p">,</span> 
+                                                <span class="n">_event_type</span><span class="o">=</span><span class="n">_event_type</span><span class="p">)</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">rmf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response2DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">input_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="p">,</span>
+                            <span class="n">output_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">detector_response</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;RMF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope2&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">rmf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<span class="c1"># telescope 3</span>
+<div class="viewcode-block" id="foxsi4_telescope3_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope3_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope3_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Ancillary Response Function (ARF) for Telescope 3.</span>
+<span class="sd">    </span>
+<span class="sd">    **DOES NOT** include atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 3 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+<span class="sd">        *** Not implemented yet. ***</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 3. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">off_axis_angle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The `off_axis_angle` input for Telescope 3&#39;s optics (</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">) is not yet implemented.&quot;</span><span class="p">)</span>
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position3_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span> 
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position3_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span> 
+    <span class="n">mylar</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position3_al_mylar</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">pix_att</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position3_pixelated_attenuator</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">opt</span><span class="o">.</span><span class="n">effective_areas</span> <span class="o">*</span> <span class="n">mylar</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">pix_att</span><span class="o">.</span><span class="n">transmissions</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">tb</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">mylar</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">pix_att</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope3&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">tb</span><span class="p">,</span> 
+                                      <span class="n">opt</span><span class="p">,</span>
+                                      <span class="n">mylar</span><span class="p">,</span> 
+                                      <span class="n">pix_att</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope3_flight_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope3_flight_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> <span class="n">time_range</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope3_flight_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">time_range</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The flight Ancillary Response Function (ARF) for Telescope 3.</span>
+<span class="sd">    </span>
+<span class="sd">    Includes atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 3 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+<span class="sd">        *** Not implemented yet. ***</span>
+
+<span class="sd">    time_range : `astropy.units.quantity.Quantity` or `None`</span>
+<span class="sd">        The time range the atmsopheric transmissions should be averaged</span>
+<span class="sd">        over. If `None`, `numpy.nan&lt;&lt;astropy.units.second`, or</span>
+<span class="sd">        `[numpy.nan, numpy.nan]&lt;&lt;astropy.units.second` then the full </span>
+<span class="sd">        time will be considered and the output will not be averaged but </span>
+<span class="sd">        a grid of the transmissions at all times and at any provided</span>
+<span class="sd">        energies.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 3. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">off_axis_angle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The `off_axis_angle` input for Telescope 3&#39;s optics (</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">) is not yet implemented.&quot;</span><span class="p">)</span>
+    <span class="n">atm</span> <span class="o">=</span> <span class="n">att_foxsi4_atmosphere</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                <span class="n">time_range</span><span class="o">=</span><span class="n">time_range</span><span class="p">)</span>
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">foxsi4_telescope3_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+
+    <span class="n">flight_arf</span> <span class="o">=</span> <span class="n">atm</span><span class="o">.</span><span class="n">transmissions</span><span class="o">*</span><span class="n">arf</span><span class="o">.</span><span class="n">response</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">atm</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">arf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">flight_arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF-flight&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;foxsi4-telescope3&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">atm</span><span class="p">,</span> 
+                                      <span class="n">arf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope3_rmf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope3_rmf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope3_rmf</span><span class="p">(</span><span class="n">region</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_side</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;merged&quot;</span><span class="p">,</span> <span class="n">_event_type</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Redistribution Matrix Function (RMF) for Telescope 3. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    region : `int`</span>
+<span class="sd">        The region of the CdTe detector required. Either provide </span>
+<span class="sd">        `region` _xor_ `pitch`. The `region` maps onto the pitches used </span>
+<span class="sd">        across the detector. </span>
+<span class="sd">        - Region 0 -&gt; 60&lt;&lt;astropy.units.um </span>
+<span class="sd">        - Region 1 -&gt; 80&lt;&lt;astropy.units.um</span>
+<span class="sd">        - Region 2 -&gt; 100&lt;&lt;astropy.units.um</span>
+
+<span class="sd">    pitch : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        Instead of `region`, it might be more usefule to specify the </span>
+<span class="sd">        pitch in physical units (must b convertable to </span>
+<span class="sd">        `astropy.units.um`). Either provide `region` _xor_ `pitch`.</span>
+<span class="sd">        The pitches map onto the `region` input.</span>
+<span class="sd">        - 60&lt;&lt;astropy.units.um -&gt; Region 0</span>
+<span class="sd">        - 80&lt;&lt;astropy.units.um -&gt; Region 1</span>
+<span class="sd">        - 100&lt;&lt;astropy.units.um -&gt; Region 2</span>
+
+<span class="sd">    _side : `str`</span>
+<span class="sd">        Define the side on the detector the user requires the response </span>
+<span class="sd">        from. Must be in [&quot;pt&quot;, &quot;merged&quot;].</span>
+<span class="sd">        Default: &quot;merged&quot;</span>
+
+<span class="sd">    _event_type : `str`</span>
+<span class="sd">        Define the type of event trigger being considered in the </span>
+<span class="sd">        response. Must be in [&quot;1hit&quot;, &quot;2hit&quot;, (&quot;all&quot;, &quot;mix&quot;)]. </span>
+<span class="sd">        Note: \&quot;all\&quot; and \&quot;mix\&quot; are the same but some from different </span>
+<span class="sd">        naming conventions on the merged and individual detector sides. </span>
+<span class="sd">        This will be fixed at some point in the future.</span>
+<span class="sd">        Default: &quot;all&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response2DOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">rmf</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position3_detector_response</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span> 
+                                                <span class="n">pitch</span><span class="o">=</span><span class="n">pitch</span><span class="p">,</span> 
+                                                <span class="n">_side</span><span class="o">=</span><span class="n">_side</span><span class="p">,</span> 
+                                                <span class="n">_event_type</span><span class="o">=</span><span class="n">_event_type</span><span class="p">)</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">rmf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response2DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">input_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="p">,</span>
+                            <span class="n">output_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">detector_response</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;RMF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope3&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">rmf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<span class="c1"># telescope 4</span>
+<div class="viewcode-block" id="foxsi4_telescope4_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope4_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope4_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Ancillary Response Function (ARF) for Telescope 4.</span>
+<span class="sd">    </span>
+<span class="sd">    **DOES NOT** include atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 4 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+<span class="sd">        *** Not implemented yet. ***</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 4. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">off_axis_angle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The `off_axis_angle` input for Telescope 4&#39;s optics (</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">) is not yet implemented.&quot;</span><span class="p">)</span>
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position4_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span> 
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position4_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span> 
+    <span class="n">uni_al</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position4_uniform_al</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">opt</span><span class="o">.</span><span class="n">effective_areas</span> <span class="o">*</span> <span class="n">uni_al</span><span class="o">.</span><span class="n">transmissions</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">tb</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">uni_al</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope4&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">tb</span><span class="p">,</span> 
+                                      <span class="n">opt</span><span class="p">,</span> 
+                                      <span class="n">uni_al</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope4_flight_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope4_flight_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> <span class="n">time_range</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope4_flight_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">time_range</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The flight Ancillary Response Function (ARF) for Telescope 4.</span>
+<span class="sd">    </span>
+<span class="sd">    Includes atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 4 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+<span class="sd">        *** Not implemented yet. ***</span>
+
+<span class="sd">    time_range : `astropy.units.quantity.Quantity` or `None`</span>
+<span class="sd">        The time range the atmsopheric transmissions should be averaged</span>
+<span class="sd">        over. If `None`, `numpy.nan&lt;&lt;astropy.units.second`, or</span>
+<span class="sd">        `[numpy.nan, numpy.nan]&lt;&lt;astropy.units.second` then the full </span>
+<span class="sd">        time will be considered and the output will not be averaged but </span>
+<span class="sd">        a grid of the transmissions at all times and at any provided</span>
+<span class="sd">        energies.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 4. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">off_axis_angle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The `off_axis_angle` input for Telescope 4&#39;s optics (</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">) is not yet implemented.&quot;</span><span class="p">)</span>
+    <span class="n">atm</span> <span class="o">=</span> <span class="n">att_foxsi4_atmosphere</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                <span class="n">time_range</span><span class="o">=</span><span class="n">time_range</span><span class="p">)</span>
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">foxsi4_telescope4_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+
+    <span class="n">flight_arf</span> <span class="o">=</span> <span class="n">atm</span><span class="o">.</span><span class="n">transmissions</span><span class="o">*</span><span class="n">arf</span><span class="o">.</span><span class="n">response</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">atm</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">arf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">flight_arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF-flight&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;foxsi4-telescope4&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">atm</span><span class="p">,</span> 
+                                      <span class="n">arf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope4_rmf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope4_rmf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope4_rmf</span><span class="p">(</span><span class="n">region</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_side</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;merged&quot;</span><span class="p">,</span> <span class="n">_event_type</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Redistribution Matrix Function (RMF) for Telescope 4. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    region : `int`</span>
+<span class="sd">        The region of the CdTe detector required. Either provide </span>
+<span class="sd">        `region` _xor_ `pitch`. The `region` maps onto the pitches used </span>
+<span class="sd">        across the detector. </span>
+<span class="sd">        - Region 0 -&gt; 60&lt;&lt;astropy.units.um </span>
+<span class="sd">        - Region 1 -&gt; 80&lt;&lt;astropy.units.um</span>
+<span class="sd">        - Region 2 -&gt; 100&lt;&lt;astropy.units.um</span>
+
+<span class="sd">    pitch : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        Instead of `region`, it might be more usefule to specify the </span>
+<span class="sd">        pitch in physical units (must b convertable to </span>
+<span class="sd">        `astropy.units.um`). Either provide `region` _xor_ `pitch`.</span>
+<span class="sd">        - pitches map onto the `region` input.</span>
+<span class="sd">        - 60&lt;&lt;astropy.units.um -&gt; Region 0</span>
+<span class="sd">        - 80&lt;&lt;astropy.units.um -&gt; Region 1</span>
+<span class="sd">        - 100&lt;&lt;astropy.units.um -&gt; Region 2</span>
+
+<span class="sd">    _side : `str`</span>
+<span class="sd">        Define the side on the detector the user requires the response </span>
+<span class="sd">        from. Must be in [&quot;pt&quot;, &quot;merged&quot;].</span>
+<span class="sd">        Default: &quot;merged&quot;</span>
+
+<span class="sd">    _event_type : `str`</span>
+<span class="sd">        Define the type of event trigger being considered in the </span>
+<span class="sd">        response. Must be in [&quot;1hit&quot;, &quot;2hit&quot;, (&quot;all&quot;, &quot;mix&quot;)]. </span>
+<span class="sd">        Note: \&quot;all\&quot; and \&quot;mix\&quot; are the same but some from different </span>
+<span class="sd">        naming conventions on the merged and individual detector sides. </span>
+<span class="sd">        This will be fixed at some point in the future.</span>
+<span class="sd">        Default: &quot;all&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response2DOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">rmf</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position4_detector_response</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span> 
+                                                <span class="n">pitch</span><span class="o">=</span><span class="n">pitch</span><span class="p">,</span> 
+                                                <span class="n">_side</span><span class="o">=</span><span class="n">_side</span><span class="p">,</span> 
+                                                <span class="n">_event_type</span><span class="o">=</span><span class="n">_event_type</span><span class="p">)</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">rmf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response2DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">input_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="p">,</span>
+                            <span class="n">output_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">detector_response</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;RMF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope4&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">rmf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<span class="c1"># telescope 5</span>
+<div class="viewcode-block" id="foxsi4_telescope5_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope5_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope5_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Ancillary Response Function (ARF) for Telescope 5.</span>
+<span class="sd">    </span>
+<span class="sd">    **DOES NOT** include atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 5 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 5. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position5_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span> 
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position5_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                     <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">)</span> 
+    <span class="n">mylar</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position5_al_mylar</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+    <span class="n">pix_att</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position5_pixelated_attenuator</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">opt</span><span class="o">.</span><span class="n">effective_areas</span> <span class="o">*</span> <span class="n">mylar</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">pix_att</span><span class="o">.</span><span class="n">transmissions</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">tb</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">mylar</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">pix_att</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope5&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">tb</span><span class="p">,</span> 
+                                      <span class="n">opt</span><span class="p">,</span> 
+                                      <span class="n">mylar</span><span class="p">,</span>
+                                      <span class="n">pix_att</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope5_flight_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope5_flight_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> <span class="n">time_range</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope5_flight_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">,</span> <span class="n">time_range</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The flight Ancillary Response Function (ARF) for Telescope 5.</span>
+<span class="sd">    </span>
+<span class="sd">    Includes atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 5 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    time_range : `astropy.units.quantity.Quantity` or `None`</span>
+<span class="sd">        The time range the atmsopheric transmissions should be averaged</span>
+<span class="sd">        over. If `None`, `numpy.nan&lt;&lt;astropy.units.second`, or</span>
+<span class="sd">        `[numpy.nan, numpy.nan]&lt;&lt;astropy.units.second` then the full </span>
+<span class="sd">        time will be considered and the output will not be averaged but </span>
+<span class="sd">        a grid of the transmissions at all times and at any provided</span>
+<span class="sd">        energies.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 5. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atm</span> <span class="o">=</span> <span class="n">att_foxsi4_atmosphere</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                <span class="n">time_range</span><span class="o">=</span><span class="n">time_range</span><span class="p">)</span>
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">foxsi4_telescope5_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">)</span>
+
+    <span class="n">flight_arf</span> <span class="o">=</span> <span class="n">atm</span><span class="o">.</span><span class="n">transmissions</span><span class="o">*</span><span class="n">arf</span><span class="o">.</span><span class="n">response</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">atm</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">arf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">flight_arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF-flight&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;foxsi4-telescope5&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">atm</span><span class="p">,</span> 
+                                      <span class="n">arf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope5_rmf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope5_rmf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">um</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope5_rmf</span><span class="p">(</span><span class="n">region</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_side</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;merged&quot;</span><span class="p">,</span> <span class="n">_event_type</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Redistribution Matrix Function (RMF) for Telescope 5. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    region : `int`</span>
+<span class="sd">        The region of the CdTe detector required. Either provide </span>
+<span class="sd">        `region` _xor_ `pitch`. The `region` maps onto the pitches used </span>
+<span class="sd">        across the detector. </span>
+<span class="sd">        - Region 0 -&gt; 60&lt;&lt;astropy.units.um </span>
+<span class="sd">        - Region 1 -&gt; 80&lt;&lt;astropy.units.um</span>
+<span class="sd">        - Region 2 -&gt; 100&lt;&lt;astropy.units.um</span>
+
+<span class="sd">    pitch : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        Instead of `region`, it might be more usefule to specify the </span>
+<span class="sd">        pitch in physical units (must b convertable to </span>
+<span class="sd">        `astropy.units.um`). Either provide `region` _xor_ `pitch`.</span>
+<span class="sd">        The pitches map onto the `region` input.</span>
+<span class="sd">        - 60&lt;&lt;astropy.units.um -&gt; Region 0</span>
+<span class="sd">        - 80&lt;&lt;astropy.units.um -&gt; Region 1</span>
+<span class="sd">        - 100&lt;&lt;astropy.units.um -&gt; Region 2</span>
+
+<span class="sd">    _side : `str`</span>
+<span class="sd">        Define the side on the detector the user requires the response </span>
+<span class="sd">        from. Must be in [&quot;pt&quot;, &quot;merged&quot;].</span>
+<span class="sd">        Default: &quot;merged&quot;</span>
+
+<span class="sd">    _event_type : `str`</span>
+<span class="sd">        Define the type of event trigger being considered in the </span>
+<span class="sd">        response. Must be in [&quot;1hit&quot;, &quot;2hit&quot;, (&quot;all&quot;, &quot;mix&quot;)]. </span>
+<span class="sd">        Note: \&quot;all\&quot; and \&quot;mix\&quot; are the same but some from different </span>
+<span class="sd">        naming conventions on the merged and individual detector sides. </span>
+<span class="sd">        This will be fixed at some point in the future.</span>
+<span class="sd">        Default: &quot;all&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response2DOutput`</span>
+<span class="sd">        An object containing all the redistribution matrix information. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">rmf</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position5_detector_response</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span> 
+                                                <span class="n">pitch</span><span class="o">=</span><span class="n">pitch</span><span class="p">,</span> 
+                                                <span class="n">_side</span><span class="o">=</span><span class="n">_side</span><span class="p">,</span> 
+                                                <span class="n">_event_type</span><span class="o">=</span><span class="n">_event_type</span><span class="p">)</span>
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">rmf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response2DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">input_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="p">,</span>
+                            <span class="n">output_energy_edges</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">rmf</span><span class="o">.</span><span class="n">detector_response</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;RMF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope5&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">rmf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<span class="c1"># telescope 6</span>
+<div class="viewcode-block" id="foxsi4_telescope6_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope6_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope6_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Ancillary Response Function (ARF) for Telescope 6.</span>
+<span class="sd">    </span>
+<span class="sd">    **DOES NOT** include atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 6 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 6. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position6_thermal_blanket</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span> 
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position6_optics</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                     <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">)</span> 
+    <span class="n">mylar</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position5_al_mylar</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">)</span>
+
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">transmissions</span> <span class="o">*</span> <span class="n">opt</span><span class="o">.</span><span class="n">effective_areas</span> <span class="o">*</span> <span class="n">mylar</span><span class="o">.</span><span class="n">transmissions</span> 
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">tb</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">mylar</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="s2">&quot;foxsi4-telescope6&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">tb</span><span class="p">,</span> 
+                                      <span class="n">opt</span><span class="p">,</span> 
+                                      <span class="n">mylar</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope6_flight_arf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope6_flight_arf">[docs]</a>
+<span class="nd">@u</span><span class="o">.</span><span class="n">quantity_input</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> <span class="n">time_range</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foxsi4_telescope6_flight_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">,</span> <span class="n">time_range</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The flight Ancillary Response Function (ARF) for Telescope 6.</span>
+<span class="sd">    </span>
+<span class="sd">    Includes atmospheric attenuation from flight.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mid_energies : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The energies at which the Telescope 6 componented are calculated. </span>
+<span class="sd">        If `numpy.nan&lt;&lt;astropy.units.keV` is passed then an entry for </span>
+<span class="sd">        all native file energies are returned. </span>
+<span class="sd">        Unit must be convertable to keV.</span>
+
+<span class="sd">    off_axis_angle : `astropy.units.quantity.Quantity`</span>
+<span class="sd">        The off-axis angle of the source.</span>
+<span class="sd">        Unit must be convertable to arc-minutes.</span>
+
+<span class="sd">    time_range : `astropy.units.quantity.Quantity` or `None`</span>
+<span class="sd">        The time range the atmsopheric transmissions should be averaged</span>
+<span class="sd">        over. If `None`, `numpy.nan&lt;&lt;astropy.units.second`, or</span>
+<span class="sd">        `[numpy.nan, numpy.nan]&lt;&lt;astropy.units.second` then the full </span>
+<span class="sd">        time will be considered and the output will not be averaged but </span>
+<span class="sd">        a grid of the transmissions at all times and at any provided</span>
+<span class="sd">        energies.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `responses.Response1DOutput`</span>
+<span class="sd">        An object containing the 1D response information of Telescope 6. </span>
+<span class="sd">        See accessible information using `.contents` on the output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atm</span> <span class="o">=</span> <span class="n">att_foxsi4_atmosphere</span><span class="p">(</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span> 
+                                <span class="n">time_range</span><span class="o">=</span><span class="n">time_range</span><span class="p">)</span>
+    <span class="n">arf</span> <span class="o">=</span> <span class="n">foxsi4_telescope6_arf</span><span class="p">(</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="p">)</span>
+
+    <span class="n">flight_arf</span> <span class="o">=</span> <span class="n">atm</span><span class="o">.</span><span class="n">transmissions</span><span class="o">*</span><span class="n">arf</span><span class="o">.</span><span class="n">response</span>
+
+    <span class="n">func_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="n">atm</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+    <span class="n">arf</span><span class="o">.</span><span class="n">update_function_path</span><span class="p">(</span><span class="n">func_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response1DOutput</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;No-File&quot;</span><span class="p">,</span>
+                            <span class="n">function_path</span><span class="o">=</span><span class="n">func_name</span><span class="p">,</span>
+                            <span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span>
+                            <span class="n">response</span><span class="o">=</span><span class="n">flight_arf</span><span class="p">,</span>
+                            <span class="n">response_type</span><span class="o">=</span><span class="s2">&quot;ARF-flight&quot;</span><span class="p">,</span>
+                            <span class="n">telescope</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;foxsi4-telescope6&quot;</span><span class="p">,</span>
+                            <span class="n">elements</span><span class="o">=</span><span class="p">(</span><span class="n">atm</span><span class="p">,</span> 
+                                      <span class="n">arf</span><span class="p">,</span>
+                                      <span class="p">),</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="foxsi4_telescope6_rmf">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.foxsi4_telescope6_rmf">[docs]</a>
+<span class="k">def</span> <span class="nf">foxsi4_telescope6_rmf</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Redistribution Matrix Function (RMF) for Telescope 6. </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    : `None`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The Telescope 6 Timepix detector response from </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2"> does not yet exist.&quot;</span><span class="p">)</span>
+    <span class="n">rmf</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">foxsi4_position6_detector_response</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">rmf</span></div>
+
+
+<div class="viewcode-block" id="asset_response_chain_plot">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.asset_response_chain_plot">[docs]</a>
+<span class="k">def</span> <span class="nf">asset_response_chain_plot</span><span class="p">(</span><span class="n">save_location</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the response chain data to visually check.&quot;&quot;&quot;</span>
+    <span class="n">pos2arffunc</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="n">foxsi4_telescope0_arf</span><span class="p">,</span> 
+                   <span class="mi">1</span><span class="p">:</span><span class="n">foxsi4_telescope1_arf</span><span class="p">,</span> 
+                   <span class="mi">2</span><span class="p">:</span><span class="n">foxsi4_telescope2_arf</span><span class="p">,</span> 
+                   <span class="mi">3</span><span class="p">:</span><span class="n">foxsi4_telescope3_arf</span><span class="p">,</span> 
+                   <span class="mi">4</span><span class="p">:</span><span class="n">foxsi4_telescope4_arf</span><span class="p">,</span> 
+                   <span class="mi">5</span><span class="p">:</span><span class="n">foxsi4_telescope5_arf</span><span class="p">,</span>
+                   <span class="mi">6</span><span class="p">:</span><span class="n">foxsi4_telescope6_arf</span><span class="p">,</span>
+                   <span class="p">}</span>
+    <span class="n">pos2rmffunc</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="n">foxsi4_telescope0_rmf</span><span class="p">,</span> 
+                   <span class="mi">1</span><span class="p">:</span><span class="n">foxsi4_telescope1_rmf</span><span class="p">,</span> 
+                   <span class="mi">2</span><span class="p">:</span><span class="n">foxsi4_telescope2_rmf</span><span class="p">,</span> 
+                   <span class="mi">3</span><span class="p">:</span><span class="n">foxsi4_telescope3_rmf</span><span class="p">,</span> 
+                   <span class="mi">4</span><span class="p">:</span><span class="n">foxsi4_telescope4_rmf</span><span class="p">,</span> 
+                   <span class="mi">5</span><span class="p">:</span><span class="n">foxsi4_telescope5_rmf</span><span class="p">,</span>
+                   <span class="mi">6</span><span class="p">:</span><span class="n">foxsi4_telescope6_rmf</span><span class="p">,</span>
+                   <span class="p">}</span>
+    
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pos2rmffunc</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">))</span>
+
+    <span class="n">original_fs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+
+    <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">positions</span><span class="p">):</span>
+        <span class="n">off_axis_angle</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">&lt;&lt;</span> <span class="n">u</span><span class="o">.</span><span class="n">arcmin</span>
+        <span class="n">pos_rmf</span> <span class="o">=</span> <span class="n">pos2rmffunc</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="n">region</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="mi">2</span><span class="o">&lt;=</span><span class="n">key</span><span class="o">&lt;=</span><span class="mi">5</span> <span class="k">else</span> <span class="n">pos2rmffunc</span><span class="p">[</span><span class="n">key</span><span class="p">]()</span>
+        <span class="n">mid_energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span> <span class="k">if</span> <span class="n">pos_rmf</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">pos_rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">pos_rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">pos_arf</span> <span class="o">=</span> <span class="n">pos2arffunc</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="n">mid_energies</span><span class="o">=</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">off_axis_angle</span><span class="o">=</span><span class="n">off_axis_angle</span><span class="p">)</span>
+
+        <span class="n">gs_ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">])</span>
+        <span class="n">gs_ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="p">])</span>
+        <span class="n">gs_ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="p">])</span>
+
+        <span class="n">gs_ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos_arf</span><span class="o">.</span><span class="n">mid_energies</span><span class="p">,</span> <span class="n">pos_arf</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
+        <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">pos_arf</span><span class="o">.</span><span class="n">mid_energies</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response [</span><span class="si">{</span><span class="n">pos_arf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pos. </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: ARF&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pos_rmf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">pos_rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                  <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">pos_rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                  <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">pos_rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                  <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">pos_rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+        <span class="n">aspect</span><span class="o">=</span><span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">extent</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">extent</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">-</span><span class="n">extent</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">gs_ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pos_rmf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> 
+                        <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> 
+                        <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">),</span> 
+                        <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span>
+                        <span class="n">aspect</span><span class="o">=</span><span class="n">aspect</span><span class="p">,</span>
+                        <span class="p">)</span>
+        <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response [</span><span class="si">{</span><span class="n">pos_rmf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count Energy [</span><span class="si">{</span><span class="n">pos_rmf</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">pos_rmf</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pos. </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: RMF&quot;</span><span class="p">)</span>
+
+        <span class="n">pos_srm</span> <span class="o">=</span> <span class="n">foxsi4_telescope_spectral_response</span><span class="p">(</span><span class="n">pos_arf</span><span class="p">,</span> <span class="n">pos_rmf</span><span class="p">)</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">gs_ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pos_srm</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> 
+                        <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> 
+                        <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">),</span> 
+                        <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span>
+                        <span class="n">aspect</span><span class="o">=</span><span class="n">aspect</span><span class="p">,</span>
+                        <span class="p">)</span>
+        <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response [</span><span class="si">{</span><span class="n">pos_srm</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count Energy [</span><span class="si">{</span><span class="n">pos_srm</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">pos_srm</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pos. </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: SRM&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">save_location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">save_location</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_location</span><span class="p">,</span><span class="s2">&quot;response-chain.png&quot;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_fs</span></div>
+
+
+<div class="viewcode-block" id="asset_response_hit_combination_plot">
+<a class="viewcode-back" href="../../response_tools.html#response_tools.responses.asset_response_hit_combination_plot">[docs]</a>
+<span class="k">def</span> <span class="nf">asset_response_hit_combination_plot</span><span class="p">(</span><span class="n">save_location</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Look at different combinations of the 1hit and 2hit responses.&quot;&quot;&quot;</span>
+    <span class="n">p5_rmf1</span> <span class="o">=</span> <span class="n">foxsi4_telescope5_rmf</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">_event_type</span><span class="o">=</span><span class="s2">&quot;1hit&quot;</span><span class="p">)</span>
+    <span class="n">p5_rmf2</span> <span class="o">=</span> <span class="n">foxsi4_telescope5_rmf</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">_event_type</span><span class="o">=</span><span class="s2">&quot;2hit&quot;</span><span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mf">4.9</span><span class="p">))</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">gs_ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">h1f</span><span class="p">,</span> <span class="n">h2f</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">h1f</span><span class="o">*</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">response</span> <span class="o">+</span> <span class="n">h2f</span><span class="o">*</span><span class="n">p5_rmf2</span><span class="o">.</span><span class="n">response</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">gs_ax0</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> 
+                      <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> 
+                      <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">0.001</span><span class="p">),</span> 
+                      <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+                      <span class="p">)</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response [</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count Energy [</span><span class="si">{</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pos. 5: RMF-(</span><span class="si">{</span><span class="n">h1f</span><span class="si">}</span><span class="s2">*1hit+</span><span class="si">{</span><span class="n">h2f</span><span class="si">}</span><span class="s2">*2hit)&quot;</span><span class="p">)</span>
+
+    <span class="n">gs_ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">h1f</span><span class="p">,</span> <span class="n">h2f</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">h1f</span><span class="o">*</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">response</span> <span class="o">+</span> <span class="n">h2f</span><span class="o">*</span><span class="n">p5_rmf2</span><span class="o">.</span><span class="n">response</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">gs_ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> 
+                      <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> 
+                      <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">0.001</span><span class="p">),</span> 
+                      <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+                      <span class="p">)</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response [</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count Energy [</span><span class="si">{</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pos. 5: RMF-(</span><span class="si">{</span><span class="n">h1f</span><span class="si">}</span><span class="s2">*1hit+</span><span class="si">{</span><span class="n">h2f</span><span class="si">}</span><span class="s2">*2hit)&quot;</span><span class="p">)</span>
+
+    <span class="n">gs_ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="n">h1f</span><span class="p">,</span> <span class="n">h2f</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">h1f</span><span class="o">*</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">response</span> <span class="o">+</span> <span class="n">h2f</span><span class="o">*</span><span class="n">p5_rmf2</span><span class="o">.</span><span class="n">response</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">gs_ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> 
+                      <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> 
+                      <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">0.001</span><span class="p">),</span> 
+                      <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> 
+                              <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+                      <span class="p">)</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response [</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count Energy [</span><span class="si">{</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">output_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Photon Energy [</span><span class="si">{</span><span class="n">p5_rmf1</span><span class="o">.</span><span class="n">input_energy_edges</span><span class="o">.</span><span class="n">unit</span><span class="si">:</span><span class="s2">latex</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">gs_ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pos. 5: RMF-(</span><span class="si">{</span><span class="n">h1f</span><span class="si">}</span><span class="s2">*1hit+</span><span class="si">{</span><span class="n">h2f</span><span class="si">}</span><span class="s2">*2hit)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">save_location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">save_location</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_location</span><span class="p">,</span><span class="s2">&quot;response-hit-combinations.png&quot;</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">save_location</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># ASSETS_PATH</span>
+    <span class="n">asset_response_chain_plot</span><span class="p">(</span><span class="n">save_location</span><span class="o">=</span><span class="n">save_location</span><span class="p">)</span>
+    <span class="n">asset_response_hit_combination_plot</span><span class="p">(</span><span class="n">save_location</span><span class="o">=</span><span class="n">save_location</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,452 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>response_tools.io.fetch_response_data &mdash; response-tools 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="/home/runner/work/response-tools/response-tools/docs/styles/svg_width_style.css?v=4fc4a161" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/Glyph_FOXSI4_favicon.png"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            response-tools
+              <img src="../../../_static/Glyph_FOXSI4_text.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../instrument.html">FOXSI-4 Instrumentation 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../observation.html">FOXSI-4 Observation <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../response_guide.html">What Is a Response? <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../general_instructions.html">Response-tools for FOXSI-4 <span>🦊</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Response-tools Examples 🦊</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Response-tools Code 🦊</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">response-tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">response_tools.io.fetch_response_data</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for response_tools.io.fetch_response_data</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Script to download data from FOXSI server.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">cmd</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="c1"># from pathlib import PureWindowsPath, PurePosixPath</span>
+
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">import</span> <span class="nn">inquirer</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urljoin</span>
+
+<span class="kn">from</span> <span class="nn">response_tools.io.load_yaml</span> <span class="kn">import</span> <span class="n">load_response_context</span>
+<span class="kn">from</span> <span class="nn">response_tools</span> <span class="kn">import</span> <span class="n">responseFilePath</span>
+
+<span class="n">local_prefix</span> <span class="o">=</span> <span class="s1">&#39;response-information&#39;</span>
+
+<span class="n">ignore_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;@eaDir/&#39;</span><span class="p">]</span>
+
+<span class="n">DEBUG</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="print_green">
+<a class="viewcode-back" href="../../../response_tools.io.html#response_tools.io.fetch_response_data.print_green">[docs]</a>
+<span class="k">def</span> <span class="nf">print_green</span><span class="p">(</span><span class="n">txt</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[92m&#39;</span> <span class="o">+</span> <span class="n">txt</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="print_red">
+<a class="viewcode-back" href="../../../response_tools.io.html#response_tools.io.fetch_response_data.print_red">[docs]</a>
+<span class="k">def</span> <span class="nf">print_red</span><span class="p">(</span><span class="n">txt</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[91m&#39;</span> <span class="o">+</span> <span class="n">txt</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DownloadType">
+<a class="viewcode-back" href="../../../response_tools.io.html#response_tools.io.fetch_response_data.DownloadType">[docs]</a>
+<span class="k">class</span> <span class="nc">DownloadType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">latest</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">historical</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">component</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">telescope</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="mi">5</span></div>
+
+
+
+
+<div class="viewcode-block" id="DownloadPrompt">
+<a class="viewcode-back" href="../../../response_tools.io.html#response_tools.io.fetch_response_data.DownloadPrompt">[docs]</a>
+<span class="k">class</span> <span class="nc">DownloadPrompt</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remote</span> <span class="o">=</span> <span class="s2">&quot;http://foxsi.space.umn.edu/data/response/response-components/&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_prefix</span> <span class="o">=</span> <span class="s1">&#39;response-information&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_prompt</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">inquirer</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
+                <span class="s2">&quot;query&quot;</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Which data products would you like to download?&quot;</span><span class="p">,</span>
+                <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">(</span><span class="s2">&quot;Get all latest products&quot;</span><span class="p">,</span>                 <span class="n">DownloadType</span><span class="o">.</span><span class="n">latest</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">&quot;Get all historical products&quot;</span><span class="p">,</span>             <span class="n">DownloadType</span><span class="o">.</span><span class="n">historical</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">&quot;Get specific response components&quot;</span><span class="p">,</span>        <span class="n">DownloadType</span><span class="o">.</span><span class="n">component</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">&quot;Get response components for telescope&quot;</span><span class="p">,</span>   <span class="n">DownloadType</span><span class="o">.</span><span class="n">telescope</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">&quot;Get specific file&quot;</span><span class="p">,</span>                       <span class="n">DownloadType</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theme</span> <span class="o">=</span> <span class="n">inquirer</span><span class="o">.</span><span class="n">themes</span><span class="o">.</span><span class="n">load_theme_from_dict</span><span class="p">({</span>
+            <span class="s2">&quot;Question&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;mark_color&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;brackets_color&quot;</span><span class="p">:</span> <span class="s2">&quot;normal&quot;</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;List&quot;</span><span class="p">:{</span>
+                <span class="s2">&quot;selection_color&quot;</span><span class="p">:</span> <span class="s2">&quot;bold_green&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;selection_cursor&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;&quot;</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt_machine</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">DownloadType</span><span class="o">.</span><span class="n">latest</span><span class="p">:</span>        <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_latest</span><span class="p">,</span>
+            <span class="n">DownloadType</span><span class="o">.</span><span class="n">historical</span><span class="p">:</span>    <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_historical</span><span class="p">,</span>
+            <span class="n">DownloadType</span><span class="o">.</span><span class="n">component</span><span class="p">:</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_prompt_component</span><span class="p">,</span>
+            <span class="n">DownloadType</span><span class="o">.</span><span class="n">telescope</span><span class="p">:</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_prompt_telecope</span><span class="p">,</span>
+            <span class="n">DownloadType</span><span class="o">.</span><span class="n">file</span><span class="p">:</span>          <span class="bp">self</span><span class="o">.</span><span class="n">_prompt_file</span>
+        <span class="p">}</span>
+
+        <span class="n">answers</span> <span class="o">=</span> <span class="n">inquirer</span><span class="o">.</span><span class="n">prompt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_prompt</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">theme</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_prompt</span><span class="p">(</span><span class="n">answers</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_handle_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reply</span><span class="p">:</span><span class="n">DownloadType</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">reply</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_machine</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prompt_machine</span><span class="p">[</span><span class="n">reply</span><span class="p">]()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Unimplemented user selection: &quot;</span> <span class="o">+</span> <span class="n">reply</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fetch_latest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;latest&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_fetch_historical</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;historical&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_prompt_component</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">component_prompt</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">inquirer</span><span class="o">.</span><span class="n">Checkbox</span><span class="p">(</span>
+                <span class="s2">&quot;component&quot;</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Which response component(s) would you like to download?&quot;</span><span class="p">,</span>
+                <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;detector response&quot;</span><span class="p">,</span> <span class="s2">&quot;attenuation&quot;</span><span class="p">,</span> <span class="s2">&quot;effective area&quot;</span><span class="p">,</span> <span class="s2">&quot;quantum efficiency&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">answers</span> <span class="o">=</span> <span class="n">inquirer</span><span class="o">.</span><span class="n">prompt</span><span class="p">(</span><span class="n">component_prompt</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">theme</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_prompt_telecope</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">telescope_prompt</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">inquirer</span><span class="o">.</span><span class="n">Checkbox</span><span class="p">(</span>
+                <span class="s2">&quot;telescope&quot;</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Which telescope&#39;s products would you like to download?&quot;</span><span class="p">,</span>
+                <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">(</span><span class="s2">&quot;P0 - CMOS detector,    2-shell optic&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">&quot;P1 - CMOS detector,    1-shell optic&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">&quot;P2 - CdTe detector,   10-shell optic&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">&quot;P3 - CdTe detector,    2-shell optic&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">&quot;P4 - CdTe detector,    1-shell optic&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">&quot;P5 - CdTe detector,   10-shell optic&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">&quot;P6 - Timepix detector, 2-shell optic&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">answers</span> <span class="o">=</span> <span class="n">inquirer</span><span class="o">.</span><span class="n">prompt</span><span class="p">(</span><span class="n">telescope_prompt</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">theme</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_prompt_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">file_prompt</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">inquirer</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span>
+                <span class="s2">&quot;file&quot;</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Provide the URL to download&quot;</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">answers</span> <span class="o">=</span> <span class="n">inquirer</span><span class="o">.</span><span class="n">prompt</span><span class="p">(</span><span class="n">file_prompt</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">theme</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">answers</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">])</span></div>
+
+
+
+
+<div class="viewcode-block" id="green_str">
+<a class="viewcode-back" href="../../../response_tools.io.html#response_tools.io.fetch_response_data.green_str">[docs]</a>
+<span class="k">def</span> <span class="nf">green_str</span><span class="p">(</span><span class="n">text</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[92m&quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span></div>
+
+        
+<div class="viewcode-block" id="foxsi4_list_missing_response_info">
+<a class="viewcode-back" href="../../../response_tools.io.html#response_tools.io.fetch_response_data.foxsi4_list_missing_response_info">[docs]</a>
+<span class="k">def</span> <span class="nf">foxsi4_list_missing_response_info</span><span class="p">(</span><span class="n">overwrite_all</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">overwrite_old</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check which response files need downloading, according to </span>
+<span class="sd">    ``response-information/info.yaml``.</span>
+<span class="sd">    </span>
+<span class="sd">    Look at all the required files in ``info.yaml``, and see which of them are not </span>
+<span class="sd">    already on the local disk.</span>
+<span class="sd">    </span>
+<span class="sd">    .. note:: Folders will only be flagged for download if they do not exist on disk.</span>
+<span class="sd">        A folder may be missing some of the needed response files, but this function will</span>
+<span class="sd">        not be aware! If you suspect you are missing some data (due to an interrupted </span>
+<span class="sd">        download, corruption, etc.), set the ``overwrite_all`` flag to ``True`` to pull</span>
+<span class="sd">        in all fresh data.</span>
+<span class="sd">        </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    overwrite_all : ``bool``</span>
+<span class="sd">        Whether to just download all required files, regardless of whether they appear</span>
+<span class="sd">        on the local disk or not. Use this flag if you are suspicious of the response</span>
+<span class="sd">        files you have on your computer.</span>
+<span class="sd">        </span>
+<span class="sd">    overwrite_old : ``bool``</span>
+<span class="sd">        Whether to replace old local files with newer versions, if new versions are </span>
+<span class="sd">        available. Currently throws ``NotImplementedError``.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    A tuple describing two items: ``files_to_get`` and ``folders_to_get``. These are </span>
+<span class="sd">    intended to be used by ``foxsi4_download_required()`` to actually do the downloading.</span>
+<span class="sd">    </span>
+<span class="sd">    ``files_to_get`` is a ``dict`` of each file that should be downloaded from the remote server. The keys in this dictionary are the file names from the ``info.yaml`` file. The value for that key is another ``dict``, which contains the remote server path to the file (under the &quot;remote&quot; key) and the local disk path to save the file (under the &quot;local&quot; key). Like this:</span>
+<span class="sd">    </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">            </span>
+<span class="sd">            files_to_get[&quot;a_response_file_name&quot;] == {</span>
+<span class="sd">                &quot;remote&quot;: &quot;http://foxsi.space.umn.edu/data/response/response-components/attenuation-data/a_response_file.fits&quot;,</span>
+<span class="sd">                &quot;local&quot;:  &quot;response-tools/response_tools/response-information/attenuation-data/a_response_file.fits&quot;</span>
+<span class="sd">            }</span>
+
+<span class="sd">    ``folders_to_get`` is a ``dict`` of each folder that should be downloaded from the remote server. The keys in this dictionary are the folder names from the ``info.yaml`` file. The value for that key is another ``dict``, which contains the remote server path to the folder (under the &quot;remote&quot; key) and the local disk path to save the folder (under the &quot;local&quot; key). Like this:</span>
+<span class="sd">    </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">            </span>
+<span class="sd">            folders_to_get[&quot;a_response_folder_name/&quot;] == {</span>
+<span class="sd">                &quot;remote&quot;: &quot;http://foxsi.space.umn.edu/data/response/response-components/attenuation-data/a_response_folder/&quot;,</span>
+<span class="sd">                &quot;local&quot;:  &quot;response-tools/response_tools/response-information/attenuation-data/a_response_folder/&quot;</span>
+<span class="sd">            }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">overwrite_old</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;No support yet for replacement of old file versions.&quot;</span><span class="p">)</span>
+        
+    <span class="n">req</span> <span class="o">=</span> <span class="n">load_response_context</span><span class="p">()</span>
+    <span class="n">server_url</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s2">&quot;remote_server&quot;</span><span class="p">]</span>
+    <span class="c1"># for urllib.parse.urljoin to work correctly, server path prefix must end in `/`:</span>
+    <span class="k">if</span> <span class="n">server_url</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+        <span class="n">server_url</span> <span class="o">+=</span> <span class="s2">&quot;/&quot;</span>
+    <span class="n">local_info_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">responseFilePath</span><span class="p">)</span>
+    <span class="n">files_to_get</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">folders_to_get</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">comp_name</span> <span class="ow">in</span> <span class="n">req</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># all response categories in info.yaml</span>
+        <span class="k">for</span> <span class="n">ftitle</span><span class="p">,</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">req</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="n">comp_name</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span> <span class="c1"># all file titles and paths</span>
+            <span class="n">path</span><span class="p">,</span><span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+            <span class="n">dest_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">local_info_dir</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dest_path</span><span class="p">)</span> <span class="ow">or</span> <span class="n">overwrite_all</span><span class="p">:</span>
+                <span class="c1"># If we don&#39;t have this path locally, better add it to the download list.</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span> <span class="ow">and</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span><span class="p">:</span>
+                    <span class="c1"># This is a folder. Add to the folder download list</span>
+                    <span class="n">folders_to_get</span><span class="p">[</span><span class="n">ftitle</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;remote&quot;</span><span class="p">:</span> <span class="n">urljoin</span><span class="p">(</span><span class="n">server_url</span><span class="p">,</span> <span class="n">fname</span><span class="p">),</span> 
+                        <span class="s2">&quot;local&quot;</span><span class="p">:</span> <span class="n">dest_path</span>
+                    <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># This is a file. Add to the files download list.</span>
+                    <span class="n">files_to_get</span><span class="p">[</span><span class="n">ftitle</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;remote&quot;</span><span class="p">:</span> <span class="n">urljoin</span><span class="p">(</span><span class="n">server_url</span><span class="p">,</span> <span class="n">fname</span><span class="p">),</span>
+                        <span class="s2">&quot;local&quot;</span><span class="p">:</span> <span class="n">dest_path</span> 
+                    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">files_to_get</span><span class="p">,</span> <span class="n">folders_to_get</span></div>
+
+    
+<div class="viewcode-block" id="foxsi4_download_required">
+<a class="viewcode-back" href="../../../response_tools.io.html#response_tools.io.fetch_response_data.foxsi4_download_required">[docs]</a>
+<span class="k">def</span> <span class="nf">foxsi4_download_required</span><span class="p">(</span><span class="n">overwrite_all</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">overwrite_old</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download all response component files specified in ``response-information/info.yaml``.</span>
+
+<span class="sd">        Download data products from a remote server to the local filesystem. Retrieves </span>
+<span class="sd">        server URL and all local paths for saving data from a config file:</span>
+<span class="sd">        ``response-tools/response-information/info.yaml``. All downloaded response data will </span>
+<span class="sd">        be saved under ``response-tools/response-information``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        overwrite_all : ``bool``</span>
+<span class="sd">            Whether to just download all required files, regardless of whether they appear</span>
+<span class="sd">            on the local disk or not. Use this flag if you are suspicious of the response</span>
+<span class="sd">            files you have on your computer.</span>
+<span class="sd">            </span>
+<span class="sd">        overwrite_old : ``bool``</span>
+<span class="sd">            Whether to replace old local files with newer versions, if new versions are </span>
+<span class="sd">            available. Currently throws ``NotImplementedError``.</span>
+
+<span class="sd">        verbose : ``bool``</span>
+<span class="sd">            Toggle for printing verbosely. If ``True``, download progress indicators and</span>
+<span class="sd">            filenames are displayed. If ``False``, nothing is printed at all.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        downloaded : ``dict``</span>
+<span class="sd">            A dict of downloaded data. Keys are the same file identifiers from the YAML</span>
+<span class="sd">            source. Values are the absolute paths on the local filesystem to the downloaded</span>
+<span class="sd">            file. Files which were already existed in the local filesystem (required no</span>
+<span class="sd">            downloaded) are not included in the return value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">overwrite_old</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;No support yet for replacement of old file versions.&quot;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">verbose_print</span><span class="p">(</span><span class="o">*</span><span class="n">something</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="n">something</span><span class="p">)</span>
+            
+    <span class="n">req</span> <span class="o">=</span> <span class="n">load_response_context</span><span class="p">()</span>
+    <span class="n">server_url</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s2">&quot;remote_server&quot;</span><span class="p">]</span>
+
+    <span class="c1"># # for urllib.parse.urljoin to work correctly, server path prefix must end in `/`:</span>
+    <span class="k">if</span> <span class="n">server_url</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+        <span class="n">server_url</span> <span class="o">+=</span> <span class="s2">&quot;/&quot;</span>
+
+    <span class="c1"># directory on local filesystem for saving data:</span>
+    <span class="n">local_info_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">responseFilePath</span><span class="p">)</span>
+    <span class="n">verbose_print</span><span class="p">(</span><span class="s2">&quot;Retrieving response products from:&quot;</span><span class="p">,</span> <span class="n">green_str</span><span class="p">(</span><span class="n">server_url</span><span class="p">))</span>
+    <span class="n">verbose_print</span><span class="p">(</span><span class="s2">&quot;Saving response products to:&quot;</span><span class="p">,</span> <span class="n">green_str</span><span class="p">(</span><span class="n">local_info_dir</span><span class="p">))</span>
+
+    <span class="n">files_to_get</span><span class="p">,</span> <span class="n">folders_to_get</span> <span class="o">=</span> <span class="n">foxsi4_list_missing_response_info</span><span class="p">(</span><span class="n">overwrite_all</span><span class="o">=</span><span class="n">overwrite_all</span><span class="p">,</span> <span class="n">overwrite_old</span><span class="o">=</span><span class="n">overwrite_old</span><span class="p">)</span>
+    
+    <span class="n">downloaded</span><span class="p">:</span><span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>   
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">files_to_get</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">folders_to_get</span><span class="p">:</span>
+        <span class="n">verbose_print</span><span class="p">(</span><span class="s2">&quot;Found nothing new to download&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">verbose_print</span><span class="p">(</span><span class="s2">&quot;Retrieving files...&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ftitle</span><span class="p">,</span> <span class="n">finfo</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">files_to_get</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">):</span>
+            <span class="n">remote_path</span> <span class="o">=</span> <span class="n">finfo</span><span class="p">[</span><span class="s2">&quot;remote&quot;</span><span class="p">]</span>
+            <span class="n">local_path</span> <span class="o">=</span> <span class="n">finfo</span><span class="p">[</span><span class="s2">&quot;local&quot;</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># create the folders along the save path, if needed</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">local_path</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">FileExistsError</span><span class="p">:</span>
+                <span class="k">pass</span>
+                
+            <span class="n">fname</span><span class="p">,</span> <span class="n">head</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">)</span>
+            <span class="n">green_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+            <span class="n">downloaded</span><span class="p">[</span><span class="n">ftitle</span><span class="p">]</span> <span class="o">=</span> <span class="n">fname</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Downloaded &quot;</span> <span class="o">+</span> <span class="n">green_str</span><span class="p">(</span><span class="n">green_name</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ftitle</span><span class="p">,</span> <span class="n">finfo</span> <span class="ow">in</span> <span class="n">folders_to_get</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">remote_path</span> <span class="o">=</span> <span class="n">finfo</span><span class="p">[</span><span class="s2">&quot;remote&quot;</span><span class="p">]</span>
+            <span class="n">local_path</span> <span class="o">=</span> <span class="n">finfo</span><span class="p">[</span><span class="s2">&quot;local&quot;</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># create the folders along the save path, if needed</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">local_path</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">FileExistsError</span><span class="p">:</span>
+                <span class="k">pass</span>
+                
+            <span class="c1"># get the contents of the folder</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">remote_path</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
+            <span class="c1"># make sure we extract all the hrefs then check the link has a &quot;.&quot; in it for an extension</span>
+            <span class="n">linked_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">))]</span>
+            <span class="c1"># just download the folder contents</span>
+            <span class="n">total_to_get</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">linked_files</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">link</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite_all</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">total_to_get</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">remote_path</span><span class="o">+</span><span class="n">link</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">link</span><span class="p">))</span>
+                    <span class="n">green_name</span> <span class="o">=</span> <span class="n">link</span>
+                    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Downloaded &quot;</span> <span class="o">+</span> <span class="n">green_str</span><span class="p">(</span><span class="n">green_name</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">total_to_get</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">verbose_print</span><span class="p">(</span><span class="s2">&quot;Found nothing new to download under&quot;</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">downloaded</span><span class="p">[</span><span class="n">ftitle</span><span class="p">]</span> <span class="o">=</span> <span class="n">local_path</span>
+            
+    <span class="k">return</span> <span class="n">downloaded</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">downloaded</span> <span class="o">=</span> <span class="n">foxsi4_download_required</span><span class="p">(</span><span class="n">overwrite_all</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">overwrite_old</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, The FOXSI Collaboration.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
