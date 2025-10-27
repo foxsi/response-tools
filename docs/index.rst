@@ -24,6 +24,7 @@ Documentation/help can be found in the `Response Tools Data Guide <https://githu
    general_instructions
    auto_examples/index
    code
+   versions_and_releases
 
 .. image:: foxsi-1sol.png
    :width: 400px
