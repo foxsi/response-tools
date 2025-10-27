@@ -4,20 +4,16 @@ This section of the documentation will provide meta information and track the hi
 
 In a list of versions, the latest will be at the top and the oldest at the bottom.
 
-## Response-tools versioning
+Files will be arranged by code version and component type. The same structure as the `response_tools.contextResponseInfo` dictionary will be used.
 
-Found via:
+## Version `1.0.0`
+
+The first complete version of the code. Found via:
 
 ```python
 import response_tools
 print(response_tools.__version__)
 ```
-
-- `1.0.0`: The first complete version of the code. Supports all of FOXSI-4's telescope components and initial version (`v1`) of the response files.
-
-## Response file versions
-
-Files will be arranged by component type and will follow the same structure as the `response_tools.contextResponseInfo` dictionary.
 
 ### Optics
 
