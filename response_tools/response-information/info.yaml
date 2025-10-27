@@ -19,8 +19,8 @@ files:
   detectors:
     cmos_det_telescope-0_resp: "detector-response-data/cmos/foxsi4_telescope-0_BASIC_RESPONSE_MATRIX_v1.fits"
     cmos_det_telescope-1_resp: "detector-response-data/cmos/foxsi4_telescope-1_BASIC_RESPONSE_MATRIX_v1.fits"
-    cdte_det_merged_resp: "detector-response-data/cdte/merged_v1/"
-    cdte_det_pt_resp: "detector-response-data/cdte/pt_v1/"
+    cdte_det_merged_resp: "detector-response-data/cdte/merged_v2/"
+    cdte_det_pt_resp: "detector-response-data/cdte/pt_v2/"
 
   attenuation:
     att_thermal_blanket: "attenuation-data/F4_Blanket_transmission_v1.dat"

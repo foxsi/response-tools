@@ -6,14 +6,29 @@ In a list of versions, the latest will be at the top and the oldest at the botto
 
 Files will be arranged by code version and component type. The same structure as the `response_tools.contextResponseInfo` dictionary will be used.
 
-## Version `1.0.0`
-
-The first complete version of the code. Found via:
+The version of the code can be found via:
 
 ```python
 import response_tools
 print(response_tools.__version__)
 ```
+
+## Version `1.0.1`
+
+[27 Oct. 2025] Updates the CdTe detector responses. Since an energy gain offset has been observed, analysis should be performed primarily on the Pt-side only.
+
+### Detectors
+
+- cdte_det_merged_resp:
+  - `v2`: detector-response-data/cdte/merged_v2/
+    - Incorporates the low energy threshold (LET) measurement results from UMN into the Pt-side CdTe response.
+- cdte_det_pt_resp:
+  - `v2`: detector-response-data/cdte/pt_v2/
+    - Incorporates the low energy threshold (LET) measurement results from UMN into the Pt-side CdTe response.
+
+## Version `1.0.0`
+
+[27 Oct. 2025] The first complete version of the code.
 
 ### Optics
 
