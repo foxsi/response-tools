@@ -13,6 +13,10 @@ import response_tools
 print(response_tools.__version__)
 ```
 
+## Version `1.0.2`
+
+[30 Oct. 2025] CdTe detector response files now share the same filename format across different versions and are now all supported in the codebase.
+
 ## Version `1.0.1`
 
 [27 Oct. 2025] Updates the CdTe detector responses. Since an energy gain offset has been observed, analysis should be performed primarily on the Pt-side only.
