@@ -370,10 +370,11 @@ def foxsi4_position2_detector_response(region:int=None, pitch=None, _side:str="m
 
     _event_type : `str`
         Define the type of event trigger being considered in the 
-        response. Must be in ["1hit", "2hit", ("all", "mix")]. 
-        Note: \"all\" and \"mix\" are the same but some from different 
-        naming conventions on the merged and individual detector sides. 
-        This will be fixed at some point in the future.
+        response. Must be in ["1hit", "2hit", "all"]. 
+        Note: \"all\" and \"mix\" (old) are the same but some from 
+        different naming conventions on the merged and individual 
+        detector sides. This has been fixed and all files use \"all\"
+        now.
         Default: "all"
 
     Returns
@@ -528,10 +529,11 @@ def foxsi4_position3_detector_response(region:int=None, pitch=None, _side:str="m
 
     _event_type : `str`
         Define the type of event trigger being considered in the 
-        response. Must be in ["1hit", "2hit", ("all", "mix")]. 
-        Note: \"all\" and \"mix\" are the same but some from different 
-        naming conventions on the merged and individual detector sides. 
-        This will be fixed at some point in the future.
+        response. Must be in ["1hit", "2hit", "all"]. 
+        Note: \"all\" and \"mix\" (old) are the same but some from 
+        different naming conventions on the merged and individual 
+        detector sides. This has been fixed and all files use \"all\"
+        now.
         Default: "all"
 
     Returns
@@ -662,10 +664,11 @@ def foxsi4_position4_detector_response(region:int=None, pitch=None, _side:str="m
 
     _event_type : `str`
         Define the type of event trigger being considered in the 
-        response. Must be in ["1hit", "2hit", ("all", "mix")]. 
-        Note: \"all\" and \"mix\" are the same but some from different 
-        naming conventions on the merged and individual detector sides. 
-        This will be fixed at some point in the future.
+        response. Must be in ["1hit", "2hit", "all"]. 
+        Note: \"all\" and \"mix\" (old) are the same but some from 
+        different naming conventions on the merged and individual 
+        detector sides. This has been fixed and all files use \"all\"
+        now.
         Default: "all"
 
     Returns
@@ -816,10 +819,11 @@ def foxsi4_position5_detector_response(region:int=None, pitch=None, _side:str="m
 
     _event_type : `str`
         Define the type of event trigger being considered in the 
-        response. Must be in ["1hit", "2hit", ("all", "mix")]. 
-        Note: \"all\" and \"mix\" are the same but some from different 
-        naming conventions on the merged and individual detector sides. 
-        This will be fixed at some point in the future.
+        response. Must be in ["1hit", "2hit", "all"]. 
+        Note: \"all\" and \"mix\" (old) are the same but some from 
+        different naming conventions on the merged and individual 
+        detector sides. This has been fixed and all files use \"all\"
+        now.
         Default: "all"
 
     Returns

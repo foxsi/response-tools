@@ -493,10 +493,11 @@ def foxsi4_telescope2_rmf(region:int=None, pitch=None, _side:str="merged", _even
 
     _event_type : `str`
         Define the type of event trigger being considered in the 
-        response. Must be in ["1hit", "2hit", ("all", "mix")]. 
-        Note: \"all\" and \"mix\" are the same but some from different 
-        naming conventions on the merged and individual detector sides. 
-        This will be fixed at some point in the future.
+        response. Must be in ["1hit", "2hit", "all"]. 
+        Note: \"all\" and \"mix\" (old) are the same but some from 
+        different naming conventions on the merged and individual 
+        detector sides. This has been fixed and all files use \"all\"
+        now.
         Default: "all"
 
     Returns
@@ -664,10 +665,11 @@ def foxsi4_telescope3_rmf(region:int=None, pitch=None, _side:str="merged", _even
 
     _event_type : `str`
         Define the type of event trigger being considered in the 
-        response. Must be in ["1hit", "2hit", ("all", "mix")]. 
-        Note: \"all\" and \"mix\" are the same but some from different 
-        naming conventions on the merged and individual detector sides. 
-        This will be fixed at some point in the future.
+        response. Must be in ["1hit", "2hit", "all"]. 
+        Note: \"all\" and \"mix\" (old) are the same but some from 
+        different naming conventions on the merged and individual 
+        detector sides. This has been fixed and all files use \"all\"
+        now.
         Default: "all"
 
     Returns
@@ -832,10 +834,11 @@ def foxsi4_telescope4_rmf(region:int=None, pitch=None, _side:str="merged", _even
 
     _event_type : `str`
         Define the type of event trigger being considered in the 
-        response. Must be in ["1hit", "2hit", ("all", "mix")]. 
-        Note: \"all\" and \"mix\" are the same but some from different 
-        naming conventions on the merged and individual detector sides. 
-        This will be fixed at some point in the future.
+        response. Must be in ["1hit", "2hit", "all"]. 
+        Note: \"all\" and \"mix\" (old) are the same but some from 
+        different naming conventions on the merged and individual 
+        detector sides. This has been fixed and all files use \"all\"
+        now.
         Default: "all"
 
     Returns
@@ -998,10 +1001,11 @@ def foxsi4_telescope5_rmf(region:int=None, pitch=None, _side:str="merged", _even
 
     _event_type : `str`
         Define the type of event trigger being considered in the 
-        response. Must be in ["1hit", "2hit", ("all", "mix")]. 
-        Note: \"all\" and \"mix\" are the same but some from different 
-        naming conventions on the merged and individual detector sides. 
-        This will be fixed at some point in the future.
+        response. Must be in ["1hit", "2hit", "all"]. 
+        Note: \"all\" and \"mix\" (old) are the same but some from 
+        different naming conventions on the merged and individual 
+        detector sides. This has been fixed and all files use \"all\"
+        now.
         Default: "all"
 
     Returns
