@@ -2,7 +2,7 @@
 
 This section of the documentation will provide meta information and track the history on the code and file versions.
 
-In a list of versions, the latest will be at the top and the oldest at the bottom.
+In a list of versions, the latest will be at the top and the oldest at the bottom. To find different versions of the code on Github, a user can either use the usual `git` commands and checkout the version commits or they can download them directly from the [Releases page](https://github.com/foxsi/response-tools/releases).
 
 Files will be arranged by code version and component type. The same structure as the `response_tools.contextResponseInfo` dictionary will be used.
 
