@@ -102,10 +102,11 @@ def cdte_det_resp(cdte:int=None, region:int=None, pitch=None, side:str="merged",
 
     event_type : `str`
         Define the type of event trigger being considered in the 
-        response. Must be in ["1hit", "2hit", ("all", "mix")]. 
-        Note: \"all\" and \"mix\" are the same but some from different 
-        naming conventions on the merged and individual detector sides. 
-        This will be fixed at some point in the future.
+        response. Must be in ["1hit", "2hit", "all"]. 
+        Note: \"all\" and \"mix\" (old) are the same but some from 
+        different naming conventions on the merged and individual 
+        detector sides. This has been fixed and all files use \"all\"
+        now.
         Default: "all"
 
     file : `str`
@@ -143,14 +144,9 @@ def cdte_det_resp(cdte:int=None, region:int=None, pitch=None, side:str="merged",
         logging.warning(f"In {sys._getframe().f_code.co_name}, the `side` must be in [\"pt\", \"merged\"].")
         return 
     
-    if event_type not in ["1hit", "2hit", "all", "mix"]:
-        logging.warning(f"In {sys._getframe().f_code.co_name}, the `event_type` must be in [\"1hit\", \"2hit\", (\"all\", \"mix\")].")
+    if event_type not in ["1hit", "2hit", "all"]:
+        logging.warning(f"In {sys._getframe().f_code.co_name}, the `event_type` must be in [\"1hit\", \"2hit\", \"all\"].")
         return 
-    
-    if side=="merged" and event_type=="mix":
-        event_type="all"
-    elif side in ["pt"] and event_type=="all":
-        event_type="mix"
     
     region = pitch2region[pitch] if have_pitch else region
     
