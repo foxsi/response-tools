@@ -283,7 +283,7 @@ def foxsi4_position2_thermal_blanket(mid_energies):
         the thermal blanket. See accessible information using 
         `.contents` on the output.
     """
-    r = att_thermal_blanket(mid_energies)
+    r = att_thermal_blanket(mid_energies, use_model=True)
     r.update_function_path(sys._getframe().f_code.co_name)
     return r
 
@@ -415,7 +415,7 @@ def foxsi4_position3_thermal_blanket(mid_energies):
         the thermal blanket. See accessible information using 
         `.contents` on the output.
     """
-    r = att_thermal_blanket(mid_energies)
+    r = att_thermal_blanket(mid_energies, use_model=True)
     r.update_function_path(sys._getframe().f_code.co_name)
     return r
 
@@ -574,7 +574,7 @@ def foxsi4_position4_thermal_blanket(mid_energies):
         the thermal blanket. See accessible information using 
         `.contents` on the output.
     """
-    r = att_thermal_blanket(mid_energies)
+    r = att_thermal_blanket(mid_energies, use_model=True)
     r.update_function_path(sys._getframe().f_code.co_name)
     return r
 
@@ -709,7 +709,7 @@ def foxsi4_position5_thermal_blanket(mid_energies):
         the thermal blanket. See accessible information using 
         `.contents` on the output.
     """
-    r = att_thermal_blanket(mid_energies)
+    r = att_thermal_blanket(mid_energies, use_model=True)
     r.update_function_path(sys._getframe().f_code.co_name)
     return r
 
@@ -864,7 +864,7 @@ def foxsi4_position6_thermal_blanket(mid_energies):
         the thermal blanket. See accessible information using 
         `.contents` on the output.
     """
-    r = att_thermal_blanket(mid_energies)
+    r = att_thermal_blanket(mid_energies, use_model=True)
     r.update_function_path(sys._getframe().f_code.co_name)
     return r
 
