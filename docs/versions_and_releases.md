@@ -13,6 +13,24 @@ import response_tools
 print(response_tools.__version__)
 ```
 
+## Version `1.0.3`
+
+[4 Nov. 2025] Updates to the thermal blanketing transmission files and the atmospheric attenuation file.
+
+### Attenuation
+
+- att_thermal_blanket:
+  - No longer exists.
+- att_early_cmos_prefilter
+  - `v1`: attenuation-data/F4_Blanket_transmission_v1.dat
+    - Was att_thermal_blanket.
+- att_modeled_thermal_blanket
+  - `v1`: attenuation-data/FOXSI4_theoretical_thermal_blanket_transmission_v1.fits
+    - Modeled attenuation for the thermal blanket.
+- att_measured_thermal_blanket
+  - `v1`: attenuation-data/FOXSI4_measured_thermal_blanket_transmission_v1.fits
+    - Measured attenuation for the thermal blanket.
+
 ## Version `1.0.2`
 
 [30 Oct. 2025] CdTe detector response files now share the same filename format across different versions and are now all supported in the codebase.

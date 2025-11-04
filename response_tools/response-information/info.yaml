@@ -23,7 +23,9 @@ files:
     cdte_det_pt_resp: "detector-response-data/cdte/pt_v2/"
 
   attenuation:
-    att_thermal_blanket: "attenuation-data/F4_Blanket_transmission_v1.dat"
+    att_early_thermal_blanket: "attenuation-data/F4_Blanket_transmission_v1.dat"
+    att_modeled_thermal_blanket: "attenuation-data/FOXSI4_theoretical_thermal_blanket_transmission_v1.fits"
+    att_measured_thermal_blanket: "attenuation-data/FOXSI4_measured_thermal_blanket_transmission_v1.fits"
     att_pixelated: "attenuation-data/20240607_fosxi4_transmission_v1.csv"
     att_al_mylar: "attenuation-data/thin_mylar_p3_p5_theoretical_v1.csv"
     att_telescope-2_uniform_al_cdte: "attenuation-data/unif_att_p2_theoretical_v1.csv"

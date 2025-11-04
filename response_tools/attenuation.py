@@ -39,8 +39,64 @@ class AttOutput(BaseOutput):
 
 # thermal blanket attenuation
 @u.quantity_input(mid_energies=u.keV)
-def att_thermal_blanket(mid_energies, file=None):
+def att_thermal_blanket(mid_energies, use_model=False, file=None): 
     """Thermal blanket transmittance interpolated to the given energies.
+
+    Parameters
+    ----------
+    mid_energies : `astropy.units.quantity.Quantity`
+        The energies at which the transmission is required. If 
+        `numpy.nan<<astropy.units.keV` is passed then an entry for all 
+        native file energies are returned. 
+        Unit must be convertable to keV.
+
+    use_model : `bool`
+        Defines whether to use the measured values for the thermal
+        blanket (False) or the modelled values (True).
+        Default: False
+
+    file : `str` or `None`
+        Gives the ability to provide custom files for the information. 
+        Default: None
+
+    Returns
+    -------
+    : `AttOutput`
+        An object containing the energies for each transmission, the 
+        transmissions, and more. See accessible information using 
+        `.contents` on the output.
+    """
+    if not use_model:
+        _f = os.path.join(FILE_PATH, RESPONSE_INFO_TYPE["att_measured_thermal_blanket"]) if file is None else file
+        with fits.open(_f) as hdul:
+            att_es = hdul[1].data["ENERGY"][0] << u.keV
+            att_values = hdul[1].data["MEASURED_TRANS"][0] << u.dimensionless_unscaled
+    else:
+        _f = os.path.join(FILE_PATH, RESPONSE_INFO_TYPE["att_modeled_thermal_blanket"]) if file is None else file
+        with fits.open(_f) as hdul:
+            att_es = hdul[1].data["ENERGY"][0] << u.keV
+            att_values = hdul[1].data["THEO_TRANS"][0] << u.dimensionless_unscaled
+    
+    mid_energies = native_resolution(native_x=att_es, input_x=mid_energies)
+
+    return AttOutput(filename=_f,
+                     function_path=f"{sys._getframe().f_code.co_name}",
+                     mid_energies=mid_energies,
+                     transmissions=np.interp(mid_energies.value, 
+                                             att_es.value, 
+                                             att_values.value, 
+                                             left=0, 
+                                             right=1) << u.dimensionless_unscaled,
+                     attenuation_type="Thermal-Blanket",
+                     model=use_model,
+                     )
+
+# early version of the thermal blanket attenuation
+@u.quantity_input(mid_energies=u.keV)
+def att_early_thermal_blanket(mid_energies, file=None): 
+    """Early version of the thermal blanket transmission.
+
+    You're likely looking for `att_thermal_blanket`.
 
     Parameters
     ----------
@@ -61,7 +117,8 @@ def att_thermal_blanket(mid_energies, file=None):
         transmissions, and more. See accessible information using 
         `.contents` on the output.
     """
-    _f = os.path.join(FILE_PATH, RESPONSE_INFO_TYPE["att_thermal_blanket"]) if file is None else file
+    logging.warning(f"Caution: This might not be the function ({sys._getframe().f_code.co_name}) you are looking for, please see `att_thermal_blanket`.")
+    _f = os.path.join(FILE_PATH, RESPONSE_INFO_TYPE["att_early_thermal_blanket"]) if file is None else file
     att = scipy.io.readsav(_f)
     att_es, att_values = att["energy_kev"] << u.keV, att["f4_transmission"] << u.dimensionless_unscaled
     mid_energies = native_resolution(native_x=att_es, input_x=mid_energies)
@@ -74,7 +131,7 @@ def att_thermal_blanket(mid_energies, file=None):
                                              att_values.value, 
                                              left=0, 
                                              right=1) << u.dimensionless_unscaled,
-                     attenuation_type="Thermal-Blanket",
+                     attenuation_type="Early-Thermal-Blanket",
                      model=True,
                      )
 
@@ -552,14 +609,19 @@ def asset_att(save_location=None):
 
     tb_col, obf0_col, obf1_col, cdte_fixed2_col, cdte_fixed4_col = plt.cm.viridis([0, 0.2, 0.4, 0.6, 0.8])
     pix_att_meas_col, pix_att_mod_col, al_mylar_mod_col, cmost0_col, cmost1_col = plt.cm.plasma([0, 0.2, 0.4, 0.6, 0.8])
-    cmost2_col, cmost3_col = plt.cm.cividis([0.1, 0.9])
+    cmost2_col, tb_cola, tb_colb, cmost3_col = plt.cm.cividis([0.1, 0.35, 0.7, 0.9])
 
     # all attenuators
     plt.figure(figsize=(10,8))
-    att_therm_bl = zeroes2nans(att_thermal_blanket(mid_energies).transmissions)
-    plt.ylabel(f"Transmission [{att_therm_bl.unit:latex}]")
+    att_therm_bl_early = zeroes2nans(att_early_thermal_blanket(mid_energies).transmissions)
+    plt.ylabel(f"Transmission [{att_therm_bl_early.unit:latex}]")
     plt.xlabel(f"Energy [{mid_energies.unit:latex}]")
-    p1 = plt.plot(mid_energies, att_therm_bl, color=tb_col, ls="-", label="Thermal blanket")
+    p1 = plt.plot(mid_energies, att_therm_bl_early, color=tb_col, ls="--", lw=4, label="Early Thermal blanket")
+
+    att_therm_bl_model = zeroes2nans(att_thermal_blanket(mid_energies, use_model=True).transmissions)
+    att_therm_bl_measure = zeroes2nans(att_thermal_blanket(mid_energies, use_model=False).transmissions)
+    p1a = plt.plot(mid_energies, att_therm_bl_model, color=tb_cola, ls="-", label="Model Thermal blanket")
+    p1b = plt.plot(mid_energies, att_therm_bl_measure, color=tb_colb, ls="-", label="Meas. Thermal blanket")
 
     old_prefilter0 = zeroes2nans(_att_old_prefilter(mid_energies, position=0).transmissions)
     p2 = plt.plot(mid_energies, old_prefilter0, color=obf0_col, ls="--", label="Old pre-filter 0", lw=3)
@@ -600,7 +662,7 @@ def asset_att(save_location=None):
 
     plt.title("Attenuators")
     
-    plt.legend(handles=p1+p2+p3+p4+p5+p6+p7+p8+p9+p10+p11+p12)
+    plt.legend(handles=p1+p1a+p1b+p2+p3+p4+p5+p6+p7+p8+p9+p10+p11+p12)
     plt.tight_layout()
     if save_location is not None:
         pathlib.Path(save_location).mkdir(parents=True, exist_ok=True)
