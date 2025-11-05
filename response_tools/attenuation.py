@@ -8,6 +8,7 @@ import sys
 import warnings
 
 from astropy.io import fits
+from astropy.time import core, Time
 import astropy.units as u
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -36,6 +37,7 @@ class AttOutput(BaseOutput):
     mid_energies: u.Quantity = np.nan<<u.keV
     off_axis_angle: u.Quantity = np.nan<<u.arcmin
     times: u.Quantity = np.nan<<u.second
+    times_utc: core.Time = None
 
 # thermal blanket attenuation
 @u.quantity_input(mid_energies=u.keV)
@@ -477,27 +479,9 @@ def att_cmos_collimator_ratio(off_axis_angle, telescope=None, file=None):
                      model=True,
                      )
 
-@u.quantity_input(mid_energies=u.keV, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV)
 def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
-    """ 
-    Atmsopheric attenuation from and for FOXSI-4 flight data.
-
-    energy = array containing energy in keV for energies 0.01 - 30 keV. Array has 506 elements
-		 
-    atmospheric_trans = array containing transmission for all energy values in energy array.
-                        Transmission is calculated for 10284 times covering the FOXSI-4 flight. 
-                        Array shape is: [10284,506] which corresponds to transmission for [time,energy]
-                        
-                        Launch time t = 0 corresponds to  index [0,*] 
-                        Observation starts at t = 100s corresponds to index [2000,*]
-                        Approximate middle of observation at t = 280s corresponds to index [5600,*]
-                        End of observation at t = 461s corresponds to index [9200,*] 
-
-
-    Units in the FITS header needs to change from keV->eV
-    Need an array of times included
-    -> 10,284 entries and t=0 is index `0` while t=100 is index `2000`
-    -> final time is 100/2000 * 10284 = 514.2
+    """ Atmsopheric attenuation from and for FOXSI-4 flight data.
 
     Parameters
     ----------
@@ -513,7 +497,13 @@ def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
         `[numpy.nan, numpy.nan]<<astropy.units.second` then the full 
         time will be considered and the output will not be averaged but 
         a grid of the transmissions at all times and at any provided
-        energies.
+        energies. Should be of length 2.
+        Can be given as seconds since launch:
+        - Observation start: 100<<astropy.units.second
+        - Observation end: 461<<astropy.units.second
+        Can be given as UTC time as well either as a string or and 
+        Astropy time.
+        - String format: YYYY-mm-ddTHH:MM:SS
     
     file : `str` or `None`
         Path/name of a custom file wanting to be loaded in as the 
@@ -526,19 +516,31 @@ def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
         transmissions, and more. See accessible information using 
         `.contents` on the output.
     """
-    if (time_range is None) or np.all(np.isnan(time_range)):
-        time_range = [np.nan, np.nan] << u.second
-    
-    if (len(time_range)!=2):
-        warnings.warn(f"{sys._getframe().f_code.co_name} `time_range` (convertable to astropy.units.seconds) should be of length 2.")
-        return
 
     _f = os.path.join(FILE_PATH, RESPONSE_INFO_TYPE["att_foxsi4_atmosphere"]) if file is None else file
     with fits.open(_f) as hdul:
-        native_times, native_energies, transmission = hdul[1].data["TIME"][0]<<u.second, (hdul[1].data["ENERGY"][0]<<u.eV)<<u.keV, hdul[1].data["ATMOSPHERIC_TRANS"][0]<<u.dimensionless_unscaled
+        native_times, _native_utc, native_energies, transmission = hdul[1].data["TIME"][0]<<u.second, hdul[1].data["TIME_UTC"][0], (hdul[1].data["ENERGY"][0]<<u.eV)<<u.keV, hdul[1].data["ATMOSPHERIC_TRANS"][0]<<u.dimensionless_unscaled
 
         # assume some sort of uniform uniform binning
         en_res = np.mean(np.diff(native_energies))
+        _native_utc_with_dec = [i if "." in i else f"{i}." for i in _native_utc] 
+        _native_utc_isot = [f"{i:0<34}" for i in _native_utc_with_dec]
+        native_utc = Time(_native_utc_isot, format='isot', scale='utc')
+
+    # handle time
+    if type(time_range)==core.Time:
+        # get UTC time in Astropy
+        user_utc = Time(time_range, format='isot', scale='utc')
+        # use first time in `native_times` as reference
+        time_range = (user_utc - native_utc[0]).sec << u.second
+    elif (time_range is None) or np.all(np.isnan(time_range)):
+        time_range = [np.nan, np.nan] << u.second
+    else:
+        assert (type(time_range)==u.Quantity) and ((time_range<<u.second).unit==u.second), f"{sys._getframe().f_code.co_name}: `time_range` should be an array of length 2 and either an Astropy Times list or a `astropy.units.second` (or convertable to) unit list"
+    
+    if (len(time_range)!=2):
+        warnings.warn(f"{sys._getframe().f_code.co_name}: `time_range` should be of length 2.")
+        return
 
     # if the time range is nothing them just want all the times, deal with energies separately
     if np.all(np.isnan(time_range)):
@@ -548,6 +550,7 @@ def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
                              function_path=f"{sys._getframe().f_code.co_name}",
                              mid_energies=native_energies<<u.keV,
                              times=native_times,
+                             times_utc=native_utc,
                              transmissions=transmission,
                              attenuation_type="File-Atmospheric-Transmissions",
                              model=True,
@@ -571,6 +574,7 @@ def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
                          function_path=f"{sys._getframe().f_code.co_name}",
                          mid_energies=mid_energies,
                          times=all_times,
+                         times_utc=native_utc,
                          transmissions=i(X, Y)<<u.dimensionless_unscaled,
                          attenuation_type="Energy-Interpolated-Atmospheric-Transmissions",
                          model=True,
@@ -587,6 +591,7 @@ def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
     # energy_inds = np.insert(energy_inds, 1, energy_inds[-1]+1) if energy_inds[-1]<(len(energy_inds)-1) else energy_inds
 
     times = native_times[time_inds]
+    times_utc = native_utc[time_inds]
     transmissions = transmission[:,time_inds]
 
     tave_transmissions = np.mean(transmissions, axis=1)
@@ -595,6 +600,7 @@ def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
                      function_path=f"{sys._getframe().f_code.co_name}",
                      mid_energies=mid_energies<<u.keV,
                      times=times,
+                     times_utc=times_utc,
                      transmissions=np.interp(mid_energies.value, 
                                              native_energies.value, 
                                              tave_transmissions.value, 
@@ -804,6 +810,7 @@ def asset_atm(save_location=None):
     plt.show()
 
 if __name__=="__main__":
+    att_foxsi4_atmosphere([np.nan]<<u.keV, time_range=Time(["2024-04-17T22:14:00", "2024-04-17T22:15:00"], format='isot', scale='utc'))
     save_location = None # ASSETS_PATH
     
     asset_att(save_location=save_location)

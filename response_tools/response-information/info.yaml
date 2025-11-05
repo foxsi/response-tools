@@ -36,7 +36,7 @@ files:
     att_telescope-1_cmos_obfilter: "attenuation-data/foxsi4_telescope-1_BASIC_optical_blocking_filter_transmittance_v1.fits"
     att_telescope-0_cmos_prefilter: "attenuation-data/foxsi4_telescope-0_BASIC_attenuation_filter_transmittance_v1.fits"
     att_telescope-1_cmos_prefilter: "attenuation-data/foxsi4_telescope-1_BASIC_attenuation_filter_transmittance_v1.fits"
-    att_foxsi4_atmosphere: "attenuation-data/FOXSI4_atmospheric_transmission_v1.fits"
+    att_foxsi4_atmosphere: "attenuation-data/FOXSI4_atmospheric_transmission_v2.fits"
     att_early_cmos_prefilter: "attenuation-data/CMOST_Prefilter_transmission_v1.dat"
 
   quantum_efficiency:

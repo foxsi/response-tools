@@ -30,6 +30,9 @@ print(response_tools.__version__)
 - att_measured_thermal_blanket
   - `v1`: attenuation-data/FOXSI4_measured_thermal_blanket_transmission_v1.fits
     - Measured attenuation for the thermal blanket.
+- att_foxsi4_atmosphere:
+  - `v2`: attenuation-data/FOXSI4_atmospheric_transmission_v2.fits
+    - Times can now be selected via seconds from launch or in UTC.
 
 ## Version `1.0.2`
 
