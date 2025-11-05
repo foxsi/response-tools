@@ -10,7 +10,7 @@ FOXSI-4 was launched from the Poker Flat Research Range in Alaska on April 17, 2
 
 *Relevant for functions with inputs like: `time_range`.*
 
-The time range is important for calculating the atmospheric transmission, which is a key component of the ARF. Depending on the objectives of the analysis, the user may select the appropriate time range using the information provided below:
+The time range is important for calculating the atmospheric transmission (see the [Time ranges and the atmospheric response](https://foxsi.github.io/response-tools/auto_examples/plot_atmospheric_response.html#sphx-glr-auto-examples-plot-atmospheric-response-py) example), which is a key component of the ARF. Depending on the objectives of the analysis, the user may select the appropriate time range using the information provided below:
 
 **Observation time intervals with stable pointing for more than a few seconds:**
 

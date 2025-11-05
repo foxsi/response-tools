@@ -21,6 +21,11 @@ Data handling examples
   * File: ``plot_rmf_examples.py``.
   * Shows how to obtain and work with a detector's RMF data-class.
 
+* **Time ranges and the atmospheric response**
+
+  * File: ``plot_atmospheric_response.py``.
+  * Shows how to choose a time range in the code for atmospheric transmissions.
+
 Plotting examples
 -----------------
 

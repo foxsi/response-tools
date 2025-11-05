@@ -9,7 +9,9 @@ import warnings
 
 from astropy.io import fits
 from astropy.time import core, Time
+from astropy.visualization import time_support
 import astropy.units as u
+from matplotlib.dates import DateFormatter
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
@@ -497,13 +499,14 @@ def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
         `[numpy.nan, numpy.nan]<<astropy.units.second` then the full 
         time will be considered and the output will not be averaged but 
         a grid of the transmissions at all times and at any provided
-        energies. Should be of length 2.
-        Can be given as seconds since launch:
+        energies. Should be of length 2. Can be given as seconds since 
+        launch or as UTC time as well either as a string or and Astropy 
+        time.
         - Observation start: 100<<astropy.units.second
         - Observation end: 461<<astropy.units.second
-        Can be given as UTC time as well either as a string or and 
-        Astropy time.
         - String format: YYYY-mm-ddTHH:MM:SS
+        - Observation start: 2024-04-17T22:14:40
+        - Observation end: 2024-04-17T22:20:41
     
     file : `str` or `None`
         Path/name of a custom file wanting to be loaded in as the 
@@ -515,6 +518,22 @@ def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
         An object containing the energies for each transmission, the 
         transmissions, and more. See accessible information using 
         `.contents` on the output.
+
+    Example
+    -------
+    >>> from astropy.time import Time
+    >>> import astropy.units as u
+    # two equivalent calls to the function
+    # using Astorpy times
+    >>> a0 = att_foxsi4_atmosphere([np.nan]<<u.keV,
+                                   time_range=Time(["2024-04-17T22:14:40",
+                                                    "2024-04-17T22:20:41"],
+                                                   format='isot',
+                                                   scale='utc'))
+    # using seconds from launch values (unit-aware)
+    >>> a1 = att_foxsi4_atmosphere([np.nan]<<u.keV,
+                                   time_range=[100,
+                                               461]<<u.second)
     """
 
     _f = os.path.join(FILE_PATH, RESPONSE_INFO_TYPE["att_foxsi4_atmosphere"]) if file is None else file
@@ -531,6 +550,7 @@ def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
     if type(time_range)==core.Time:
         # get UTC time in Astropy
         user_utc = Time(time_range, format='isot', scale='utc')
+
         # use first time in `native_times` as reference
         time_range = (user_utc - native_utc[0]).sec << u.second
     elif (time_range is None) or np.all(np.isnan(time_range)):
@@ -717,9 +737,11 @@ def asset_sigmoid(save_location=None):
 def asset_atm(save_location=None):
     fig = plt.figure(figsize=(16,6))
 
-    obs_start = 100
-    obs_mid = 280
-    obs_end = 461
+    time_support()
+
+    obs_start = 100 << u.second
+    obs_mid = 280 << u.second
+    obs_end = 461 << u.second
 
     gs = gridspec.GridSpec(1, 3)
 
@@ -727,28 +749,56 @@ def asset_atm(save_location=None):
 
     energy0, time0 = [1]<<u.keV, np.nan<<u.second
     atm0 = att_foxsi4_atmosphere(mid_energies=energy0, time_range=time0)
-    p0 = gs_ax0.plot(atm0.times, atm0.transmissions, ls=":", label=f"energy:{energy0:latex}\ntime:{time0:latex}", lw=3)
+    p0 = gs_ax0.plot(atm0.times_utc, atm0.transmissions, ls=":", label=f"energy:{energy0:latex}\ntime:{time0:latex}", lw=3)
 
     energy1, time1 = [1, 3, 5, 10, 15]<<u.keV, np.nan<<u.second
     atm1 = att_foxsi4_atmosphere(mid_energies=energy1, time_range=time1)
     p1 = []
     for i in range(len(energy1)):
-        p1 += gs_ax0.plot(atm1.times, atm1.transmissions[:,i], ls="-", label=f"energy:{energy1[i]:latex}")
+        p1 += gs_ax0.plot(atm1.times_utc, atm1.transmissions[:,i], ls="-", label=f"energy:{energy1[i]:latex}")
+
+    diff_from_first_to_start = obs_start - atm1.times[0]
+    obs_start_utc = atm1.times_utc[0] + diff_from_first_to_start
+    diff_from_first_to_mid = obs_mid - atm1.times[0]
+    obs_mid_utc = atm1.times_utc[0] + diff_from_first_to_mid
+    diff_from_first_to_end = obs_end - atm1.times[0]
+    obs_end_utc = atm1.times_utc[0] + diff_from_first_to_end
 
     gs_ax0.set_ylabel(f"Transmission [{atm0.transmissions.unit:latex}]")
-    gs_ax0.set_xlabel(f"Time (Obs. start=100 s) [{atm0.times.unit:latex}]")
+    gs_ax0.set_xlabel(f"UTC Time (Obs. start~{obs_start_utc})")
     gs_ax0.set_ylim([0,1.05])
-    v0 = gs_ax0.axvline(obs_start, ls="-.", c="k", label="obs. start")
-    v1 = gs_ax0.axvline(obs_mid, ls="-.", c="k", label="obs. middle")
-    v2 = gs_ax0.axvline(obs_end, ls="-.", c="k", label="obs. end")
-    gs_ax0.set_xlim([0, 600])
+    gs_ax0.set_xlim([atm1.times_utc[0], atm1.times_utc[-1]])
     gs_ax0.set_title("Sampled energy band transmission vs. time")
+
+    date_format = DateFormatter("%H:%M:%S")
+    gs_ax0.xaxis.set_major_formatter(date_format)
+
+    gs_ax0b = gs_ax0.twiny()
+    gs_ax0b_color = "grey"
+    _ = gs_ax0b.plot(atm0.times, atm0.transmissions, lw=0)
+    v0 = gs_ax0b.axvline(obs_start.value, ls="-.", c="k", label="obs. start")
+    v1 = gs_ax0b.axvline(obs_mid.value, ls="-.", c="k", label="obs. middle")
+    v2 = gs_ax0b.axvline(obs_end.value, ls="-.", c="k", label="obs. end")
+    gs_ax0b.set_xlabel(f"Time (Obs. start~100 s) [{atm0.times.unit:latex}]", color=gs_ax0b_color)
+    gs_ax0b.set_xlim([atm1.times[0].value, atm1.times[-1].value])
+    gs_ax0b.tick_params(axis="x", labelcolor=gs_ax0b_color, color=gs_ax0b_color, which="both")
+
+    _y_time_loc = 0.3
+    _x_offset = 4 << u.second
+    _y_offset = 0.3
+    gs_ax0.annotate(f"{obs_start_utc.strftime('%H:%M:%S')} UTC", (obs_start_utc+_x_offset, _y_time_loc), rotation=90)
+    gs_ax0.annotate(f"{obs_mid_utc.strftime('%H:%M:%S')} UTC", (obs_mid_utc+_x_offset, _y_time_loc+_y_offset), rotation=90)
+    gs_ax0.annotate(f"{obs_end_utc.strftime('%H:%M:%S')} UTC", (obs_end_utc, _y_time_loc), rotation=90, ha="right")
+    _y_sec_loc = _y_time_loc+0.25
+    gs_ax0b.annotate(f"{obs_start:.0f}", (obs_start.value+_x_offset.value, _y_sec_loc), color=gs_ax0b_color, rotation=90)
+    gs_ax0b.annotate(f"{obs_mid:.0f}", (obs_mid.value+_x_offset.value, _y_sec_loc+_y_offset), color=gs_ax0b_color, rotation=90)
+    gs_ax0b.annotate(f"{obs_end:.0f}", (obs_end.value, _y_sec_loc), color=gs_ax0b_color, rotation=90, ha="right")
+
     plt.legend(handles=p0+p1+[v0,v1,v2])
-    
 
     gs_ax1 = fig.add_subplot(gs[0, 1])
 
-    energy2, time2 = np.nan<<u.keV, [obs_start, obs_end]<<u.second
+    energy2, time2 = np.nan<<u.keV, [obs_start.value, obs_end.value]<<u.second
     atm2 = att_foxsi4_atmosphere(mid_energies=energy2, time_range=time2)
     p2 = gs_ax1.plot(atm2.mid_energies, atm2.transmissions, ls="-", label=f"time range:{time2:latex}")
 
@@ -760,13 +810,20 @@ def asset_atm(save_location=None):
     p4 = gs_ax1.plot(atm3.mid_energies, atm3.transmissions[:, 5600], ls="-", label=f"time:{atm3.times[5600]:latex}")
     p5 = gs_ax1.plot(atm3.mid_energies, atm3.transmissions[:, 9200], ls="-", label=f"time:{atm3.times[9200]:latex}")
 
+    cmos_le = 0.8<<u.keV
+    v3 = gs_ax1.axvline(cmos_le.value, ls="-.", c="k", label="CMOS energies")
+    gs_ax1.arrow(cmos_le.value, 0.85, 1, 0, length_includes_head=True, head_width=0.02, head_length=0.2, color="k")
+    cdte_le = 4<<u.keV
+    v4 = gs_ax1.axvline(cdte_le.value, ls=":", c="k", label="CdTe energies")
+    gs_ax1.arrow(cdte_le.value, 0.85, 5, 0, length_includes_head=True, head_width=0.02, head_length=1, color="k")
+
     gs_ax1.set_ylabel(f"Transmission [{atm3.transmissions.unit:latex}]")
     gs_ax1.set_xlabel(f"Energy [{atm3.mid_energies.unit:latex}]")
     gs_ax1.set_ylim([0,1.05])
     gs_ax1.set_xlim([0.01, 30])
     gs_ax1.set_xscale("log")
     gs_ax1.set_title("Time averaged and time sampled transmission vs. energy")
-    plt.legend(handles=p2+p3+p4+p5)
+    plt.legend(handles=p2+p3+p4+p5+[v3,v4])
 
     
     gs_ax2 = fig.add_subplot(gs[0, 2])
@@ -780,6 +837,13 @@ def asset_atm(save_location=None):
     atm5 = att_foxsi4_atmosphere(mid_energies=energy5, time_range=time5)
     colour5 = "orange"
     gs_ax2.plot(atm5.mid_energies, atm5.transmissions, label=f"time range:{atm5.times[0]:.2f}$-${atm5.times[-1]:.2f}\nCdTe range+response resolution", marker="x", ms=2, c=colour5)
+
+    # add the lowest energies of the detectors
+    v5 = gs_ax2.axvline(cmos_le.value, ls="-.", c="k", label="CMOS energies")
+    gs_ax2.arrow(cmos_le.value, 0.85, 1, 0, length_includes_head=True, head_width=0.02, head_length=0.2, color="k")
+    v6 = gs_ax2.axvline(cdte_le.value, ls=":", c="k", label="CdTe energies")
+    gs_ax2.arrow(cdte_le.value, 0.85, 5, 0, length_includes_head=True, head_width=0.02, head_length=1, color="k")
+
     # inset Axes for the CdTe plot
     x1, x2, y1, y2 = 2.5, 30, 0.95, 1.04  # subregion of the original image
     axins = gs_ax2.inset_axes([0.4, 0.35, 0.5, 0.4],
@@ -793,13 +857,19 @@ def asset_atm(save_location=None):
     _connectors[0].__dict__["_visible"] = False 
     _connectors[1].__dict__["_visible"] = True
 
+    # add the lowest energies of the detectors
+    _ = axins.axvline(cmos_le.value, ls="-.", c="k", label="CMOS energies")
+    axins.arrow(cmos_le.value, 0.96, 1, 0, length_includes_head=True, head_width=0.01, head_length=0.2, color="k")
+    _ = axins.axvline(cdte_le.value, ls=":", c="k", label="CdTe energies")
+    axins.arrow(cdte_le.value, 0.96, 5, 0, length_includes_head=True, head_width=0.01, head_length=1, color="k")
+
     gs_ax2.set_ylabel(f"Transmission [{atm3.transmissions.unit:latex}]")
     gs_ax2.set_xlabel(f"Energy [{atm3.mid_energies.unit:latex}]")
     gs_ax2.set_ylim([0,1.05])
     gs_ax2.set_xlim([0.01, 30])
     gs_ax2.set_xscale("log")
     gs_ax2.set_title("Time averaged transmission vs. sampled energy")
-    plt.legend(handles=p6+p7)
+    plt.legend(handles=p6+p7+[v5,v6])
 
     plt.suptitle("FOXSI-4 Flight Atmospheric Transmission")
 
@@ -810,8 +880,7 @@ def asset_atm(save_location=None):
     plt.show()
 
 if __name__=="__main__":
-    att_foxsi4_atmosphere([np.nan]<<u.keV, time_range=Time(["2024-04-17T22:14:00", "2024-04-17T22:15:00"], format='isot', scale='utc'))
-    save_location = None # ASSETS_PATH
+    save_location = None # ASSETS_PATH # 
     
     asset_att(save_location=save_location)
     

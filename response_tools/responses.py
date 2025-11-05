@@ -177,7 +177,15 @@ def foxsi4_telescope0_flight_arf(mid_energies, off_axis_angle, time_range):
         `[numpy.nan, numpy.nan]<<astropy.units.second` then the full 
         time will be considered and the output will not be averaged but 
         a grid of the transmissions at all times and at any provided
-        energies.
+        energies. Should be of length 2.
+        Can be given as seconds since launch:
+        - Observation start: 100<<astropy.units.second
+        - Observation end: 461<<astropy.units.second
+        Can be given as UTC time as well either as a string or and 
+        Astropy time.
+        - String format: YYYY-mm-ddTHH:MM:SS
+        - Observation start: 2024-04-17T22:14:40
+        - Observation end: 2024-04-17T22:20:41
 
     Returns
     -------
@@ -307,7 +315,15 @@ def foxsi4_telescope1_flight_arf(mid_energies, off_axis_angle, time_range):
         `[numpy.nan, numpy.nan]<<astropy.units.second` then the full 
         time will be considered and the output will not be averaged but 
         a grid of the transmissions at all times and at any provided
-        energies.
+        energies. Should be of length 2.
+        Can be given as seconds since launch:
+        - Observation start: 100<<astropy.units.second
+        - Observation end: 461<<astropy.units.second
+        Can be given as UTC time as well either as a string or and 
+        Astropy time.
+        - String format: YYYY-mm-ddTHH:MM:SS
+        - Observation start: 2024-04-17T22:14:40
+        - Observation end: 2024-04-17T22:20:41
 
     Returns
     -------
@@ -434,7 +450,15 @@ def foxsi4_telescope2_flight_arf(mid_energies, off_axis_angle, time_range):
         `[numpy.nan, numpy.nan]<<astropy.units.second` then the full 
         time will be considered and the output will not be averaged but 
         a grid of the transmissions at all times and at any provided
-        energies.
+        energies. Should be of length 2.
+        Can be given as seconds since launch:
+        - Observation start: 100<<astropy.units.second
+        - Observation end: 461<<astropy.units.second
+        Can be given as UTC time as well either as a string or and 
+        Astropy time.
+        - String format: YYYY-mm-ddTHH:MM:SS
+        - Observation start: 2024-04-17T22:14:40
+        - Observation end: 2024-04-17T22:20:41
 
     Returns
     -------
@@ -604,7 +628,15 @@ def foxsi4_telescope3_flight_arf(mid_energies, time_range, off_axis_angle=None):
         `[numpy.nan, numpy.nan]<<astropy.units.second` then the full 
         time will be considered and the output will not be averaged but 
         a grid of the transmissions at all times and at any provided
-        energies.
+        energies. Should be of length 2.
+        Can be given as seconds since launch:
+        - Observation start: 100<<astropy.units.second
+        - Observation end: 461<<astropy.units.second
+        Can be given as UTC time as well either as a string or and 
+        Astropy time.
+        - String format: YYYY-mm-ddTHH:MM:SS
+        - Observation start: 2024-04-17T22:14:40
+        - Observation end: 2024-04-17T22:20:41
 
     Returns
     -------
@@ -773,7 +805,15 @@ def foxsi4_telescope4_flight_arf(mid_energies, time_range, off_axis_angle=None):
         `[numpy.nan, numpy.nan]<<astropy.units.second` then the full 
         time will be considered and the output will not be averaged but 
         a grid of the transmissions at all times and at any provided
-        energies.
+        energies. Should be of length 2.
+        Can be given as seconds since launch:
+        - Observation start: 100<<astropy.units.second
+        - Observation end: 461<<astropy.units.second
+        Can be given as UTC time as well either as a string or and 
+        Astropy time.
+        - String format: YYYY-mm-ddTHH:MM:SS
+        - Observation start: 2024-04-17T22:14:40
+        - Observation end: 2024-04-17T22:20:41
 
     Returns
     -------
@@ -942,7 +982,15 @@ def foxsi4_telescope5_flight_arf(mid_energies, off_axis_angle, time_range):
         `[numpy.nan, numpy.nan]<<astropy.units.second` then the full 
         time will be considered and the output will not be averaged but 
         a grid of the transmissions at all times and at any provided
-        energies.
+        energies. Should be of length 2.
+        Can be given as seconds since launch:
+        - Observation start: 100<<astropy.units.second
+        - Observation end: 461<<astropy.units.second
+        Can be given as UTC time as well either as a string or and 
+        Astropy time.
+        - String format: YYYY-mm-ddTHH:MM:SS
+        - Observation start: 2024-04-17T22:14:40
+        - Observation end: 2024-04-17T22:20:41
 
     Returns
     -------
@@ -1106,7 +1154,15 @@ def foxsi4_telescope6_flight_arf(mid_energies, off_axis_angle, time_range):
         `[numpy.nan, numpy.nan]<<astropy.units.second` then the full 
         time will be considered and the output will not be averaged but 
         a grid of the transmissions at all times and at any provided
-        energies.
+        energies. Should be of length 2.
+        Can be given as seconds since launch:
+        - Observation start: 100<<astropy.units.second
+        - Observation end: 461<<astropy.units.second
+        Can be given as UTC time as well either as a string or and 
+        Astropy time.
+        - String format: YYYY-mm-ddTHH:MM:SS
+        - Observation start: 2024-04-17T22:14:40
+        - Observation end: 2024-04-17T22:20:41
 
     Returns
     -------
