@@ -58,6 +58,7 @@ There are a number of fields common to all data-class types used in the package.
 | `response_type`       | Describes whether the response in the data-class is an ARF, RMF, or SRM.                                                                       |
 | `telescope`           | Details the telescope to which the data, or components of the data, belongs.                                                                   |
 | `times`               | A unit aware list (likely in seconds) of the times at which the data was evaluated and then processed.                                         |
+| `times_utc`           | An Astropy Times list of the times at which the data was evaluated and then processed.                                                         |
 | `transmissions`       | A unit aware array (likely dimensionless) of the attenuator’s transmission.                                                                    |
 
 Inspecting a returned output and observing a subset of these fields should make it extra clear to a user as to exactly what they are handling when it comes to the output of the function.
