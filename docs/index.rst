@@ -6,7 +6,7 @@
 The FOXSI Response Tools documentation! |:fox:|
 ===============================================
 
-Welcome! This is the online documentation for the `response-tools <https://github.com/foxsi/response-tools>`__ code repository developed for the `FOXSI-4 sounding rocket mission <https://foxsi.umn.edu/launches/foxsi-4>`__.
+Welcome! This is the online documentation for the `response-tools <https://github.com/foxsi/response-tools>`__ code repository developed for the `FOXSI-4 <https://foxsi.umn.edu/launches/foxsi-4>`__ and `FOXSI-5 <https://foxsi.umn.edu/foxsi-5>`__ sounding rocket missions.
 
 The repository contains a Python package that can help a user download FOXSI's telescope response elements. Additionally, a codebase exists to load in and work with the response files.
 
@@ -18,8 +18,10 @@ Documentation/help can be found in the `Response Tools Data Guide <https://githu
    :maxdepth: 2
    :caption: Contents:
 
-   instrument
-   observation
+   foxsi4_instrument
+   foxsi4_observation
+   foxsi5_instrument
+   foxsi5_observation
    response_guide
    general_instructions
    auto_examples/index
