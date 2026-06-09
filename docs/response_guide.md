@@ -40,6 +40,8 @@ The RMF is a single product made of many measurements or simulations and should 
 
 The SRM describes the total response of the telescope in question. It takes into account both the ARF and the RMF.
 
+Another commonly used term when discussing instrument responses is DRM (Detector Response Matrix). This is sometimes used as an alternative to SRM in that it encapsulates the full instrument response, while others use it to only represent the detector's response, i.e. the same or similar to the RMF. Given this ambiguity, we will avoid using the term DRM and stick to the more explicitly defined terms listed above.
+
 ### How does combining the ARF and RMF into an SRM work?
 
 The SRM is the combination of the ARF and RMF:
