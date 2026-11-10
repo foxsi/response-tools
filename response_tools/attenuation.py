@@ -630,6 +630,155 @@ def att_foxsi4_atmosphere(mid_energies, time_range=None, file=None):
                      model=True,
                      )
 
+@u.quantity_input(mid_energies=u.keV)
+def att_foxsi5_atmosphere(mid_energies, time_range=None, file=None):
+    """ Atmsopheric attenuation from and for FOXSI-4 flight data.
+
+    Parameters
+    ----------
+    mid_energies : `astropy.units.quantity.Quantity`
+        The energies at which the transmission is required. If 
+        `numpy.nan<<astropy.units.keV` is passed then an entry for all 
+        native file energies are returned. 
+        Unit must be convertable to keV.
+
+    time_range : `astropy.units.quantity.Quantity` or `None`
+        The time range the atmsopheric transmissions should be averaged
+        over. If `None`, `numpy.nan<<astropy.units.second`, or
+        `[numpy.nan, numpy.nan]<<astropy.units.second` then the full 
+        time will be considered and the output will not be averaged but 
+        a grid of the transmissions at all times and at any provided
+        energies. Should be of length 2. Can be given as seconds since 
+        launch or as UTC time as well either as a string or and Astropy 
+        time.
+        - Observation start: ???<<astropy.units.second
+        - Observation end: ???<<astropy.units.second
+        - String format: YYYY-mm-ddTHH:MM:SS
+        - Observation start: ? # 2024-04-17T22:14:40
+        - Observation end: ? # 2024-04-17T22:20:41
+    
+    file : `str` or `None`
+        Path/name of a custom file wanting to be loaded in as the 
+        atmospheric data file.
+
+    Returns
+    -------
+    : `AttOutput`
+        An object containing the energies for each transmission, the 
+        transmissions, and more. See accessible information using 
+        `.contents` on the output.
+
+    Example
+    -------
+    >>> from astropy.time import Time
+    >>> import astropy.units as u
+    # two equivalent calls to the function
+    # using Astorpy times
+    >>> a0 = att_foxsi5_atmosphere([np.nan]<<u.keV,
+                                   time_range=Time(["2024-04-17T22:14:40",
+                                                    "2024-04-17T22:20:41"],
+                                                   format='isot',
+                                                   scale='utc'))
+    # using seconds from launch values (unit-aware)
+    >>> a1 = att_foxsi5_atmosphere([np.nan]<<u.keV,
+                                   time_range=[100,
+                                               461]<<u.second)
+    """
+
+    _f = os.path.join(FILE_PATH, RESPONSE_INFO_TYPE["att_foxsi5_atmosphere"]) if file is None else file
+    with fits.open(_f) as hdul:
+        native_times, _native_utc, native_energies, transmission = hdul[1].data["TIME"][0]<<u.second, hdul[1].data["TIME_UTC"][0], (hdul[1].data["ENERGY"][0]<<u.eV)<<u.keV, hdul[1].data["ATMOSPHERIC_TRANS"][0]<<u.dimensionless_unscaled
+
+        # assume some sort of uniform uniform binning
+        en_res = np.mean(np.diff(native_energies))
+        _native_utc_with_dec = [i if "." in i else f"{i}." for i in _native_utc] 
+        _native_utc_isot = [f"{i:0<34}" for i in _native_utc_with_dec]
+        native_utc = Time(_native_utc_isot, format='isot', scale='utc')
+
+    # handle time
+    if type(time_range)==core.Time:
+        # get UTC time in Astropy
+        user_utc = Time(time_range, format='isot', scale='utc')
+
+        # use first time in `native_times` as reference
+        time_range = (user_utc - native_utc[0]).sec << u.second
+    elif (time_range is None) or np.all(np.isnan(time_range)):
+        time_range = [np.nan, np.nan] << u.second
+    else:
+        assert (type(time_range)==u.Quantity) and ((time_range<<u.second).unit==u.second), f"{sys._getframe().f_code.co_name}: `time_range` should be an array of length 2 and either an Astropy Times list or a `astropy.units.second` (or convertable to) unit list"
+    
+    if (len(time_range)!=2):
+        warnings.warn(f"{sys._getframe().f_code.co_name}: `time_range` should be of length 2.")
+        return
+
+    # if the time range is nothing them just want all the times, deal with energies separately
+    if np.all(np.isnan(time_range)):
+        if np.all(np.isnan(mid_energies)):
+            # don't bother going further if we're just going to return the native data
+            return AttOutput(filename=_f,
+                             function_path=f"{sys._getframe().f_code.co_name}",
+                             mid_energies=native_energies<<u.keV,
+                             times=native_times,
+                             times_utc=native_utc,
+                             transmissions=transmission,
+                             attenuation_type="File-Atmospheric-Transmissions",
+                             model=True,
+                             )
+        
+        # the grid can be huge so let's help cut down on the interpolation amount
+        cut_native_energies_inds = np.nonzero(((mid_energies[0]-en_res)<=native_energies) & (native_energies<=(mid_energies[-1]+en_res)))
+        cut_native_energies = native_energies[cut_native_energies_inds]
+        cut_transmission = transmission[cut_native_energies_inds]
+
+        x, y = np.meshgrid(cut_native_energies, native_times)
+        # PROPER INTERPOLATION: i = scipy.interpolate.LinearNDInterpolator(list(zip(x.flatten().value, y.flatten().value)), cut_transmission.T.flatten().value)
+        # the grid is really fine so is it good enough to just use nearest neighbours?
+        i = scipy.interpolate.NearestNDInterpolator(list(zip(x.flatten().value, y.flatten().value)), cut_transmission.T.flatten().value)
+
+        mid_energies = native_resolution(native_x=native_energies, input_x=mid_energies)
+        all_times = native_resolution(native_x=native_times, input_x=time_range)
+        X, Y = np.meshgrid(mid_energies, all_times)
+
+        return AttOutput(filename=_f,
+                         function_path=f"{sys._getframe().f_code.co_name}",
+                         mid_energies=mid_energies,
+                         times=all_times,
+                         times_utc=native_utc,
+                         transmissions=i(X, Y)<<u.dimensionless_unscaled,
+                         attenuation_type="Energy-Interpolated-Atmospheric-Transmissions",
+                         model=True,
+                         )
+
+    # this is a big array so let's slice before interpolating
+    time_inds = np.nonzero((time_range[0]<=native_times) & (native_times<=time_range[1]))[0]
+
+    mid_energies = native_resolution(native_x=native_energies, input_x=mid_energies)
+
+    # # we'll interpolate so make sure to include a range one wider for the energy range
+    # energy_inds = np.nonzero((mid_energies[0]<=native_energies) & (native_energies<=mid_energies[-1]))[0]
+    # energy_inds = np.insert(energy_inds, 0, energy_inds[0]-1) if energy_inds[0]>0 else energy_inds
+    # energy_inds = np.insert(energy_inds, 1, energy_inds[-1]+1) if energy_inds[-1]<(len(energy_inds)-1) else energy_inds
+
+    times = native_times[time_inds]
+    times_utc = native_utc[time_inds]
+    transmissions = transmission[:,time_inds]
+
+    tave_transmissions = np.mean(transmissions, axis=1)
+
+    return AttOutput(filename=_f,
+                     function_path=f"{sys._getframe().f_code.co_name}",
+                     mid_energies=mid_energies<<u.keV,
+                     times=times,
+                     times_utc=times_utc,
+                     transmissions=np.interp(mid_energies.value, 
+                                             native_energies.value, 
+                                             tave_transmissions.value, 
+                                             left=0, 
+                                             right=0) << u.dimensionless_unscaled,
+                     attenuation_type="Time-Averaged-Atmospheric-Transmissions",
+                     model=True,
+                     )
+
 def asset_att(save_location=None):
     mid_energies = create_energy_midpoints()
 

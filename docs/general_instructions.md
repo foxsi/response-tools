@@ -1,4 +1,4 @@
-# Response-tools for FOXSI-4 <span>&#129418;</span>
+# Response-tools for FOXSI-4 & -5 <span>&#129418;</span>
 
 Repository to manage response elements, originally for the FOXSI-4 sounding rocket mission and it can be extended.
 

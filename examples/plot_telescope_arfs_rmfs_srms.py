@@ -19,7 +19,7 @@ import response_tools.responses as responses
 # user can make are obviously chosen then hidden in the function but it
 # might still be useful to see an idea of what these elements look like:
 
-responses.asset_response_chain_plot()
+responses.asset_foxsi4_response_chain_plot()
 
 # %%
 # **Note** these functions are not usually names the best since they 
