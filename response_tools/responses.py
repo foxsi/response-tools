@@ -156,7 +156,7 @@ def foxsi4_telescope0_arf(mid_energies, off_axis_angle):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi4_telescope0_flight_arf(mid_energies, off_axis_angle, time_range):
     """The flight Ancillary Response Function (ARF) for telescope 0.
     
@@ -294,7 +294,7 @@ def foxsi4_telescope1_arf(mid_energies, off_axis_angle):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi4_telescope1_flight_arf(mid_energies, off_axis_angle, time_range):
     """The flight Ancillary Response Function (ARF) for telescope 1.
     
@@ -429,7 +429,7 @@ def foxsi4_telescope2_arf(mid_energies, off_axis_angle):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi4_telescope2_flight_arf(mid_energies, off_axis_angle, time_range):
     """The flight Ancillary Response Function (ARF) for telescope 2.
     
@@ -606,7 +606,7 @@ def foxsi4_telescope3_arf(mid_energies, off_axis_angle=None):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi4_telescope3_flight_arf(mid_energies, time_range, off_axis_angle=None):
     """The flight Ancillary Response Function (ARF) for Telescope 3.
     
@@ -783,7 +783,7 @@ def foxsi4_telescope4_arf(mid_energies, off_axis_angle=None):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi4_telescope4_flight_arf(mid_energies, time_range, off_axis_angle=None):
     """The flight Ancillary Response Function (ARF) for Telescope 4.
     
@@ -961,7 +961,7 @@ def foxsi4_telescope5_arf(mid_energies, off_axis_angle):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi4_telescope5_flight_arf(mid_energies, off_axis_angle, time_range):
     """The flight Ancillary Response Function (ARF) for Telescope 5.
     
@@ -1133,7 +1133,7 @@ def foxsi4_telescope6_arf(mid_energies, off_axis_angle):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi4_telescope6_flight_arf(mid_energies, off_axis_angle, time_range):
     """The flight Ancillary Response Function (ARF) for Telescope 6.
     
@@ -1406,7 +1406,7 @@ def foxsi5_telescope0_arf(mid_energies, off_axis_angle):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi5_telescope0_flight_arf(mid_energies, off_axis_angle, time_range):
     """The flight Ancillary Response Function (ARF) for telescope 0.
     
@@ -1547,7 +1547,7 @@ def foxsi5_telescope1_arf(mid_energies, off_axis_angle):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi5_telescope1_flight_arf(mid_energies, off_axis_angle, time_range):
     """The flight Ancillary Response Function (ARF) for telescope 1.
     
@@ -1685,7 +1685,7 @@ def foxsi5_telescope2_arf(mid_energies, off_axis_angle):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi5_telescope2_flight_arf(mid_energies, off_axis_angle, time_range):
     """The flight Ancillary Response Function (ARF) for telescope 2.
     
@@ -1865,7 +1865,7 @@ def foxsi5_telescope3_arf(mid_energies, off_axis_angle=None):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi5_telescope3_flight_arf(mid_energies, time_range, off_axis_angle=None):
     """The flight Ancillary Response Function (ARF) for Telescope 3.
     
@@ -2045,7 +2045,7 @@ def foxsi5_telescope4_arf(mid_energies, off_axis_angle=None):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi5_telescope4_flight_arf(mid_energies, time_range, off_axis_angle=None):
     """The flight Ancillary Response Function (ARF) for Telescope 4.
     
@@ -2226,7 +2226,7 @@ def foxsi5_telescope5_arf(mid_energies, off_axis_angle):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi5_telescope5_flight_arf(mid_energies, off_axis_angle, time_range):
     """The flight Ancillary Response Function (ARF) for Telescope 5.
     
@@ -2401,7 +2401,7 @@ def foxsi5_telescope6_arf(mid_energies, off_axis_angle):
                                       ),
                             )
 
-@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin, time_range=u.second)
+@u.quantity_input(mid_energies=u.keV, off_axis_angle=u.arcmin)
 def foxsi5_telescope6_flight_arf(mid_energies, off_axis_angle, time_range):
     """The flight Ancillary Response Function (ARF) for Telescope 6.
     
